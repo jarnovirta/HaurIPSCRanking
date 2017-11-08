@@ -1,7 +1,10 @@
 package fi.haur_ranking.core;
 
-import fi.haur_ranking.database.StageScoreService;
+import java.util.List;
+
 import fi.haur_ranking.domain.Match;
+import fi.haur_ranking.domain.StageScoreSheet;
+import fi.haur_ranking.service.StageScoreService;
 
 public class App {
 	public static void main(String[] args) {
@@ -15,5 +18,7 @@ public class App {
 		Match match = new Match();
 		match.setWinMssMatchId(1);
 		
+		List<StageScoreSheet> sheets = scoreService.findScoreSheetsForMatch(match);
+		System.out.println("GOT " + sheets.size() + " SHEETS");
 	}
 }

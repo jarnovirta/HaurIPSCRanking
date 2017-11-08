@@ -1,4 +1,4 @@
-package fi.haur_ranking.database;
+package fi.haur_ranking.database.winMss;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
