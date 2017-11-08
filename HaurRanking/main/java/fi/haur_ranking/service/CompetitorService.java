@@ -6,7 +6,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import fi.haur_ranking.database.winMss.AccessDatabaseUtil;
+import fi.haur_ranking.database.winMss.WinMssDatabaseUtil;
 import fi.haur_ranking.domain.Competitor;
 import fi.haur_ranking.domain.Match;
 
@@ -16,7 +16,7 @@ public class CompetitorService {
 		String email = null;		
 		Statement statement = null;
 		ResultSet resultSet = null;
-		Connection connection = AccessDatabaseUtil.connectToAccessDatabase();
+		Connection connection = WinMssDatabaseUtil.connectToAccessDatabase();
 		try {
 			statement = connection.createStatement();
 			resultSet = statement.executeQuery("SELECT Email FROM tblMember WHERE MemberId = " + memberId);
@@ -25,11 +25,11 @@ public class CompetitorService {
 			}
 			resultSet.close();
 			statement.close();
-			AccessDatabaseUtil.closeConnecion(connection);
+			WinMssDatabaseUtil.closeConnecion(connection);
 			return email;
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			AccessDatabaseUtil.closeConnecion(connection);
+			WinMssDatabaseUtil.closeConnecion(connection);
 			return null;
 		}
 	}
@@ -38,7 +38,7 @@ public class CompetitorService {
 		Statement statement = null;
 		ResultSet resultSet = null;
 		List<Competitor> disqualifiedCompetitors = new ArrayList<Competitor>();
-		Connection connection = AccessDatabaseUtil.connectToAccessDatabase();
+		Connection connection = WinMssDatabaseUtil.connectToAccessDatabase();
 		try {
 			System.out.println("Searching for DQed competitors for match " + match.getWinMssMatchId());
 			statement = connection.createStatement();
@@ -56,12 +56,12 @@ public class CompetitorService {
 			}
 			resultSet.close();
 			statement.close();
-			AccessDatabaseUtil.closeConnecion(connection);
+			WinMssDatabaseUtil.closeConnecion(connection);
 			
 			return disqualifiedCompetitors;
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			AccessDatabaseUtil.closeConnecion(connection);
+			WinMssDatabaseUtil.closeConnecion(connection);
 			return null;
 		}
 	}

@@ -6,7 +6,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import fi.haur_ranking.database.winMss.AccessDatabaseUtil;
+import fi.haur_ranking.database.winMss.WinMssDatabaseUtil;
 import fi.haur_ranking.domain.Competitor;
 import fi.haur_ranking.domain.Match;
 
@@ -14,12 +14,12 @@ public class MatchService {
 	Connection connection;
 	
 	public Match readMatchFromDatabase(int matchId) {
-		connection = AccessDatabaseUtil.connectToAccessDatabase();
+		connection = WinMssDatabaseUtil.connectToAccessDatabase();
 		List<Competitor> competitors = findAllCompetitors();
 		for (Competitor competitor : competitors) {
 			System.out.println(competitor.getFirstName() + " " + competitor.getLastName());
 		}
-		AccessDatabaseUtil.closeConnecion(connection);
+		WinMssDatabaseUtil.closeConnecion(connection);
 		return null;
 	}
 	

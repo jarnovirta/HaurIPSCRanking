@@ -6,7 +6,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import fi.haur_ranking.database.winMss.AccessDatabaseUtil;
+import fi.haur_ranking.database.winMss.WinMssDatabaseUtil;
 import fi.haur_ranking.domain.Match;
 import fi.haur_ranking.domain.StageScoreSheet;
 
@@ -17,7 +17,7 @@ public class StageScoreService {
 	
 	public List<StageScoreSheet> findScoreSheetsForMatch(Match match) {
 		List<StageScoreSheet> stageScoreSheets= new ArrayList<StageScoreSheet>();
-		connection = AccessDatabaseUtil.connectToAccessDatabase();		
+		connection = WinMssDatabaseUtil.connectToAccessDatabase();		
 		Statement statement = null;
 		ResultSet resultSet = null;
 		try {
@@ -40,11 +40,11 @@ public class StageScoreService {
 			}
 			resultSet.close();
 			statement.close();
-			AccessDatabaseUtil.closeConnecion(connection);
+			WinMssDatabaseUtil.closeConnecion(connection);
 			return stageScoreSheets;
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			AccessDatabaseUtil.closeConnecion(connection);
+			WinMssDatabaseUtil.closeConnecion(connection);
 			return null;
 		}
 	}
