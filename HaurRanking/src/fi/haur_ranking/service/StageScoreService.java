@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 import fi.haur_ranking.database.winMss.WinMssDatabaseUtil;
@@ -54,10 +55,43 @@ public class StageScoreService {
 	}
 	
 	public void testSave(StageScoreSheet sheet) {
-		EntityManager em = Persistence.createEntityManagerFactory("fi.haur_ranking.jpa").createEntityManager();
-		em.getTransaction().begin();
-		em.persist(sheet);
-		em.getTransaction().commit();
+		try {
+			EntityManagerFactory emf = 
+				      Persistence.createEntityManagerFactory("fi.haur_ranking.jpa");
+				    
+				    EntityManager em = emf.createEntityManager();
+			em.getTransaction().begin();
+			em.persist(sheet);
+			em.getTransaction().commit();
+			emf.close();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	public void testSave(List<StageScoreSheet> sheets) {
+		try {
+			EntityManagerFactory emf = 
+				      Persistence.createEntityManagerFactory("fi.haur_ranking.jpa");
+				    
+				    EntityManager em = emf.createEntityManager();
+			em.getTransaction().begin();
+			for (StageScoreSheet sheet : sheets)
+				em.persist(sheet);
+			em.getTransaction().commit();
+			emf.close();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public List<StageScoreSheet> findAll() {
+		EntityManagerFactory emf = 
+			      Persistence.createEntityManagerFactory("fi.haur_ranking.jpa");
+			    EntityManager em = emf.createEntityManager();
+		return em.createQuery("Select t from StageScoreSheet t").getResultList();
 		
 	}
+	
 }

@@ -4,21 +4,16 @@
     version="2.0" xmlns="http://java.sun.com/xml/ns/persistence">
     <persistence-unit name="fi.haur_ranking.jpa" transaction-type="RESOURCE_LOCAL">
 		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-		<class>fi.haur_ranking.domain.StageScoreSheet</class> 
+		<exclude-unlisted-classes>false</exclude-unlisted-classes>
 		<properties>
-			<!-- <property name="showSql" value="true" /> -->
-			
+			<property name="showSql" value="true" />
 			<property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbc.JDBCDriver" />
 			<property name="javax.persistence.jdbc.url"
-				value="jdbc:hsqldb:file:data/haurrankingdb;create=true" />
-			<property name="javax.persistence.jdbc.user" value="" />
+				value="jdbc:hsqldb:file:data\haurrankingdb;shutdown=true;hsqldb.default_table_type=cached" />
+			<property name="javax.persistence.jdbc.user" value="sa" />
 			<property name="javax.persistence.jdbc.password" value="" />
 			<property name="eclipselink.ddl-generation" value="create-or-extend-tables" />
 			<property name="eclipselink.ddl-generation.output-mode" value="database" />
-			<property name="eclipselink.weaving" value="false" />
-			<property name="eclipselink.logging.level" value="SEVERE" />
-			<property name="eclipselink.logging.level.sql" value="SEVERE" />
-			
 		</properties>
 	</persistence-unit>
 </persistence>
