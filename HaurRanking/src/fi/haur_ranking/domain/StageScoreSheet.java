@@ -1,6 +1,15 @@
 package fi.haur_ranking.domain;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
 public class StageScoreSheet {
+	@Id
+	@GeneratedValue(strategy = GenerationType.TABLE)
+	private Long id;
 	private String ssiModel = "match_ipsc.ipscscorecard";
 	private int winMssPrimaryKey;
 	private int winMssStageId;
@@ -158,5 +167,13 @@ public class StageScoreSheet {
 
 	public void setWinMssMemberId(int winMssMemberId) {
 		this.winMssMemberId = winMssMemberId;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 }

@@ -6,9 +6,13 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Persistence;
+
 import fi.haur_ranking.database.winMss.WinMssDatabaseUtil;
 import fi.haur_ranking.domain.Match;
 import fi.haur_ranking.domain.StageScoreSheet;
+
 
 // Reads score data from a WinMSS .mdb file (Microsoft Access database)
 public class StageScoreService {
@@ -47,5 +51,13 @@ public class StageScoreService {
 			WinMssDatabaseUtil.closeConnecion(connection);
 			return null;
 		}
+	}
+	
+	public void testSave(StageScoreSheet sheet) {
+		EntityManager em = Persistence.createEntityManagerFactory("fi.haur_ranking.jpa").createEntityManager();
+		em.getTransaction().begin();
+		em.persist(sheet);
+		em.getTransaction().commit();
+		
 	}
 }

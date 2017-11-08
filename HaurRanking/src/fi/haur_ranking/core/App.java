@@ -20,5 +20,7 @@ public class App {
 		
 		List<StageScoreSheet> sheets = scoreService.findScoreSheetsForMatch(match);
 		System.out.println("GOT " + sheets.size() + " SHEETS");
+		scoreService.testSave(sheets.get(0));
+		System.out.println("DONE");
 	}
 }
