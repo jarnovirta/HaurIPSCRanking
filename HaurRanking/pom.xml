@@ -1,0 +1,98 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>HaurRanking</groupId>
+  <artifactId>HaurRanking</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>haurranking</name>
+  <build>
+    <sourceDirectory>src</sourceDirectory>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.5.1</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+	<plugin>
+		    <groupId>org.apache.maven.plugins</groupId>
+		    <artifactId>maven-dependency-plugin</artifactId>
+		    <executions>
+		        <execution>
+		            <id>copy-dependencies</id>
+		            <phase>prepare-package</phase>
+		            <goals>
+		                <goal>copy-dependencies</goal>
+		            </goals>
+		            <configuration>
+		                <outputDirectory>${project.build.directory}/lib</outputDirectory>
+		                <overWriteReleases>false</overWriteReleases>
+		                <overWriteSnapshots>false</overWriteSnapshots>
+		                <overWriteIfNewer>true</overWriteIfNewer>
+		            </configuration>
+		        </execution>
+		    </executions>
+		</plugin>
+      <plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-jar-plugin</artifactId>
+		<version>3.0.2</version>
+		<configuration>
+		  <archive>
+		    <manifest>
+		    <addClasspath>true</addClasspath>
+		    <classpathPrefix>lib/</classpathPrefix>
+			<mainClass>fi.ipsc_results_uploader.core.App</mainClass>
+		    </manifest>
+		  </archive>
+		</configuration>
+   		</plugin>
+
+    </plugins>
+
+  </build>
+  <dependencies>
+  <!-- https://mvnrepository.com/artifact/commons-lang/commons-lang -->
+ 	<dependency>
+	    <groupId>com.healthmarketscience.jackcess</groupId>
+	    <artifactId>jackcess</artifactId>
+	    <version>2.1.2</version>
+
+	    <exclusions>
+	    	<exclusion>
+	    		<groupId>commons-lang</groupId>
+	    		<artifactId>commons-lang</artifactId>
+	    	</exclusion>
+	    </exclusions>
+ 	</dependency> 
+  
+<!-- https://mvnrepository.com/artifact/commons-lang/commons-lang -->
+	<dependency>
+	    <groupId>commons-lang</groupId>
+	    <artifactId>commons-lang</artifactId>
+	    <version>2.5</version>
+	</dependency>
+	
+	 <dependency>
+	    <groupId>com.healthmarketscience.jackcess</groupId>
+	    <artifactId>jackcess-encrypt</artifactId>
+	    <version>2.1.2</version>
+	</dependency> 
+
+
+	<dependency>
+	    <groupId>org.apache.poi</groupId>
+	    <artifactId>poi</artifactId>
+	    <version>3.9</version>
+	</dependency> 
+	
+	<!-- https://mvnrepository.com/artifact/net.sf.ucanaccess/ucanaccess -->
+	<dependency>
+	    <groupId>net.sf.ucanaccess</groupId>
+	    <artifactId>ucanaccess</artifactId>
+	    <version>4.0.2</version>
+	</dependency>
+	
+  </dependencies>
+</project>

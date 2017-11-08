@@ -1,0 +1,35 @@
+SSI API DQ REASONS:
+
+IPSC_DQ_REASON = (('no', u'Not disqualified'), 
+                ('gr', u'General regulations'), 
+                ('ad', u'Accidental discharge'), 
+                ('ug', u'Unsafe gun handling'), 
+                ('uc', u'Unsportsmanlike conduct'), 
+                ('pc', u'Prohibited substances'))
+
+
+
+WINMSS DATABASE TABLE tblTypeDisqualificationRule
+
+TypeDisqualificationRuleId	TypeDisqualificationRule
+0							No disqualification
+1							Safety Infraction
+2							Unsportsmanlike Conduct
+3							Prohibited Substances
+4							Other
+   
+CORRESPONDENCE WINMSS - SSI API:
+
+WINMSS				API
+0, 0				'no'
+1-3, 1				'ad'
+4-16, 1				'ug'
+x, 2				'uc'
+x, 3				'pc'
+x, 4				'gr'		
+
+
+TABLE tblMatchCompetitor HAS COLUMNS IsDisqualified and TypeDisqualifyRuleId 
+and FailedPowerFactor
+
+	
