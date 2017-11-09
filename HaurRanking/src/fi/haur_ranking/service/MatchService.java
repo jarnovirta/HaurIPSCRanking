@@ -6,24 +6,29 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import fi.haur_ranking.database.winMss.WinMssDatabaseUtil;
 import fi.haur_ranking.domain.Competitor;
 import fi.haur_ranking.domain.Match;
+import fi.haur_ranking.repository.haur_ranking_repository.MatchRepository;
+import fi.haur_ranking.repository.winmss_repository.WinMSSMatchRepository;
+import fi.haur_ranking.repository.winmss_repository.WinMssDatabaseUtil;
 
 public class MatchService {
 	Connection connection;
-	
-	public Match readMatchFromDatabase(int matchId) {
-		connection = WinMssDatabaseUtil.connectToAccessDatabase();
-		List<Competitor> competitors = findAllCompetitors();
+			
+	public List<Match> findAllFromWinMSSDb() {
+		WinMSSMatchRepository winMSSMatchRepository = new WinMSSMatchRepository();
+		return winMSSMatchRepository.findAll();
+	}
+	public Match findMatchFromWinMSSDb(int matchId) {
+		connection = WinMssDatabaseUtil.getConnection();
+		List<Competitor> competitors = findAllCompetitorsFromWinMSSDb();
 		for (Competitor competitor : competitors) {
 			System.out.println(competitor.getFirstName() + " " + competitor.getLastName());
 		}
-		WinMssDatabaseUtil.closeConnecion(connection);
 		return null;
 	}
 	
-	public List<Competitor> findAllCompetitors() {
+	private List<Competitor> findAllCompetitorsFromWinMSSDb() {
 		Statement statement = null;
 		ResultSet resultSet = null;
 		List<Competitor> competitors = new ArrayList<Competitor>();
@@ -40,5 +45,9 @@ public class MatchService {
 			ex.printStackTrace();
 			return null;
 		}
+	}
+	
+	public List<Match> saveToHaurRankingDb(List<Match> matches) {
+		return MatchRepository.saveAll(matches);
 	}
 }

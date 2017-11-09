@@ -1,11 +1,20 @@
 package fi.haur_ranking.domain;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
+@Entity
+@Table(name="Competitor")
 public class Competitor {
-
-	private int ssiPrimaryKey;
-	private int winMssCompetitorId;
-	private int winMssMemberId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.TABLE)
+	private Long id;
+	private Long ssiPrimaryKey;
+	private Long winMssCompetitorId;
+	private Long winMssMemberId;
 	private String firstName;
 	private String lastName;
 	private String ICS;
@@ -20,15 +29,51 @@ public class Competitor {
 		this.lastName = lastName;
 		this.ICS = ICS; 
 	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Long getSsiPrimaryKey() {
+		return ssiPrimaryKey;
+	}
+
+	public void setSsiPrimaryKey(Long ssiPrimaryKey) {
+		this.ssiPrimaryKey = ssiPrimaryKey;
+	}
+
+	public Long getWinMssCompetitorId() {
+		return winMssCompetitorId;
+	}
+
+	public void setWinMssCompetitorId(Long winMssCompetitorId) {
+		this.winMssCompetitorId = winMssCompetitorId;
+	}
+
+	public Long getWinMssMemberId() {
+		return winMssMemberId;
+	}
+
+	public void setWinMssMemberId(Long winMssMemberId) {
+		this.winMssMemberId = winMssMemberId;
+	}
+
 	public String getFirstName() {
 		return firstName;
 	}
+
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
+
 	public String getLastName() {
 		return lastName;
 	}
+
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
@@ -49,14 +94,6 @@ public class Competitor {
 		this.email = email;
 	}
 
-	public int getSsiPrimaryKey() {
-		return ssiPrimaryKey;
-	}
-
-	public void setSsiPrimaryKey(int ssiPrimaryKey) {
-		this.ssiPrimaryKey = ssiPrimaryKey;
-	}
-
 	public String getSsiDisqualificationReason() {
 		return ssiDisqualificationReason;
 	}
@@ -64,16 +101,13 @@ public class Competitor {
 	public void setSsiDisqualificationReason(String ssiDisqualificationReason) {
 		this.ssiDisqualificationReason = ssiDisqualificationReason;
 	}
-	
+
 	public int getWinMssTypeDisqualifyRuleId() {
 		return winMssTypeDisqualifyRuleId;
 	}
 
-	public void setWinMssTypeDisqualifyRuleId(int winMssDisqualificationReason) {
-		this.winMssTypeDisqualifyRuleId = winMssDisqualificationReason;
-		if (winMssDisqualificationReason == 0) ssiDisqualificationReason = "no";
-		if (winMssDisqualificationReason >= 1 && winMssDisqualificationReason <= 3) ssiDisqualificationReason = "ad";
-		if (winMssDisqualificationReason >= 4 && winMssDisqualificationReason <= 16) ssiDisqualificationReason = "ug";
+	public void setWinMssTypeDisqualifyRuleId(int winMssTypeDisqualifyRuleId) {
+		this.winMssTypeDisqualifyRuleId = winMssTypeDisqualifyRuleId;
 	}
 
 	public int getWinMssTypeDisqualificationRuleId() {
@@ -82,24 +116,6 @@ public class Competitor {
 
 	public void setWinMssTypeDisqualificationRuleId(int winMssTypeDisqualificationRuleId) {
 		this.winMssTypeDisqualificationRuleId = winMssTypeDisqualificationRuleId;
-		if (winMssTypeDisqualificationRuleId == 2) ssiDisqualificationReason = "uc";
-		if (winMssTypeDisqualificationRuleId == 3) ssiDisqualificationReason = "pc";
-		if (winMssTypeDisqualificationRuleId == 4) ssiDisqualificationReason = "gr";
 	}
 
-	public int getWinMssCompetitorId() {
-		return winMssCompetitorId;
-	}
-
-	public void setWinMssCompetitorId(int winMssCompetitorId) {
-		this.winMssCompetitorId = winMssCompetitorId;
-	}
-
-	public int getWinMssMemberId() {
-		return winMssMemberId;
-	}
-
-	public void setWinMssMemberId(int winMssMemberId) {
-		this.winMssMemberId = winMssMemberId;
-	}
 }

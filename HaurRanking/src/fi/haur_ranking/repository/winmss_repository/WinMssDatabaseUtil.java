@@ -1,27 +1,31 @@
-package fi.haur_ranking.database.winMss;
+package fi.haur_ranking.repository.winmss_repository;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 
 // Methods for using a Ucanaccess connection to a Microsoft Access database file (.mdb).
 public class WinMssDatabaseUtil {
-	public static Connection connectToAccessDatabase() {
-		Connection connection = null;
+	static Connection connection = null;
+	
+	public static Connection getConnection() {
+		if (connection != null) return connection;
+		
 		try {
 			Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
-			String dbConnectionString = "jdbc:ucanaccess://WinMSS.mdb;jackcessOpener=fi.haur_ranking.database.winMss.CryptCodecOpener";
+			String dbConnectionString = "jdbc:ucanaccess://WinMSS.mdb;jackcessOpener=fi.haur_ranking.repository.winmss_repository.CryptCodecOpener";
 			connection = DriverManager.getConnection(dbConnectionString, null, null);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
 		return connection;
 	}
 
-	public static void closeConnecion(Connection conn) {
+	public static void closeConnecion() {
 		try {
-			if (conn != null) {
-				conn.commit();
-				conn.close();
+			if (connection != null) {
+				connection.commit();
+				connection.close();
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();

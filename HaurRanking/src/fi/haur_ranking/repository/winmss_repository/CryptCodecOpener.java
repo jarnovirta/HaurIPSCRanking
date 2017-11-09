@@ -1,4 +1,4 @@
-package fi.haur_ranking.database.winMss;
+package fi.haur_ranking.repository.winmss_repository;
 
 import java.io.File;
 import java.io.IOException;
