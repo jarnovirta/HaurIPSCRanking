@@ -49,5 +49,20 @@ public class MatchRepository {
 			return null;
 		}
 	}
+	public static int getTotalMatchCount() {
+		int matchCount;
+		try {
+			EntityManagerFactory emf = 
+				      Persistence.createEntityManagerFactory("fi.haur_ranking.jpa");
+			EntityManager em = emf.createEntityManager();
+			matchCount = ((Long) em.createQuery("SELECT COUNT(m) from Match m").getSingleResult()).intValue();
+			emf.close();
+			return matchCount;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return -1;
+		}
+	}
 	
 }

@@ -13,14 +13,13 @@ import fi.haur_ranking.repository.winmss_repository.WinMSSMatchRepository;
 import fi.haur_ranking.repository.winmss_repository.WinMssDatabaseUtil;
 
 public class MatchService {
-	Connection connection;
 			
-	public List<Match> findAllFromWinMSSDb() {
+	public static List<Match> findAllFromWinMSSDb(String fileLocation) {
 		WinMSSMatchRepository winMSSMatchRepository = new WinMSSMatchRepository();
-		return winMSSMatchRepository.findAll();
+		return winMSSMatchRepository.findAll(fileLocation);
 	}
-	public Match findMatchFromWinMSSDb(int matchId) {
-		connection = WinMssDatabaseUtil.getConnection();
+	public static Match findMatchFromWinMSSDb(int matchId) {
+		
 		List<Competitor> competitors = findAllCompetitorsFromWinMSSDb();
 		for (Competitor competitor : competitors) {
 			System.out.println(competitor.getFirstName() + " " + competitor.getLastName());
@@ -28,7 +27,8 @@ public class MatchService {
 		return null;
 	}
 	
-	private List<Competitor> findAllCompetitorsFromWinMSSDb() {
+	private static List<Competitor> findAllCompetitorsFromWinMSSDb() {
+		Connection connection = WinMssDatabaseUtil.getConnection();
 		Statement statement = null;
 		ResultSet resultSet = null;
 		List<Competitor> competitors = new ArrayList<Competitor>();
@@ -47,7 +47,16 @@ public class MatchService {
 		}
 	}
 	
-	public List<Match> saveToHaurRankingDb(List<Match> matches) {
+	public static List<Match> saveToHaurRankingDb(List<Match> matches) {
 		return MatchRepository.saveAll(matches);
+	}
+	public static int getTotalMatchCount() {
+		return MatchRepository.getTotalMatchCount();
+	}
+	
+	public static void importWinMssDatabase(String winMssDbLocation) {
+		saveToHaurRankingDb(findAllFromWinMSSDb(winMssDbLocation));
+		System.out.println("\nIMPORT DONE");
+		
 	}
 }

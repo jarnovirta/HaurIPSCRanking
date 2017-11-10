@@ -6,20 +6,18 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import fi.haur_ranking.domain.Competitor;
 import fi.haur_ranking.domain.Match;
-import fi.haur_ranking.repository.haur_ranking_repository.StageScoreSheetRepository;
 
 public class WinMSSMatchRepository {
 
 	Connection connection; 
 	
-	public List<Match> findAll() {
+	public List<Match> findAll(String fileLocation) {
 		List<Match> matchList = new ArrayList<Match>();
 		
 		try {
 			WinMSSStageScoreSheetRepository winMSSStageScoreSheetRepository = new WinMSSStageScoreSheetRepository();
-			connection = WinMssDatabaseUtil.getConnection();
+			connection = WinMssDatabaseUtil.getConnection(fileLocation);
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery("SELECT MatchId, MatchName FROM tblMatch");
 			while (resultSet.next()) {
