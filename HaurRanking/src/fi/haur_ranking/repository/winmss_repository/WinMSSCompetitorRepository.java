@@ -9,8 +9,7 @@ import java.util.List;
 import fi.haur_ranking.domain.Competitor;
 
 public class WinMSSCompetitorRepository {
-	public Competitor findCompetitor(Long winMSSMemberId) {
-
+	public static Competitor findCompetitor(Long winMSSMemberId) {
 		try {
 			Connection connection = WinMssDatabaseUtil.getConnection();
 			Statement statement;

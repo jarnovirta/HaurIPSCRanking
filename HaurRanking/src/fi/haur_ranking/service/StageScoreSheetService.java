@@ -22,14 +22,16 @@ public class StageScoreSheetService {
 	
 	Connection connection;
 	
-	StageScoreSheetRepository stageScoreSheetRepository = new StageScoreSheetRepository();
 	WinMSSStageScoreSheetRepository winMSSStageScoreSheetRepository = new WinMSSStageScoreSheetRepository();
 	
-	public StageScoreSheet saveToHaurRankingDB(StageScoreSheet sheet) {
-		return stageScoreSheetRepository.save(sheet);
+	public static StageScoreSheet saveToHaurRankingDB(StageScoreSheet sheet) {
+		return StageScoreSheetRepository.save(sheet);
 		
 	}
-	public List<StageScoreSheet> findAllFromHaurRankingDB() {
-		return stageScoreSheetRepository.findAll();
+	public static List<StageScoreSheet> findAllFromHaurRankingDB() {
+		return StageScoreSheetRepository.findAll();
+	}
+	public static int getTotalStageScoreSheetCount() {
+		return StageScoreSheetRepository.getTotalStageScoreSheetCount();
 	}
 }

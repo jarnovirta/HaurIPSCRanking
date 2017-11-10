@@ -9,20 +9,15 @@ import java.util.List;
 import fi.haur_ranking.domain.Match;
 
 public class WinMSSMatchRepository {
-
-	Connection connection; 
-	
-	public List<Match> findAll(String fileLocation) {
+	public static List<Match> findAll(String fileLocation) {
 		List<Match> matchList = new ArrayList<Match>();
-		
 		try {
-			WinMSSStageScoreSheetRepository winMSSStageScoreSheetRepository = new WinMSSStageScoreSheetRepository();
-			connection = WinMssDatabaseUtil.getConnection(fileLocation);
+			Connection connection = WinMssDatabaseUtil.getConnection(fileLocation);
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery("SELECT MatchId, MatchName FROM tblMatch");
 			while (resultSet.next()) {
 				Match match = new Match(resultSet.getString(2), resultSet.getLong(1));
-				match.setStageScoreSheets(winMSSStageScoreSheetRepository.findScoreSheetsForMatch(match.getWinMssMatchId()));
+				match.setStageScoreSheets(WinMSSStageScoreSheetRepository.findScoreSheetsForMatch(match.getWinMssMatchId()));
 				matchList.add(match);
 			}
 			resultSet.close();
@@ -34,6 +29,4 @@ public class WinMSSMatchRepository {
 			return null;
 		}
 	}
-
-	
 }

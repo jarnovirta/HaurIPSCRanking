@@ -26,7 +26,7 @@ import fi.haur_ranking.repository.winmss_repository.WinMssDatabaseUtil;
 import fi.haur_ranking.service.DatabaseStatisticsService;
 import fi.haur_ranking.service.MatchService;
 
-public class HaurRankingGUI {
+public class MainWindow {
 	private JFrame mainFrame;
 	private JLabel headerLabel;
 	private JPanel databaseGeneralInfoPanel;

@@ -15,11 +15,9 @@ import fi.haur_ranking.repository.winmss_repository.WinMssDatabaseUtil;
 public class MatchService {
 			
 	public static List<Match> findAllFromWinMSSDb(String fileLocation) {
-		WinMSSMatchRepository winMSSMatchRepository = new WinMSSMatchRepository();
-		return winMSSMatchRepository.findAll(fileLocation);
+		return WinMSSMatchRepository.findAll(fileLocation);
 	}
 	public static Match findMatchFromWinMSSDb(int matchId) {
-		
 		List<Competitor> competitors = findAllCompetitorsFromWinMSSDb();
 		for (Competitor competitor : competitors) {
 			System.out.println(competitor.getFirstName() + " " + competitor.getLastName());
@@ -57,6 +55,5 @@ public class MatchService {
 	public static void importWinMssDatabase(String winMssDbLocation) {
 		saveToHaurRankingDb(findAllFromWinMSSDb(winMssDbLocation));
 		System.out.println("\nIMPORT DONE");
-		
 	}
 }

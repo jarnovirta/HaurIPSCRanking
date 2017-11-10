@@ -9,7 +9,7 @@ import javax.persistence.Persistence;
 import fi.haur_ranking.domain.StageScoreSheet;
 
 public class StageScoreSheetRepository {
-	public StageScoreSheet save(StageScoreSheet sheet) { 
+	public static StageScoreSheet save(StageScoreSheet sheet) { 
 		try {
 			EntityManagerFactory emf = 
 				      Persistence.createEntityManagerFactory("fi.haur_ranking.jpa");
@@ -25,7 +25,7 @@ public class StageScoreSheetRepository {
 			return null;
 		}
 	}
-	public StageScoreSheet find(Long id) {
+	public static StageScoreSheet find(Long id) {
 		try {
 			EntityManagerFactory emf = 
 				      Persistence.createEntityManagerFactory("fi.haur_ranking.jpa");
@@ -39,7 +39,7 @@ public class StageScoreSheetRepository {
 			return null;
 		}
 	}
-	public List<StageScoreSheet> findAll() {
+	public static List<StageScoreSheet> findAll() {
 		try {
 			EntityManagerFactory emf = 
 				      Persistence.createEntityManagerFactory("fi.haur_ranking.jpa");
@@ -53,5 +53,22 @@ public class StageScoreSheetRepository {
 			return null;
 		}
 	}
+	
+	public static int getTotalStageScoreSheetCount() {
+		int matchCount;
+		try {
+			EntityManagerFactory emf = 
+				      Persistence.createEntityManagerFactory("fi.haur_ranking.jpa");
+			EntityManager em = emf.createEntityManager();
+			matchCount = ((Long) em.createQuery("SELECT COUNT(s) from StageScoreSheet s").getSingleResult()).intValue();
+			emf.close();
+			return matchCount;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return -1;
+		}
+	}
+
 }
 

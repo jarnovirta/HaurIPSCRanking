@@ -10,13 +10,12 @@ import fi.haur_ranking.domain.Match;
 import fi.haur_ranking.domain.StageScoreSheet;
 
 public class WinMSSStageScoreSheetRepository {
-	public List<StageScoreSheet> findScoreSheetsForMatch(Long winMssDbMatchId) {
+	public static List<StageScoreSheet> findScoreSheetsForMatch(Long winMssDbMatchId) {
 		
 		List<StageScoreSheet> stageScoreSheets= new ArrayList<StageScoreSheet>();
 		Connection connection = WinMssDatabaseUtil.getConnection();		
 		Statement statement = null;
 		ResultSet resultSet = null;
-		WinMSSCompetitorRepository winMSSCompetitorRepository = new WinMSSCompetitorRepository();
 		try {
 			statement = connection.createStatement();
 			resultSet = statement.executeQuery("SELECT * FROM tblMatchStageScore WHERE MatchId = " + winMssDbMatchId);
@@ -34,7 +33,7 @@ public class WinMSSStageScoreSheetRepository {
 				sheet.setProcedurals(resultSet.getInt(10));
 				sheet.setTime(resultSet.getDouble(11));
 				sheet.setScoresZeroedForStage(resultSet.getBoolean(12));
-				sheet.setCompetitor(winMSSCompetitorRepository.findCompetitor(sheet.getWinMssMemberId()));
+				sheet.setCompetitor(WinMSSCompetitorRepository.findCompetitor(sheet.getWinMssMemberId()));
 				stageScoreSheets.add(sheet);
 			}
 			resultSet.close();

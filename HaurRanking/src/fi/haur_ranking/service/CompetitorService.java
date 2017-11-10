@@ -8,11 +8,12 @@ import java.util.List;
 
 import fi.haur_ranking.domain.Competitor;
 import fi.haur_ranking.domain.Match;
+import fi.haur_ranking.repository.haur_ranking_repository.CompetitorRepository;
 import fi.haur_ranking.repository.winmss_repository.WinMssDatabaseUtil;
 
 public class CompetitorService {
 	
-	public String findCompetitorEmail(int memberId) {
+	public static String findCompetitorEmail(int memberId) {
 		String email = null;		
 		Statement statement = null;
 		ResultSet resultSet = null;
@@ -33,7 +34,7 @@ public class CompetitorService {
 			return null;
 		}
 	}
-	public List<Competitor> findDisqualifiedCompetitors(Match match) {
+	public static List<Competitor> findDisqualifiedCompetitors(Match match) {
 				
 		Statement statement = null;
 		ResultSet resultSet = null;
@@ -64,5 +65,7 @@ public class CompetitorService {
 			return null;
 		}
 	}
-
+	public static int getTotalCompetitorCount() {
+		return CompetitorRepository.getTotalCompetitorCount();
+	}
 }
