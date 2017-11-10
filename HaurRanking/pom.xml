@@ -6,6 +6,7 @@
   <name>haurranking</name>
   <build>
     <sourceDirectory>src</sourceDirectory>
+    <finalName>haurranking</finalName>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -43,7 +44,7 @@
 		    <manifest>
 		    <addClasspath>true</addClasspath>
 		    <classpathPrefix>lib/</classpathPrefix>
-			<mainClass>fi.ipsc_results_uploader.core.App</mainClass>
+			<mainClass>fi.haur_ranking.core.App</mainClass>
 		    </manifest>
 		  </archive>
 		</configuration>
