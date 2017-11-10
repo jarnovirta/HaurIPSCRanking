@@ -1,10 +1,13 @@
 package fi.haur_ranking.core;
 
+import fi.haur_ranking.domain.ClassifierStage;
 import fi.haur_ranking.gui.MainWindow;
 
 public class App {
 	
 	public static void main(String[] args) {
+		
+		
 		// Start GUI
 		MainWindow gui = new MainWindow();
 		gui.prepareGUI();

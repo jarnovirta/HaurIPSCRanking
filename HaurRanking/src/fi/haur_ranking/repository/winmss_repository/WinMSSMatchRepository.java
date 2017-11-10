@@ -14,9 +14,11 @@ public class WinMSSMatchRepository {
 		try {
 			Connection connection = WinMssDatabaseUtil.getConnection(fileLocation);
 			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery("SELECT MatchId, MatchName FROM tblMatch");
+			ResultSet resultSet = statement.executeQuery("SELECT MatchId, MatchName, MatchDt, TypeFirearmId FROM tblMatch");
 			while (resultSet.next()) {
-				Match match = new Match(resultSet.getString(2), resultSet.getLong(1));
+				Match match = new Match(resultSet.getString(2), resultSet.getLong(1), 
+						resultSet.getString(3), resultSet.getInt(4));
+				System.out.println("MATCH DATE: " + match.getWinMssDateString());
 				match.setStageScoreSheets(WinMSSStageScoreSheetRepository.findScoreSheetsForMatch(match.getWinMssMatchId()));
 				matchList.add(match);
 			}

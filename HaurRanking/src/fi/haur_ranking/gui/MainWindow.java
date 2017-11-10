@@ -29,7 +29,7 @@ import fi.haur_ranking.service.MatchService;
 public class MainWindow {
 	private JFrame mainFrame;
 	private JLabel headerLabel;
-	private JPanel databaseGeneralInfoPanel;
+	private JPanel databaseStatisticsPanel;
 	private JLabel databaseMatchCountPanel;
 	private JLabel databaseStageAndCompetitorCountPanel;
 	
@@ -49,16 +49,16 @@ public class MainWindow {
 		
 		headerLabel = new JLabel("",JLabel.CENTER );
 		
-		databaseGeneralInfoPanel = new JPanel(new GridLayout(2, 1));
-		databaseGeneralInfoPanel.setSize(350, 20);		
+		databaseStatisticsPanel = new JPanel(new GridLayout(2, 1));
+		databaseStatisticsPanel.setSize(350, 20);		
 
 		databaseMatchCountPanel = new JLabel("",JLabel.LEFT);        
 		databaseMatchCountPanel.setSize(300, 10);
 		databaseStageAndCompetitorCountPanel = new JLabel("",JLabel.LEFT);        
 		databaseStageAndCompetitorCountPanel.setSize(300, 10);
 		
-		databaseGeneralInfoPanel.add(databaseMatchCountPanel);
-		databaseGeneralInfoPanel.add(databaseStageAndCompetitorCountPanel);
+		databaseStatisticsPanel.add(databaseMatchCountPanel);
+		databaseStatisticsPanel.add(databaseStageAndCompetitorCountPanel);
 		
 		mainFrame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent windowEvent){
@@ -71,45 +71,25 @@ public class MainWindow {
 		
 		mainFrame.add(headerLabel);
 		mainFrame.add(controlPanel);
-		mainFrame.add(databaseGeneralInfoPanel);
+		mainFrame.add(databaseStatisticsPanel);
 		
 	}
 	public void showHaurRankingGui() {
+		updateDatabaseStaticsPanel();
+		JButton importCompetitions = new JButton("Tuo kilpailuja");
+		importCompetitions.setActionCommand("importCompetitions");
+		importCompetitions.addActionListener(new ButtonClickListener()); 
+		controlPanel.add(importCompetitions);
+		mainFrame.setVisible(true);		 
+	}
+
+	private void updateDatabaseStaticsPanel() {
 		DatabaseStatistics databaseStatistics = DatabaseStatisticsService.getDatabaseStatistics();
 		databaseMatchCountPanel.setText("Kilpailuja : " + databaseStatistics.getMatchCount());
 		databaseStageAndCompetitorCountPanel.setText("Asematuloksia : " + databaseStatistics.getStageCount() 
 			+ " (" + databaseStatistics.getCompetitorCount() + " kilpailijaa)");
-		
-		JButton importCompetitions = new JButton("Tuo kilpailuja");
-		
-		importCompetitions.setActionCommand("importCompetitions");
-				
-		importCompetitions.addActionListener(new ButtonClickListener()); 
-		
-		controlPanel.add(importCompetitions);
-		
-		mainFrame.setVisible(true);		 
 	}
 
-	private void initializeFontSize() {
-	        float multiplier = 1.8f;
-	        UIDefaults defaults = UIManager.getDefaults();
-	        int i = 0;
-	        for (Enumeration e = defaults.keys(); e.hasMoreElements(); i++) {
-	            Object key = e.nextElement();
-	            Object value = defaults.get(key);
-	            if (value instanceof Font) {
-	                Font font = (Font) value;
-	                int newSize = Math.round(font.getSize() * multiplier);
-	                if (value instanceof FontUIResource) {
-	                    defaults.put(key, new FontUIResource(font.getName(), font.getStyle(), newSize));
-	                } else {
-	                    defaults.put(key, new Font(font.getName(), font.getStyle(), newSize));
-	                }
-	            }
-	        
-	    }
-	}
 	private class ButtonClickListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			String command = e.getActionCommand();  
@@ -124,9 +104,28 @@ public class MainWindow {
 					lastMSSDbFileLocation = Paths.get(absoluteFilePath).getParent().toString();
 					System.out.println("Loading database from " + absoluteFilePath);
 					MatchService.importWinMssDatabase(absoluteFilePath);
+					updateDatabaseStaticsPanel();
 			    }
 			}
-		}	
+		}
+	}
+	private void initializeFontSize() {
+        float multiplier = 1.8f;
+        UIDefaults defaults = UIManager.getDefaults();
+        int i = 0;
+        for (Enumeration e = defaults.keys(); e.hasMoreElements(); i++) {
+            Object key = e.nextElement();
+            Object value = defaults.get(key);
+            if (value instanceof Font) {
+                Font font = (Font) value;
+                int newSize = Math.round(font.getSize() * multiplier);
+                if (value instanceof FontUIResource) {
+                    defaults.put(key, new FontUIResource(font.getName(), font.getStyle(), newSize));
+                } else {
+                    defaults.put(key, new Font(font.getName(), font.getStyle(), newSize));
+                }
+            }
+        }
 	}
 }
 	

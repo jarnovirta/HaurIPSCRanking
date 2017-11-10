@@ -53,6 +53,8 @@ public class MatchService {
 	}
 	
 	public static void importWinMssDatabase(String winMssDbLocation) {
+		List<Match> winMSSMatches = findAllFromWinMSSDb(winMssDbLocation);
+		
 		saveToHaurRankingDb(findAllFromWinMSSDb(winMssDbLocation));
 		System.out.println("\nIMPORT DONE");
 	}
