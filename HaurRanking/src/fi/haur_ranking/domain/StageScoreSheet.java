@@ -1,17 +1,14 @@
 package fi.haur_ranking.domain;
 
-import java.util.Date;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
 @Entity
 @Table(name="StageScoreSheet")
@@ -25,6 +22,7 @@ public class StageScoreSheet {
 	private Long winMssPrimaryKey;
 	private Long winMssStageId;
 	private Long winMssMemberId;
+	private Stage stage;
 	private int aHits;
 	private int bHits;
 	private int cHits;
@@ -38,10 +36,10 @@ public class StageScoreSheet {
 	private boolean failedPowerFactor = false;
 	private boolean disqualified = false;
 	private double hitfactor;
+	@Enumerated(EnumType.STRING)
 	private IPSCDivision ipscDivision;
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date lastModifiedInWinMSSDatabase;
-	@Transient
+	private String stageName;
+	private String matchName;
 	private String lastModifiedInWinMSSDatabaseString;
 	
 	private int procedurals;
@@ -167,12 +165,7 @@ public class StageScoreSheet {
 	public void setIpscDivision(IPSCDivision ipscDivision) {
 		this.ipscDivision = ipscDivision;
 	}
-	public Date getLastModifiedInWinMSSDatabase() {
-		return lastModifiedInWinMSSDatabase;
-	}
-	public void setLastModifiedInWinMSSDatabase(Date lastModifiedInWinMSSDatabase) {
-		this.lastModifiedInWinMSSDatabase = lastModifiedInWinMSSDatabase;
-	}
+
 	public String getLastModifiedInWinMSSDatabaseString() {
 		return lastModifiedInWinMSSDatabaseString;
 	}
@@ -196,6 +189,24 @@ public class StageScoreSheet {
 	}
 	public void setFailedPowerFactor(boolean failedPowerFactor) {
 		this.failedPowerFactor = failedPowerFactor;
+	}
+	public Stage getStage() {
+		return stage;
+	}
+	public void setStage(Stage stage) {
+		this.stage = stage;
+	}
+	public String getStageName() {
+		return stageName;
+	}
+	public void setStageName(String stageName) {
+		this.stageName = stageName;
+	}
+	public String getMatchName() {
+		return matchName;
+	}
+	public void setMatchName(String matchName) {
+		this.matchName = matchName;
 	}
 	
 }

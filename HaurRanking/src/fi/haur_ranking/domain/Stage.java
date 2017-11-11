@@ -2,10 +2,14 @@ package fi.haur_ranking.domain;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -20,8 +24,10 @@ public class Stage {
 	private Long winMssMatchId;
 	
 	private Match match;
+	@OneToMany(cascade = CascadeType.ALL)
 	private List<StageScoreSheet> stageScoreSheets;
 	
+	@Enumerated(EnumType.STRING)
 	private ClassifierStage classifierStage;
 	
 	public Long getId() {

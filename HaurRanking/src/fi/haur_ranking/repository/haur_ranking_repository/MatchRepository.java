@@ -49,6 +49,21 @@ public class MatchRepository {
 			return null;
 		}
 	}
+	public static List<Match> findByName(String name) {
+		List<Match> matches;
+		try {
+			EntityManagerFactory emf = 
+				      Persistence.createEntityManagerFactory("fi.haur_ranking.jpa");
+			EntityManager em = emf.createEntityManager();
+			matches = (List<Match>) em.createQuery("SELECT m from Match m WHERE m.name = '" + name + "'").getResultList();
+			emf.close();
+			return matches;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}		
+	}
 	public static int getTotalMatchCount() {
 		int matchCount;
 		try {

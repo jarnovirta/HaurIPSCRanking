@@ -1,5 +1,6 @@
 package fi.haur_ranking.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import fi.haur_ranking.domain.ClassifierStage;
@@ -7,6 +8,7 @@ import fi.haur_ranking.domain.Match;
 import fi.haur_ranking.domain.Stage;
 import fi.haur_ranking.domain.StageScoreSheet;
 import fi.haur_ranking.repository.haur_ranking_repository.MatchRepository;
+import fi.haur_ranking.repository.haur_ranking_repository.StageScoreSheetRepository;
 import fi.haur_ranking.repository.winmss_repository.WinMSSMatchRepository;
 
 public class MatchService {
@@ -50,29 +52,40 @@ public class MatchService {
 	}
 	
 	public static void importWinMssDatabase(String winMssDbLocation) {
+		System.out.println("Starting import");
 		List<Match> winMssMatches = WinMSSMatchRepository.findAllHandgunMatches(winMssDbLocation);
-
+		 // MatchRepository.saveAll(winMssMatches);
+		// Check if match has score sheets which are not in ranking database. Mark classifier stages.
+		
+		List<StageScoreSheet> sheets = new ArrayList<StageScoreSheet>();
 		for (Match match : winMssMatches) {
+			
 			for (Stage stage : match.getStages()) {
 				if (ClassifierStage.contains(stage.getName())) {
 					stage.setClassifierStage(ClassifierStage.parseString(stage.getName()));
-					System.out.println("FOUND CLASSIFIER " + stage.getClassifierStage().toString());
 				}
+				sheets.addAll(stage.getStageScoreSheets());
 			}
 		}
-		// TEST
-		System.out.println("\n\n *** Found " + winMssMatches.size() + " matches from WinMSS:");
-
+		System.out.println("Sending request for " + sheets.size() + " sheets");
+		StageScoreSheetRepository.isInHaurRankingDatabase(sheets);
+				
+		// TEST: lis‰‰ classifierit jotka eiv‰t ole tietokannassa ja tee ranking-haku niille.
+		
+		List<StageScoreSheet> newClassifierStageScoreSheets = new ArrayList<StageScoreSheet>();
 		for (Match match : winMssMatches) {
-			System.out.println("\n*** " + match.getMatchName() + " - " + match.getWinMssDateString() + " - ");
 			for (Stage stage : match.getStages()) {
-				System.out.println("\n STAGE: " + stage.getName());
-				for (StageScoreSheet sheet : stage.getStageScoreSheets()) {
-					System.out.println(sheet.getCompetitor().getFirstName() + " " + sheet.getCompetitor().getLastName() + " " + 
-				sheet.getLastModifiedInWinMSSDatabaseString() + " hf: " + sheet.getHitfactor() + " Division: " + sheet.getIpscDivision());
+				if (stage.getClassifierStage() != null) {
+					
 				}
 			}
 		}
+		
+		
+		// StageScoreSheetService.saveToHaurRankingDB(winMssMatches);
+		
+		
+		System.out.println("\n\n *** Found " + newClassifierStageScoreSheets.size() + " matches from WinMSS:");
 		
 		System.out.println("\nIMPORT DONE");
 		////////

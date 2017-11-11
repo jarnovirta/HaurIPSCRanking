@@ -18,7 +18,7 @@ public class WinMSSMatchRepository {
 			while (resultSet.next()) {
 				Match match = new Match(resultSet.getString(2), resultSet.getLong(1), 
 						resultSet.getString(3));
-				match.setStages(WinMSSStageRepository.findStagesForMatch(match.getWinMssMatchId()));
+				match.setStages(WinMSSStageRepository.findStagesForMatch(match));
 				matchList.add(match);
 			}
 			resultSet.close();

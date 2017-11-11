@@ -122,8 +122,8 @@ public class MainWindow {
 	private void initializeFontSize() {
         float multiplier = 1.8f;
         UIDefaults defaults = UIManager.getDefaults();
-        int i = 0;
-        for (Enumeration e = defaults.keys(); e.hasMoreElements(); i++) {
+        Enumeration<Object> e = defaults.keys();
+        for (int i = 0; e.hasMoreElements(); i++) {
             Object key = e.nextElement();
             Object value = defaults.get(key);
             if (value instanceof Font) {

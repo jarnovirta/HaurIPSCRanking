@@ -8,10 +8,11 @@ import java.util.List;
 
 import fi.haur_ranking.domain.Competitor;
 import fi.haur_ranking.domain.IPSCDivision;
+import fi.haur_ranking.domain.Stage;
 import fi.haur_ranking.domain.StageScoreSheet;
 
 public class WinMSSStageScoreSheetRepository {
-	public static List<StageScoreSheet> findStageScoreSheetsForStage(Long matchId, Long stageId) {
+	public static List<StageScoreSheet> findStageScoreSheetsForStage(Long matchId, Stage stage) {
 		List<StageScoreSheet> stageScoreSheets= new ArrayList<StageScoreSheet>();
 		Connection connection = WinMssDatabaseUtil.getConnection();		
 		Statement statement = null;
@@ -19,7 +20,7 @@ public class WinMSSStageScoreSheetRepository {
 		try {
 			statement = connection.createStatement();
 			resultSet = statement.executeQuery("SELECT * FROM tblMatchStageScore WHERE MatchId=" + matchId
-					+ " AND StageId = " + stageId);
+					+ " AND StageId = " + stage.getWinMssId());
 			while (resultSet.next()) {
 				StageScoreSheet sheet = new StageScoreSheet();
 				sheet.setWinMssStageId(resultSet.getLong(2));
@@ -38,7 +39,10 @@ public class WinMSSStageScoreSheetRepository {
 				sheet.setScoresZeroedForStage(resultSet.getBoolean(12));
 				sheet.setDisqualified(resultSet.getBoolean(15));
 				sheet.setHitfactor(resultSet.getDouble(19));
-				sheet.setLastModifiedInWinMSSDatabaseString(resultSet.getString(20));
+				sheet.setLastModifiedInWinMSSDatabaseString(resultSet.getString(21));
+				sheet.setStage(stage);
+				sheet.setStageName(stage.getName());
+				sheet.setMatchName(stage.getMatch().getName());
 				stageScoreSheets.add(sheet);
 			}
 			resultSet.close();
@@ -66,4 +70,5 @@ public class WinMSSStageScoreSheetRepository {
 			return null;
 		}
 	}
+	
 }

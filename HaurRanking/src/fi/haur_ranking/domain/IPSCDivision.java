@@ -16,4 +16,5 @@ public enum IPSCDivision {
 		if (winMSSDivisionTypeId == 18) return IPSCDivision.CLASSIC;
 		else return null;
 	}
+
 }

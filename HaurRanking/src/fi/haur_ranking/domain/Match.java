@@ -25,14 +25,14 @@ public class Match {
 	
 	private String winMssDateString; 
 	private Long winMssMatchId;
-	private String matchName;
+	private String name;
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<Stage> stages;
 	
 	public Match() { }
 	
 	public Match(String matchName, Long winMssMatchId, String winMssDateString) {
-		this.matchName = matchName;
+		this.name = matchName;
 		this.winMssMatchId = winMssMatchId;
 		this.winMssDateString = winMssDateString;
 		
@@ -46,11 +46,13 @@ public class Match {
 		this.winMssMatchId = winMssMatchId;
 	}
 
-	public String getMatchName() {
-		return matchName;
+	
+	public String getName() {
+		return name;
 	}
-	public void setMatchName(String matchName) {
-		this.matchName = matchName;
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public List<Stage> getStages() {

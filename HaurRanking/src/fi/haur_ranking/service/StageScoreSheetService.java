@@ -34,4 +34,8 @@ public class StageScoreSheetService {
 	public static int getTotalStageScoreSheetCount() {
 		return StageScoreSheetRepository.getTotalStageScoreSheetCount();
 	}
+	
+	public static boolean isInHaurRankingDatabase(List<StageScoreSheet> sheets) {
+		return StageScoreSheetRepository.isInHaurRankingDatabase(sheets);
+	}
 }
