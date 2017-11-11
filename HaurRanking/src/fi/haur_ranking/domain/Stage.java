@@ -1,5 +1,7 @@
 package fi.haur_ranking.domain;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,14 +14,19 @@ public class Stage {
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE)
 	private Long id;
-	private int ssiStageNumber;
+	private Long winMssId;
+	
 	private String name;
-	private int ssiPrimaryKey;
-	public int getSsiStageNumber() {
-		return ssiStageNumber;
+	private Long winMssMatchId;
+	
+	private Match match;
+	private List<StageScoreSheet> stageScoreSheets;
+	
+	public Long getId() {
+		return id;
 	}
-	public void setSsiStageNumber(int ssiStageNumber) {
-		this.ssiStageNumber = ssiStageNumber;
+	public void setId(Long id) {
+		this.id = id;
 	}
 	public String getName() {
 		return name;
@@ -27,16 +34,29 @@ public class Stage {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public int getSsiPrimaryKey() {
-		return ssiPrimaryKey;
+	
+	public Long getWinMssId() {
+		return winMssId;
 	}
-	public void setSsiPrimaryKey(int ssiPrimaryKey) {
-		this.ssiPrimaryKey = ssiPrimaryKey;
+	public void setWinMssId(Long winMssId) {
+		this.winMssId = winMssId;
 	}
-	public Long getId() {
-		return id;
+	public Long getWinMssMatchId() {
+		return winMssMatchId;
 	}
-	public void setId(Long id) {
-		this.id = id;
+	public void setWinMssMatchId(Long winMssMatchId) {
+		this.winMssMatchId = winMssMatchId;
+	}
+	public Match getMatch() {
+		return match;
+	}
+	public void setMatch(Match match) {
+		this.match = match;
+	}
+	public List<StageScoreSheet> getStageScoreSheets() {
+		return stageScoreSheets;
+	}
+	public void setStageScoreSheets(List<StageScoreSheet> stageScoreSheets) {
+		this.stageScoreSheets = stageScoreSheets;
 	}
 }	

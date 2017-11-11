@@ -1,5 +1,7 @@
 package fi.haur_ranking.domain;
 
+import java.util.Date;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -7,6 +9,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name="StageScoreSheet")
@@ -30,6 +35,13 @@ public class StageScoreSheet {
 	private int specialPenalty;
 	private double time;
 	private String timeString;
+	private boolean disqualified;
+	private double hitfactor;
+	private IPSCDivision ipscDivision;
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date lastModifiedInWinMSSDatabase;
+	@Transient
+	private String lastModifiedInWinMSSDatabaseString;
 	
 	private int procedurals;
 	boolean scoresZeroedForStage = false;
@@ -147,6 +159,36 @@ public class StageScoreSheet {
 	}
 	public void setCompetitor(Competitor competitor) {
 		this.competitor = competitor;
+	}
+	public IPSCDivision getIpscDivision() {
+		return ipscDivision;
+	}
+	public void setIpscDivision(IPSCDivision ipscDivision) {
+		this.ipscDivision = ipscDivision;
+	}
+	public Date getLastModifiedInWinMSSDatabase() {
+		return lastModifiedInWinMSSDatabase;
+	}
+	public void setLastModifiedInWinMSSDatabase(Date lastModifiedInWinMSSDatabase) {
+		this.lastModifiedInWinMSSDatabase = lastModifiedInWinMSSDatabase;
+	}
+	public String getLastModifiedInWinMSSDatabaseString() {
+		return lastModifiedInWinMSSDatabaseString;
+	}
+	public void setLastModifiedInWinMSSDatabaseString(String lastModifiedInWinMSSDatabaseString) {
+		this.lastModifiedInWinMSSDatabaseString = lastModifiedInWinMSSDatabaseString;
+	}
+	public double getHitfactor() {
+		return hitfactor;
+	}
+	public void setHitfactor(double hitfactor) {
+		this.hitfactor = hitfactor;
+	}
+	public boolean isDisqualified() {
+		return disqualified;
+	}
+	public void setDisqualified(boolean disqualified) {
+		this.disqualified = disqualified;
 	}
 
 	

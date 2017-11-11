@@ -41,9 +41,7 @@ public class CompetitorService {
 		List<Competitor> disqualifiedCompetitors = new ArrayList<Competitor>();
 		Connection connection = WinMssDatabaseUtil.getConnection();
 		try {
-			System.out.println("Searching for DQed competitors for match " + match.getWinMssMatchId());
 			statement = connection.createStatement();
-			
 			resultSet = statement.executeQuery("SELECT MemberId, CompetitorId, TypeDisqualifyRuleId FROM tblMatchCompetitor WHERE "
 					+ "IsDisqualified = 1 AND MatchId = " + match.getWinMssMatchId());
 			while (resultSet.next()) {

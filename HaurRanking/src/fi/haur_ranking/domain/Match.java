@@ -24,20 +24,18 @@ public class Match {
 	private Date date;
 	
 	private String winMssDateString; 
-	@Transient
-	private int winMssTypeFirearmId;
 	private Long winMssMatchId;
 	private String matchName;
 	@OneToMany(cascade = CascadeType.ALL)
-	private List<StageScoreSheet> stageScoreSheets;
+	private List<Stage> stages;
 	
 	public Match() { }
 	
-	public Match(String matchName, Long winMssMatchId, String winMssDateString, int winMssTypeFirearmId) {
+	public Match(String matchName, Long winMssMatchId, String winMssDateString) {
 		this.matchName = matchName;
 		this.winMssMatchId = winMssMatchId;
 		this.winMssDateString = winMssDateString;
-		this.winMssTypeFirearmId = winMssTypeFirearmId;
+		
 	}
 	
 	public Long getWinMssMatchId() {
@@ -54,12 +52,15 @@ public class Match {
 	public void setMatchName(String matchName) {
 		this.matchName = matchName;
 	}
-	public List<StageScoreSheet> getStageScoreSheets() {
-		return stageScoreSheets;
+
+	public List<Stage> getStages() {
+		return stages;
 	}
-	public void setStageScoreSheets(List<StageScoreSheet> stageScoreSheets) {
-		this.stageScoreSheets = stageScoreSheets;
+
+	public void setStages(List<Stage> stages) {
+		this.stages = stages;
 	}
+
 	public Long getId() {
 		return id;
 	}
@@ -83,11 +84,5 @@ public class Match {
 		this.winMssDateString = winMssDateString;
 	}
 
-	public int getWinMssTypeFirearmId() {
-		return winMssTypeFirearmId;
-	}
 
-	public void setWinMssTypeFirearmId(int winMssTypeFirearmId) {
-		this.winMssTypeFirearmId = winMssTypeFirearmId;
-	}
 }
