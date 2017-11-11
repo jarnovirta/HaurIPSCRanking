@@ -35,7 +35,8 @@ public class StageScoreSheet {
 	private int specialPenalty;
 	private double time;
 	private String timeString;
-	private boolean disqualified;
+	private boolean failedPowerFactor = false;
+	private boolean disqualified = false;
 	private double hitfactor;
 	private IPSCDivision ipscDivision;
 	@Temporal(TemporalType.TIMESTAMP)
@@ -190,6 +191,11 @@ public class StageScoreSheet {
 	public void setDisqualified(boolean disqualified) {
 		this.disqualified = disqualified;
 	}
-
+	public boolean isFailedPowerFactor() {
+		return failedPowerFactor;
+	}
+	public void setFailedPowerFactor(boolean failedPowerFactor) {
+		this.failedPowerFactor = failedPowerFactor;
+	}
 	
 }

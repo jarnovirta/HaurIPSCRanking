@@ -3,7 +3,7 @@ package fi.haur_ranking.domain;
 // IPSC classification stage listing.
 // http://www.ipsc.org/classification/icsStages.php
 public enum ClassifierStage {
-	CLC01, CLC02, CLC03, CLC04, CLC05, COC06, CLC07, 
+	CLC01, CLC02, CLC03, CLC04, CLC05, CLC06, CLC07, 
 	CLC08, CLC09, CLC10, CLC11, CLC12, CLC13, CLC14,
 	CLC15, CLC16, CLC17, CLC18, CLC19, CLC20, CLC21,
 	CLC22, CLC23, CLC24, CLC25, CLC26, CLC27, CLC28, 
@@ -15,8 +15,20 @@ public enum ClassifierStage {
 	CLC64, CLC65, CLC66, CLC67, CLC68, CLC69, CLC70, 
 	CLC71, CLC72, CLC73, CLC74, CLC75, CLC76, CLC77,
 	CLC78, CLC79, CLC80;
-	
+	@Override
 	public String toString() {
-		return this.name().substring(0, 2) + "-" + this.name().substring(3); 
+		return this.name().substring(0, 3) + "-" + this.name().substring(3); 
+	}
+	public static boolean contains(String testString) {
+		for (ClassifierStage stage : ClassifierStage.values()) {
+			if (stage.toString().equals(testString)) return true;
+		}
+		return false;
+	}
+	public static ClassifierStage parseString(String testString) {
+		for (ClassifierStage stage : ClassifierStage.values()) {
+			if (stage.toString().equals(testString)) return stage;
+		}
+		return null;
 	}
 }

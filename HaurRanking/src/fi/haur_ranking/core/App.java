@@ -1,5 +1,6 @@
 package fi.haur_ranking.core;
 
+import fi.haur_ranking.domain.ClassifierStage;
 import fi.haur_ranking.gui.MainWindow;
 
 public class App {

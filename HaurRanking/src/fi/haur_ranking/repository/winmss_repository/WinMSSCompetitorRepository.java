@@ -9,7 +9,7 @@ import java.util.List;
 import fi.haur_ranking.domain.Competitor;
 
 public class WinMSSCompetitorRepository {
-	public static Competitor findCompetitorByWinMSSMemberId(Long winMSSMemberId) {
+	public static Competitor findCompetitor(Long winMSSMemberId, Long matchId) {
 		try {
 			Connection connection = WinMssDatabaseUtil.getConnection();
 			Statement statement;
@@ -17,9 +17,10 @@ public class WinMSSCompetitorRepository {
 			Competitor competitor = null;
 			statement = connection.createStatement();
 			resultSet = statement.executeQuery("SELECT Firstname, Lastname, ICS FROM tblMember WHERE MemberId = " + winMSSMemberId);
-			while(resultSet.next()) {
+			if (resultSet.next()) {
 				competitor = new Competitor(resultSet.getString(1), resultSet.getString(2), resultSet.getString(3));
 			}
+
 			statement.close();
 			resultSet.close();
 			return competitor;

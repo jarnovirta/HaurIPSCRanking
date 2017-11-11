@@ -2,6 +2,7 @@ package fi.haur_ranking.service;
 
 import java.util.List;
 
+import fi.haur_ranking.domain.ClassifierStage;
 import fi.haur_ranking.domain.Match;
 import fi.haur_ranking.domain.Stage;
 import fi.haur_ranking.domain.StageScoreSheet;
@@ -50,26 +51,30 @@ public class MatchService {
 	
 	public static void importWinMssDatabase(String winMssDbLocation) {
 		List<Match> winMssMatches = WinMSSMatchRepository.findAllHandgunMatches(winMssDbLocation);
-		
+
+		for (Match match : winMssMatches) {
+			for (Stage stage : match.getStages()) {
+				if (ClassifierStage.contains(stage.getName())) {
+					stage.setClassifierStage(ClassifierStage.parseString(stage.getName()));
+					System.out.println("FOUND CLASSIFIER " + stage.getClassifierStage().toString());
+				}
+			}
+		}
 		// TEST
 		System.out.println("\n\n *** Found " + winMssMatches.size() + " matches from WinMSS:");
-		boolean foundHeliScorecard = false;
-		boolean foundSamiScorecard = false;
-		//
+
 		for (Match match : winMssMatches) {
 			System.out.println("\n*** " + match.getMatchName() + " - " + match.getWinMssDateString() + " - ");
 			for (Stage stage : match.getStages()) {
 				System.out.println("\n STAGE: " + stage.getName());
 				for (StageScoreSheet sheet : stage.getStageScoreSheets()) {
-					if (sheet.getCompetitor().getLastName().equals("de Szejko") && sheet.getCompetitor().getFirstName().equals("Heli")) foundHeliScorecard = true;
-					if (sheet.getCompetitor().getLastName().equals("Haanp‰‰") && sheet.getCompetitor().getFirstName().equals("Sami")) foundSamiScorecard = true;
 					System.out.println(sheet.getCompetitor().getFirstName() + " " + sheet.getCompetitor().getLastName() + " " + 
-				sheet.getLastModifiedInWinMSSDatabaseString() + " hf: " + sheet.getHitfactor() + " DQ: " + sheet.isDisqualified() + " Zeroed: " + sheet.isScoresZeroedForStage());
+				sheet.getLastModifiedInWinMSSDatabaseString() + " hf: " + sheet.getHitfactor() + " Division: " + sheet.getIpscDivision());
 				}
 			}
 		}
-		System.out.println("HELI card found: " + foundHeliScorecard);
-		System.out.println("SAMi card found: " + foundSamiScorecard);
+		
 		System.out.println("\nIMPORT DONE");
+		////////
 	}
 }

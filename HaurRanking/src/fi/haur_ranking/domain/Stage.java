@@ -22,6 +22,8 @@ public class Stage {
 	private Match match;
 	private List<StageScoreSheet> stageScoreSheets;
 	
+	private ClassifierStage classifierStage;
+	
 	public Long getId() {
 		return id;
 	}
@@ -58,5 +60,11 @@ public class Stage {
 	}
 	public void setStageScoreSheets(List<StageScoreSheet> stageScoreSheets) {
 		this.stageScoreSheets = stageScoreSheets;
+	}
+	public ClassifierStage getClassifierStage() {
+		return classifierStage;
+	}
+	public void setClassifierStage(ClassifierStage classifierStage) {
+		this.classifierStage = classifierStage;
 	}
 }	
