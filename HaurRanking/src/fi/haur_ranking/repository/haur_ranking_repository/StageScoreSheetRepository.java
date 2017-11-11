@@ -114,13 +114,7 @@ public class StageScoreSheetRepository {
 				return true;
 			}
 			
-//			queryString = "SELECT s FROM Stage s WHERE s.name='" + sheet.getStage().getName() + "' AND s.match.name='" 
-//					+ sheet.getStage().getMatch().getName() + "'";
-//			List<Stage> stages = (List<Stage>) em.createQuery(queryString).getResultList();
-			
 			return false;
-//			 if (stages.size() > 0) return true;
-			
 			
 		}
 		catch (Exception e) {
@@ -128,9 +122,5 @@ public class StageScoreSheetRepository {
 			return false;
 		}
 	}
-		
-		
-		
-	
 }
 
