@@ -54,7 +54,7 @@ public class MatchService {
 	public static void importWinMssDatabase(String winMssDbLocation) {
 		System.out.println("Starting import");
 		List<Match> winMssMatches = WinMSSMatchRepository.findAllHandgunMatches(winMssDbLocation);
-		 // MatchRepository.saveAll(winMssMatches);
+		
 		// Check if match has score sheets which are not in ranking database. Mark classifier stages.
 		
 		List<StageScoreSheet> sheets = new ArrayList<StageScoreSheet>();
@@ -72,21 +72,33 @@ public class MatchService {
 				
 		// TEST: lis‰‰ classifierit jotka eiv‰t ole tietokannassa ja tee ranking-haku niille.
 		
-		List<StageScoreSheet> newClassifierStageScoreSheets = new ArrayList<StageScoreSheet>();
+		List<Match> matchesToRemove = new ArrayList<Match>();
 		for (Match match : winMssMatches) {
+			List<Stage> stagesToRemove = new ArrayList<Stage>();
 			for (Stage stage : match.getStages()) {
-				if (stage.getClassifierStage() != null) {
-					
+				
+				if (stage.getClassifierStage() == null) {
+					stagesToRemove.add(stage);
+				}
+			}
+			for (Stage stage : stagesToRemove) {
+				match.getStages().remove(stage);
+			}
+		}
+		for (Match match : matchesToRemove) {
+			winMssMatches.remove(match);
+		}
+		System.out.println("\n\n *** Found " + winMssMatches.size() + " matches with classifier stages from WinMSS:");
+		for (Match match : winMssMatches) {
+			System.out.println(match.getName()); {
+				for (Stage stage : match.getStages()) {
+					System.out.println("STAGE: " + stage.getName() + ", " + stage.getStageScoreSheets().size() + " score cards");
 				}
 			}
 		}
 		
-		
-		// StageScoreSheetService.saveToHaurRankingDB(winMssMatches);
-		
-		
-		System.out.println("\n\n *** Found " + newClassifierStageScoreSheets.size() + " matches from WinMSS:");
-		
+		MatchService.saveToHaurRankingDb(winMssMatches);
+				
 		System.out.println("\nIMPORT DONE");
 		////////
 	}

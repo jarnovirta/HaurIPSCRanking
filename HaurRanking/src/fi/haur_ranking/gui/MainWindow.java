@@ -29,6 +29,7 @@ import fi.haur_ranking.gui.filters.WinMSSFileFilter;
 import fi.haur_ranking.repository.winmss_repository.WinMssDatabaseUtil;
 import fi.haur_ranking.service.DatabaseStatisticsService;
 import fi.haur_ranking.service.MatchService;
+import fi.haur_ranking.service.RankingService;
 
 public class MainWindow {
 	private JFrame mainFrame;
@@ -90,6 +91,10 @@ public class MainWindow {
 		importCompetitions.setActionCommand("importCompetitions");
 		importCompetitions.addActionListener(new ButtonClickListener()); 
 		controlPanel.add(importCompetitions);
+		importCompetitions = new JButton("Luo ranking");
+		importCompetitions.setActionCommand("generateRanking");
+		importCompetitions.addActionListener(new ButtonClickListener()); 
+		controlPanel.add(importCompetitions);
 		mainFrame.setVisible(true);		 
 	}
 
@@ -104,18 +109,10 @@ public class MainWindow {
 		public void actionPerformed(ActionEvent e) {
 			String command = e.getActionCommand();  
 			if (command.equals("importCompetitions")) {
-				JFileChooser fileChooser;
-				if (lastMSSDbFileLocation != null) fileChooser = new JFileChooser(lastMSSDbFileLocation);
-				else fileChooser = new JFileChooser();
-				fileChooser.setFileFilter(new WinMSSFileFilter());
-				int returnVal = fileChooser.showOpenDialog(mainFrame);
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					String absoluteFilePath = fileChooser.getSelectedFile().getAbsolutePath();
-					lastMSSDbFileLocation = Paths.get(absoluteFilePath).getParent().toString();
-					System.out.println("Loading database from " + absoluteFilePath);
-					MatchService.importWinMssDatabase(absoluteFilePath);
-					updateDatabaseStaticsPanel();
-			    }
+				importCompetitionsCommandHandler();
+			}
+			if (command.equals("generateRanking")) {
+				RankingService.generateRanking();
 			}
 		}
 	}
@@ -136,6 +133,20 @@ public class MainWindow {
                 }
             }
         }
+	}
+	private void importCompetitionsCommandHandler() {
+		JFileChooser fileChooser;
+		if (lastMSSDbFileLocation != null) fileChooser = new JFileChooser(lastMSSDbFileLocation);
+		else fileChooser = new JFileChooser();
+		fileChooser.setFileFilter(new WinMSSFileFilter());
+		int returnVal = fileChooser.showOpenDialog(mainFrame);
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			String absoluteFilePath = fileChooser.getSelectedFile().getAbsolutePath();
+			lastMSSDbFileLocation = Paths.get(absoluteFilePath).getParent().toString();
+			System.out.println("Loading database from " + absoluteFilePath);
+			MatchService.importWinMssDatabase(absoluteFilePath);
+			updateDatabaseStaticsPanel();
+	    }
 	}
 }
 	

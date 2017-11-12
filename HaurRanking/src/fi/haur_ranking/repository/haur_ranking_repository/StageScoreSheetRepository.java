@@ -6,13 +6,8 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
-import org.apache.poi.ss.usermodel.Sheet;
-
-import fi.haur_ranking.domain.IPSCDivision;
-import fi.haur_ranking.domain.Match;
-import fi.haur_ranking.domain.Stage;
 import fi.haur_ranking.domain.StageScoreSheet;
 
 public class StageScoreSheetRepository {
@@ -97,14 +92,14 @@ public class StageScoreSheetRepository {
 						+ " AND s.stage.match.name = :matchName AND s.competitor.firstName = :firstName AND s.competitor.lastName = :lastName"
 						+ " AND s.ipscDivision = :ipscDiv";
 						
-				final Query query = em.createQuery(queryString);
+				final TypedQuery<StageScoreSheet> query = em.createQuery(queryString, StageScoreSheet.class);
 				query.setParameter("lastModified", sheet.getLastModifiedInWinMSSDatabaseString());
 				query.setParameter("stageName", sheet.getStageName());
 				query.setParameter("matchName", sheet.getMatchName());
 				query.setParameter("firstName", sheet.getCompetitor().getFirstName());
 				query.setParameter("lastName", sheet.getCompetitor().getLastName());
 				query.setParameter("ipscDiv", sheet.getIpscDivision());
-				List<StageScoreSheet> sheets = (List<StageScoreSheet>) query.getResultList();
+				List<StageScoreSheet> sheets = query.getResultList();
 				if (sheets.size() > 0) resultList.addAll(sheets);
 			}
 			em.close();
