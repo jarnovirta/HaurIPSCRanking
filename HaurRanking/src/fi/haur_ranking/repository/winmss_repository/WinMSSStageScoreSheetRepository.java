@@ -56,18 +56,21 @@ public class WinMSSStageScoreSheetRepository {
 			statement.close();
 			resultSet.close();
 
-			List<StageScoreSheet> removeForFailedPf = new ArrayList<StageScoreSheet>();
-			// Add IPSC division and remove sheets for competitors who failed power factor.
+			List<StageScoreSheet> removeScoreSheets = new ArrayList<StageScoreSheet>();
+			// Add IPSC division and remove sheets for competitors who failed power factor. Also remove sheets
+			// with last modification date null in WinMSS database. These are blank score sheets where no result has 
+			// been entered at any point.
 			for (StageScoreSheet sheet : resultScoreSheets) {
 				statement = connection.createStatement();
 				resultSet = statement.executeQuery("SELECT TypeDivisionId, FailedPowerFactor FROM tblMatchCompetitor WHERE MemberId="+ sheet.getWinMssMemberId() 
 							+ " AND MatchId=" + match.getWinMssMatchId());
 				if (resultSet.next()) {
 					sheet.setIpscDivision(IPSCDivision.getDivisionByWinMSSTypeId(resultSet.getInt(1)));
-					if (resultSet.getBoolean(2)) removeForFailedPf.add(sheet);
+					if (resultSet.getBoolean(2)) removeScoreSheets.add(sheet);
 				}
+				if (sheet.getLastModifiedInWinMSSDatabaseString() == null) removeScoreSheets.add(sheet);
 			}
-			resultScoreSheets.removeAll(removeForFailedPf);
+			resultScoreSheets.removeAll(removeScoreSheets);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

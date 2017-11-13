@@ -1,3 +1,10 @@
 TODO:
 
 - Päivämäärät Date muotoon ja niiden vertailu Date.
+- lisää toisen nimen alkukirjain kilpailijoille
+- Varmista että DQ kisaajat eivät ole mukana
+- katso service-repository koodinjako
+- tarkista vielä koko tuontilogiikka, eli onko lastmodified päivän perusteella ok vai voiko käyttää jotain muuta päivää.
+
+// RIITTÄISIKÖ PELKKÄ STAGEN NIMI, KISAN NIMI, AIKA FILTTERÖINTIIN, ILMAN TULOSKORTTEJA? VOIKO TULOSKORTTIEN FILTTERÖINTIÄ 
+			// NOPETUTTAA?

@@ -18,20 +18,19 @@ public class StageRepository {
 	// Only ClassifierStages with at least two results are taken into account when generating a ranking.
 	public static Map<ClassifierStage, Double> getClassifierStagesWithTwoOrMoreResults(IPSCDivision division, EntityManager entityManager) {
 		Map<ClassifierStage, Double> resultClassifierStages = new HashMap<ClassifierStage, Double>();
-
 		try {
 			for (ClassifierStage classifierStage : ClassifierStage.values()) {
-				String queryString = "SELECT s FROM StageScoreSheet s WHERE s.stage.classifierStage = :classifierStage"
-						+ " AND s.ipscDivision = :division ORDER BY s.hitFactor";
-				final TypedQuery<StageScoreSheet> query = entityManager.createQuery(queryString, StageScoreSheet.class);
+				String queryString = "SELECT s.hitFactor FROM StageScoreSheet s WHERE s.stage.classifierStage = :classifierStage"
+						+ " AND s.ipscDivision = :division ORDER BY s.hitFactor DESC";
+				final TypedQuery<Double> query = entityManager.createQuery(queryString, Double.class);
 				query.setParameter("classifierStage", classifierStage);
 				query.setParameter("division", division);
+				query.setMaxResults(2);
+				List<Double> topTwoHitFactors = query.getResultList();
 				
-				List<StageScoreSheet> sheets = query.getResultList();
-								
-				if (sheets.size() >= 2) {
+				if (topTwoHitFactors.size() == 2) {
 					// Calculate average of two best hit factors
-					double averageOfTwoBestResults = (sheets.get(0).getHitFactor() + sheets.get(1).getHitFactor()) / 2;
+					double averageOfTwoBestResults = (topTwoHitFactors.get(0) + topTwoHitFactors.get(1)) / 2;
 					resultClassifierStages.put(classifierStage, averageOfTwoBestResults);
 				}
 			}

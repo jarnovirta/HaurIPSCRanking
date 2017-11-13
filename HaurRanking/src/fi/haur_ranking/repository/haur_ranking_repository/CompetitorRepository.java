@@ -1,13 +1,11 @@
 package fi.haur_ranking.repository.haur_ranking_repository;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 
 import fi.haur_ranking.domain.ClassifierStage;
@@ -26,55 +24,76 @@ public class CompetitorRepository {
 		}
 	}
 	
-	public static Map<ClassifierStage, Map<Competitor, Double>> getCompetitorRankingScoresForClassifierStages(Map<ClassifierStage, Double> classifierStages, IPSCDivision division, EntityManager entityManager) {
-		
-		Map<ClassifierStage, Map<Competitor, Double>> competitorRankingScoresByClassifierStage = new HashMap<ClassifierStage, Map<Competitor, Double>>();
-		
-		List<StageScoreSheet> competitorScoreSheetsForClassifierStage = new ArrayList<StageScoreSheet>();
-		System.out.println("DIVISION: " + division.toString());
+	public static List<Object[]> getCompetitorRankingScoresForClassifierStages(Map<ClassifierStage, Double> classifierStages, IPSCDivision division, EntityManager entityManager) {
+
+		List<Object[]> orderedResultList = new ArrayList<Object[]>();
+		List<Object[]> unorderedResultList = new ArrayList<Object[]>();
+		List<Competitor> allCompetitors = findAll(entityManager);
 		try {
-			
-			String queryString = "SELECT c FROM Competitor c";
-//					+ "DISTINCT(s.competitor) FROM StageScoreSheet s WHERE s.stage.classifierStage = :classifierStage"
-//					+ " AND s.ipscDivision = :division";
-			final TypedQuery<Competitor> query = entityManager.createQuery(queryString, Competitor.class);
-//			query.setParameter("classifierStage", classifier);
-//			query.setParameter("division", division);
-			
-			List<Competitor> allCompetitors = query.getResultList();
-			
 			// KORJATTAVA ORDER BY DATE
 			
-			Map<Competitor, List<StageScoreSheet>> competitorList = new HashMap<Competitor, List<StageScoreSheet>>();
-			System.out.println("LOOP COMPETITORS AND CHECK MINIMUM 4 RESULTS");
 			for (Competitor competitor : allCompetitors) {
-				queryString = "SELECT s FROM StageScoreSheet s WHERE s.competitor = :competitor AND s.stage.classifierStage IN :classifierStage "
-						+ "AND s.ipscDivision = :division";
+				String queryString = "SELECT s FROM StageScoreSheet s WHERE s.competitor = :competitor AND s.stage.classifierStage IN :classifierStage "
+						+ "AND s.ipscDivision = :division ORDER BY s.lastModifiedInWinMSSDatabaseString DESC";
 						 
-				final TypedQuery<StageScoreSheet> classifierScoreSheetsForCompetitorQuery = entityManager.createQuery(queryString, StageScoreSheet.class);
-				classifierScoreSheetsForCompetitorQuery.setParameter("classifierStage", classifierStages.keySet());
-				
-				classifierScoreSheetsForCompetitorQuery.setParameter("division", division);
-				classifierScoreSheetsForCompetitorQuery.setParameter("competitor", competitor);
-				List<StageScoreSheet> classifierScoreSheetsForCompetitor = classifierScoreSheetsForCompetitorQuery.getResultList();
-				
-				// System.out.println("Competitor " + competitor.getFirstName() + " " + competitor.getLastName() + " has " + classifierScoreSheetsForCompetitor.size() + " classifier score cards");
-				if (classifierScoreSheetsForCompetitor.size() >= 4) {
-					for (StageScoreSheet sheet : classifierScoreSheetsForCompetitor) {
-						System.out.println(sheet.getHitFactor() + " - " + sheet.getLastModifiedInWinMSSDatabaseString());
+				final TypedQuery<StageScoreSheet> query = entityManager.createQuery(queryString, StageScoreSheet.class);
+				query.setParameter("classifierStage", classifierStages.keySet());
+				query.setParameter("division", division);
+				query.setParameter("competitor", competitor);
+				query.setMaxResults(8);
+				List<StageScoreSheet> competitorLatestScoreSheets = query.getResultList();
+
+				// If minimum 4 classifier results for competitor, calculate relative score for each of 8 latest results (competitor hit factor
+				// divided by average of top two results for classifier stage). Then calculate average of 4 best relative scores.
+				if (competitorLatestScoreSheets.size() >= 4) {
+					List<Double> competitorRelativeScores = new ArrayList<Double>();
+					int resultCounter = 0;
+					for (StageScoreSheet sheet : competitorLatestScoreSheets) {
+						ClassifierStage classifierStage = sheet.getStage().getClassifierStage();
+						double classifierStageTopTwoResultsAverage = classifierStages.get(classifierStage);
+						competitorRelativeScores.add(sheet.getHitFactor() / classifierStageTopTwoResultsAverage);
+						if (++resultCounter == 4) break;
 					}
-					competitorList.put(competitor, classifierScoreSheetsForCompetitor.subList(0, 7));
-					System.out.println("Added " + classifierScoreSheetsForCompetitor.subList(0, 7).size() + " results for competitor, best result " + classifierScoreSheetsForCompetitor.subList(0, 7).get(0).getHitFactor());
+					Double competitorTopResultsAverage; 
+					double scoreSum = 0;
+					for (Double score : competitorRelativeScores) scoreSum += score;
+					competitorTopResultsAverage = scoreSum / competitorRelativeScores.size();
+					Object[] competitorTotalScore = new Object[] { competitor, competitorTopResultsAverage };
+					unorderedResultList.add(competitorTotalScore);
 				}
+			}
+			orderedResultList = new ArrayList<Object[]>();
+			
+			while(unorderedResultList.size() > 0) {
+				int indexOfTopScore = -1;
+				double topScore = -1;
+				for (Object[] competitorResult : unorderedResultList) {
+					if ((double) competitorResult[1] > topScore) {
+						indexOfTopScore = unorderedResultList.indexOf(competitorResult);
+						topScore = (double) competitorResult[1];
+					}
+				}
+				orderedResultList.add(unorderedResultList.get(indexOfTopScore));
+				unorderedResultList.remove(unorderedResultList.get(indexOfTopScore));
 			}
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-		return null;
+		return orderedResultList;
 	}
-	
+	public static List<Competitor> findAll(EntityManager entityManager) {
+		try {
+			String queryString = "SELECT c FROM Competitor c";
+			final TypedQuery<Competitor> query = entityManager.createQuery(queryString, Competitor.class);
+			return query.getResultList();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 	public static Competitor findByName(String firstName, String lastName, EntityManager entityManager) {
 		String queryString = "SELECT c FROM Competitor c WHERE c.firstName = :firstName AND c.lastName = :lastName";
 		try {

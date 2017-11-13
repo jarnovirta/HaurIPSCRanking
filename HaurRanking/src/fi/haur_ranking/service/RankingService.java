@@ -8,12 +8,14 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 
 import fi.haur_ranking.domain.ClassifierStage;
+import fi.haur_ranking.domain.Competitor;
 import fi.haur_ranking.domain.IPSCDivision;
 import fi.haur_ranking.repository.haur_ranking_repository.CompetitorRepository;
 import fi.haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
 
 public class RankingService {
 	public static Map<IPSCDivision, List<String[]>> generateRanking() {
+		System.out.println("\n*** HAUR VARJORANKING ***");
 		Map<IPSCDivision, List<String[]>> divisionRankings = new HashMap<IPSCDivision, List<String[]>>();
 		for (IPSCDivision division : IPSCDivision.values()) {
 			divisionRankings.put(division, generateRankingForDivision(division));
@@ -22,16 +24,24 @@ public class RankingService {
 		return divisionRankings;
 	}
 	private static List<String[]> generateRankingForDivision(IPSCDivision division) {
+		System.out.println("\nDIVISION: " + division.toString());
+		
 		List<String[]> divisionRankingLineItems = new ArrayList<String[]>();
 		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
 		
 		// Get a list of classifier stages for which results will be taken into account in ranking 
 		// (stages with min. 2 results). Get average of two best results for each.
+		
 		Map<ClassifierStage, Double> classifierStageTopResultAvgerages = StageService.getClassifierStagesWithTwoOrMoreResults(division);
-		
-		
-		CompetitorRepository.getCompetitorRankingScoresForClassifierStages(classifierStageTopResultAvgerages, division, entityManager);
-		
+		List<Object[]> resultList = CompetitorRepository.getCompetitorRankingScoresForClassifierStages(classifierStageTopResultAvgerages, division, entityManager);
+		int position = 1;
+		for (Object[] rankingItem : resultList) {
+			Competitor competitor = (Competitor) rankingItem[0];
+			Double result = (Double) rankingItem[1];
+			System.out.println(position + ". " + competitor.getFirstName() + " " + competitor.getLastName() + " / score : " + result);
+			position++;
+			
+		}
 		
 		// Generate competitor ranking scores. Get stage comparison numbers (competitors hit factor divided by average of two 
 		// best hit factors for the stage, max value 2) for 8 most recent results for competitors with min. 4 results
@@ -44,7 +54,7 @@ public class RankingService {
 		// Calculate hit factor average for competitor (for 4 best results?) which does not affect ranking. Calculate percentages
 		// (100% for first, others based on ranking score divided by the score for the top competitor)
 			entityManager.close();
-			System.out.println("RANKING DONE!");
+			
 		return divisionRankingLineItems;
 	}
 }

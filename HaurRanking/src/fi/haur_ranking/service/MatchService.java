@@ -43,6 +43,8 @@ public class MatchService {
 			match.setStages(WinMSSStageRepository.findStagesForMatch(match));
 			List<Stage> stagesWithNewResults = new ArrayList<Stage>();
 			
+			// RIITTÄISIKÖ PELKKÄ STAGEN NIMI, KISAN NIMI, AIKA FILTTERÖINTIIN, ILMAN TULOSKORTTEJA? VOIKO TULOSKORTTIEN FILTTERÖINTIÄ 
+			// NOPETUTTAA?
 			for (Stage stage : match.getStages()) {
 				if (ClassifierStage.contains(stage.getName())) stage.setClassifierStage(ClassifierStage.parseString(stage.getName()));
 				
