@@ -16,12 +16,14 @@ public class StageScoreSheet {
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE)
 	private Long id;
-	@ManyToOne(cascade = CascadeType.ALL)
+	
+	@ManyToOne(cascade = CascadeType.PERSIST)
 	private Competitor competitor;
 	private String ssiModel = "match_ipsc.ipscscorecard";
 	private Long winMssPrimaryKey;
 	private Long winMssStageId;
 	private Long winMssMemberId;
+	@ManyToOne
 	private Stage stage;
 	private int aHits;
 	private int bHits;
@@ -35,11 +37,10 @@ public class StageScoreSheet {
 	private String timeString;
 	private boolean failedPowerFactor = false;
 	private boolean disqualified = false;
-	private double hitfactor;
+	private double hitFactor;
 	@Enumerated(EnumType.STRING)
 	private IPSCDivision ipscDivision;
-	private String stageName;
-	private String matchName;
+	
 	private String lastModifiedInWinMSSDatabaseString;
 	
 	private int procedurals;
@@ -172,11 +173,11 @@ public class StageScoreSheet {
 	public void setLastModifiedInWinMSSDatabaseString(String lastModifiedInWinMSSDatabaseString) {
 		this.lastModifiedInWinMSSDatabaseString = lastModifiedInWinMSSDatabaseString;
 	}
-	public double getHitfactor() {
-		return hitfactor;
+	public double getHitFactor() {
+		return hitFactor;
 	}
-	public void setHitfactor(double hitfactor) {
-		this.hitfactor = hitfactor;
+	public void setHitFactor(double hitFactor) {
+		this.hitFactor = hitFactor;
 	}
 	public boolean isDisqualified() {
 		return disqualified;
@@ -195,18 +196,6 @@ public class StageScoreSheet {
 	}
 	public void setStage(Stage stage) {
 		this.stage = stage;
-	}
-	public String getStageName() {
-		return stageName;
-	}
-	public void setStageName(String stageName) {
-		this.stageName = stageName;
-	}
-	public String getMatchName() {
-		return matchName;
-	}
-	public void setMatchName(String matchName) {
-		this.matchName = matchName;
 	}
 	
 }

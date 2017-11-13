@@ -11,36 +11,7 @@ import javax.persistence.TypedQuery;
 import fi.haur_ranking.domain.StageScoreSheet;
 
 public class StageScoreSheetRepository {
-	public static StageScoreSheet save(StageScoreSheet sheet) { 
-		try {
-			EntityManagerFactory emf = 
-				      Persistence.createEntityManagerFactory("fi.haur_ranking.jpa");
-				    EntityManager em = emf.createEntityManager();
-			em.getTransaction().begin();
-			em.persist(sheet);
-			em.getTransaction().commit();
-			emf.close();
-			return find(sheet.getId());
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-	public static StageScoreSheet find(Long id) {
-		try {
-			EntityManagerFactory emf = 
-				      Persistence.createEntityManagerFactory("fi.haur_ranking.jpa");
-			EntityManager em = emf.createEntityManager();
-			StageScoreSheet sheet = (StageScoreSheet) em.createQuery("SELECT s from StageScoreSheet s WHERE s.id = " + id).getSingleResult();
-			emf.close();
-			return sheet; 
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
+
 	public static List<StageScoreSheet> findAll() {
 		try {
 			EntityManagerFactory emf = 
@@ -72,50 +43,38 @@ public class StageScoreSheetRepository {
 		}
 	}
 
-	public static boolean isInHaurRankingDatabase(List<StageScoreSheet> stageSheets) {
-//		System.out.println("CHECKING DB FOR SCORESHEET: " + sheet.getLastModifiedInWinMSSDatabaseString() 
-//				+ " " + sheet.getStage().getName() + " " + sheet.getStage().getMatch().getName());
-//		
-		System.out.println("CHECKING DB FOR SCORESHEETS");
+	public static void filterStageScoreSheetsExistingInDatabase(List<StageScoreSheet> sheets, EntityManager entityManager) {
 		
-		List<StageScoreSheet> resultList = new ArrayList<StageScoreSheet>();
-		try {
-			EntityManagerFactory emf = 
-				      Persistence.createEntityManagerFactory("fi.haur_ranking.jpa");
-			EntityManager em = emf.createEntityManager();
-			for (StageScoreSheet sheet : stageSheets) {
-				// Must identify StageScoreSheet as same by multiple criteria because lastModified date may be same for many score cards 
-				// if imported into database. Cannot store WinMSS database id and use it because this would cause a dependency to WinMSS database
-				// and could cause problems in use.
-				
-				String queryString = "SELECT s FROM StageScoreSheet s WHERE s.lastModifiedInWinMSSDatabaseString = :lastModified AND s.stage.name = :stageName"
-						+ " AND s.stage.match.name = :matchName AND s.competitor.firstName = :firstName AND s.competitor.lastName = :lastName"
-						+ " AND s.ipscDivision = :ipscDiv";
-						
-				final TypedQuery<StageScoreSheet> query = em.createQuery(queryString, StageScoreSheet.class);
-				query.setParameter("lastModified", sheet.getLastModifiedInWinMSSDatabaseString());
-				query.setParameter("stageName", sheet.getStageName());
-				query.setParameter("matchName", sheet.getMatchName());
-				query.setParameter("firstName", sheet.getCompetitor().getFirstName());
-				query.setParameter("lastName", sheet.getCompetitor().getLastName());
-				query.setParameter("ipscDiv", sheet.getIpscDivision());
-				List<StageScoreSheet> sheets = query.getResultList();
-				if (sheets.size() > 0) resultList.addAll(sheets);
+		List<StageScoreSheet> removeScoreSheets = new ArrayList<StageScoreSheet>();
+		for (StageScoreSheet sheet : sheets) {
+			try {
+					// Must identify StageScoreSheet as same by multiple criteria because lastModified date may be same for many score cards 
+					// if imported into database. Cannot store WinMSS database id and use it because this would cause a dependency to WinMSS database
+					// and could cause problems in use.
+					
+					String queryString = "SELECT s FROM StageScoreSheet s WHERE s.lastModifiedInWinMSSDatabaseString = :lastModified AND s.stage.name = :stageName"
+							+ " AND s.stage.match.name = :matchName AND s.competitor.firstName = :firstName AND s.competitor.lastName = :lastName"
+							+ " AND s.ipscDivision = :ipscDiv";
+							
+					final TypedQuery<StageScoreSheet> query = entityManager.createQuery(queryString, StageScoreSheet.class);
+					query.setParameter("lastModified", sheet.getLastModifiedInWinMSSDatabaseString());
+					query.setParameter("firstName", sheet.getCompetitor().getFirstName());
+					query.setParameter("lastName", sheet.getCompetitor().getLastName());
+					query.setParameter("ipscDiv", sheet.getIpscDivision());
+					query.setParameter("stageName", sheet.getStage().getName());
+					query.setParameter("matchName", sheet.getStage().getMatch().getName());
+					List<StageScoreSheet> dbSheets = query.getResultList();
+					if (dbSheets.size() != 0) {
+						removeScoreSheets.add(sheet);
+					}
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
-			em.close();
-			emf.close();
-			System.out.println("Found " + resultList.size() + " existing sheets, " + (stageSheets.size() - resultList.size()) + " new sheets.");
-			if (resultList.size() > 0) {
-				return true;
+			for (StageScoreSheet removeSheet : removeScoreSheets) {
+				sheets.remove(removeSheet);
 			}
-			
-			return false;
-			
 		}
-		catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
 }
 

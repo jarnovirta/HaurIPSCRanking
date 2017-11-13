@@ -6,27 +6,38 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.TypedQuery;
+
 import fi.haur_ranking.domain.Competitor;
 import fi.haur_ranking.domain.IPSCDivision;
+import fi.haur_ranking.domain.Match;
 import fi.haur_ranking.domain.Stage;
 import fi.haur_ranking.domain.StageScoreSheet;
+import fi.haur_ranking.repository.haur_ranking_repository.StageScoreSheetRepository;
 
 public class WinMSSStageScoreSheetRepository {
-	public static List<StageScoreSheet> findStageScoreSheetsForStage(Long matchId, Stage stage) {
-		List<StageScoreSheet> stageScoreSheets= new ArrayList<StageScoreSheet>();
+	public static List<StageScoreSheet> find(Match match, Stage stage) {
+		System.out.println("FINDING SCORE SHEETS FOR MATCH " + match.getName() + " STAGE " + stage.getName());
+		
+		List<StageScoreSheet> resultScoreSheets = new ArrayList<StageScoreSheet>();
 		Connection connection = WinMssDatabaseUtil.getConnection();		
 		Statement statement = null;
 		ResultSet resultSet = null;
+
 		try {
 			statement = connection.createStatement();
-			resultSet = statement.executeQuery("SELECT * FROM tblMatchStageScore WHERE MatchId=" + matchId
+			resultSet = statement.executeQuery("SELECT * FROM tblMatchStageScore WHERE MatchId=" + match.getWinMssMatchId()
 					+ " AND StageId = " + stage.getWinMssId());
 			while (resultSet.next()) {
 				StageScoreSheet sheet = new StageScoreSheet();
+				sheet.setStage(stage);
 				sheet.setWinMssStageId(resultSet.getLong(2));
 				sheet.setWinMssMemberId(resultSet.getLong(3));
-				Competitor competitor = WinMSSCompetitorRepository.findCompetitor(sheet.getWinMssMemberId(), matchId);
-				if (WinMSSCompetitorRepository.isDisqualified(sheet.getWinMssMemberId(), matchId)) continue;
+				Competitor competitor = WinMSSCompetitorRepository.findCompetitor(sheet.getWinMssMemberId(), match.getWinMssMatchId());
+				if (WinMSSCompetitorRepository.isDisqualified(sheet.getWinMssMemberId(), match.getWinMssMatchId())) continue;
 				sheet.setCompetitor(competitor);
 				sheet.setaHits(resultSet.getInt(4));
 				sheet.setbHits(resultSet.getInt(5));
@@ -38,37 +49,31 @@ public class WinMSSStageScoreSheetRepository {
 				sheet.setTime(resultSet.getDouble(11));
 				sheet.setScoresZeroedForStage(resultSet.getBoolean(12));
 				sheet.setDisqualified(resultSet.getBoolean(15));
-				sheet.setHitfactor(resultSet.getDouble(19));
+				sheet.setHitFactor(resultSet.getDouble(19));
 				sheet.setLastModifiedInWinMSSDatabaseString(resultSet.getString(21));
-				sheet.setStage(stage);
-				sheet.setStageName(stage.getName());
-				sheet.setMatchName(stage.getMatch().getName());
-				stageScoreSheets.add(sheet);
+				resultScoreSheets.add(sheet);
 			}
-			resultSet.close();
 			statement.close();
-			
-			// Add IPSC division and check for failed power factor.
-			List<StageScoreSheet> finalStageScoreSheetList = new ArrayList<StageScoreSheet>();
-			for (StageScoreSheet sheet : stageScoreSheets) {
+			resultSet.close();
+
+			List<StageScoreSheet> removeForFailedPf = new ArrayList<StageScoreSheet>();
+			// Add IPSC division and remove sheets for competitors who failed power factor.
+			for (StageScoreSheet sheet : resultScoreSheets) {
 				statement = connection.createStatement();
 				resultSet = statement.executeQuery("SELECT TypeDivisionId, FailedPowerFactor FROM tblMatchCompetitor WHERE MemberId="+ sheet.getWinMssMemberId() 
-							+ " AND MatchId=" + matchId);
+							+ " AND MatchId=" + match.getWinMssMatchId());
 				if (resultSet.next()) {
 					sheet.setIpscDivision(IPSCDivision.getDivisionByWinMSSTypeId(resultSet.getInt(1)));
-					sheet.setFailedPowerFactor(resultSet.getBoolean(2));
+					if (resultSet.getBoolean(2)) removeForFailedPf.add(sheet);
 				}
-				if (!sheet.isFailedPowerFactor()) {
-					finalStageScoreSheetList.add(sheet);
-				}
-				statement.close();
-				resultSet.close();
 			}
-			return finalStageScoreSheetList;
+			resultScoreSheets.removeAll(removeForFailedPf);
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			return null;
 		}
+		finally {
+			WinMssDatabaseUtil.closeStatementResultSet(statement, resultSet);
+		}
+		return resultScoreSheets;
 	}
-	
 }

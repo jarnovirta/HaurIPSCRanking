@@ -3,103 +3,92 @@ package fi.haur_ranking.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import fi.haur_ranking.domain.ClassifierStage;
+import fi.haur_ranking.domain.Competitor;
 import fi.haur_ranking.domain.Match;
 import fi.haur_ranking.domain.Stage;
 import fi.haur_ranking.domain.StageScoreSheet;
+import fi.haur_ranking.repository.haur_ranking_repository.CompetitorRepository;
+import fi.haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
 import fi.haur_ranking.repository.haur_ranking_repository.MatchRepository;
 import fi.haur_ranking.repository.haur_ranking_repository.StageScoreSheetRepository;
 import fi.haur_ranking.repository.winmss_repository.WinMSSMatchRepository;
+import fi.haur_ranking.repository.winmss_repository.WinMSSStageRepository;
+import fi.haur_ranking.repository.winmss_repository.WinMSSStageScoreSheetRepository;
 
 public class MatchService {
 			
-	public static List<Match> findAllFromWinMSSDb(String fileLocation) {
-		return WinMSSMatchRepository.findAllHandgunMatches(fileLocation);
-	}
-//	public static Match findMatchFromWinMSSDb(int matchId) {
-//		List<Competitor> competitors = findAllCompetitorsFromWinMSSDb();
-//		for (Competitor competitor : competitors) {
-//			System.out.println(competitor.getFirstName() + " " + competitor.getLastName());
-//		}
-//		return null;
-//	}
-	
-//	private static List<Competitor> findAllCompetitorsFromWinMSSDb() {
-//		Connection connection = WinMssDatabaseUtil.getConnection();
-//		Statement statement = null;
-//		ResultSet resultSet = null;
-//		List<Competitor> competitors = new ArrayList<Competitor>();
-//		try {
-//			statement = connection.createStatement();
-//			resultSet = statement.executeQuery("SELECT * FROM tblMember");
-//			while (resultSet.next()) {
-//				competitors.add(new Competitor(resultSet.getString(3), resultSet.getString(2), resultSet.getString(1)));
-//			}
-//			resultSet.close();
-//			statement.close();
-//			return competitors;
-//		} catch (Exception ex) {
-//			ex.printStackTrace();
-//			return null;
-//		}
-//	}
-	
-	public static List<Match> saveToHaurRankingDb(List<Match> matches) {
-		return MatchRepository.saveAll(matches);
-	}
 	public static int getTotalMatchCount() {
-		return MatchRepository.getTotalMatchCount();
+		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
+		int count = MatchRepository.getTotalMatchCount(entityManager);
+		entityManager.close();
+		return count;
 	}
 	
 	public static void importWinMssDatabase(String winMssDbLocation) {
-		System.out.println("Starting import");
-		List<Match> winMssMatches = WinMSSMatchRepository.findAllHandgunMatches(winMssDbLocation);
 		
-		// Check if match has score sheets which are not in ranking database. Mark classifier stages.
+		System.out.println("\n*** STARTING IMPORT");
+		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
+		entityManager.getTransaction().begin();
 		
-		List<StageScoreSheet> sheets = new ArrayList<StageScoreSheet>();
+		// Find all matches from WinMSS database
+		List<Match> winMssMatches = WinMSSMatchRepository.findAll(winMssDbLocation);
+		List<Match> matchesWithNewResults = new ArrayList<Match>();
+
+		// Filter matches to only include matches and stages with results which are not yet in ranking database.
 		for (Match match : winMssMatches) {
+			// Find all stages in WinMSS database and check whether stage results are already in ranking database
+			match.setStages(WinMSSStageRepository.findStagesForMatch(match));
+			List<Stage> stagesWithNewResults = new ArrayList<Stage>();
 			
 			for (Stage stage : match.getStages()) {
-				if (ClassifierStage.contains(stage.getName())) {
-					stage.setClassifierStage(ClassifierStage.parseString(stage.getName()));
-				}
-				sheets.addAll(stage.getStageScoreSheets());
-			}
-		}
-		System.out.println("Sending request for " + sheets.size() + " sheets");
-		StageScoreSheetRepository.isInHaurRankingDatabase(sheets);
+				if (ClassifierStage.contains(stage.getName())) stage.setClassifierStage(ClassifierStage.parseString(stage.getName()));
 				
-		// TEST: lis‰‰ classifierit jotka eiv‰t ole tietokannassa ja tee ranking-haku niille.
-		
-		List<Match> matchesToRemove = new ArrayList<Match>();
-		for (Match match : winMssMatches) {
-			List<Stage> stagesToRemove = new ArrayList<Stage>();
-			for (Stage stage : match.getStages()) {
-				
-				if (stage.getClassifierStage() == null) {
-					stagesToRemove.add(stage);
+				stage.setStageScoreSheets(WinMSSStageScoreSheetRepository.find(match, stage));
+				StageScoreSheetRepository.filterStageScoreSheetsExistingInDatabase(stage.getStageScoreSheets(), entityManager);
+								
+				// Handle new stage score sheets 
+				if (stage.getStageScoreSheets().size() > 0) {
+					
+					// Check whether competitor exists in database
+					for (StageScoreSheet sheet : stage.getStageScoreSheets()) {
+						Competitor databaseCompetitor = CompetitorRepository.findByName(sheet.getCompetitor().getFirstName(), 
+								sheet.getCompetitor().getLastName(), entityManager);
+						if (databaseCompetitor != null) sheet.setCompetitor(databaseCompetitor);
+						else 
+							sheet.setCompetitor(CompetitorRepository.persist(sheet.getCompetitor(), entityManager));
+					}
+					stagesWithNewResults.add(stage); 
 				}
 			}
-			for (Stage stage : stagesToRemove) {
-				match.getStages().remove(stage);
-			}
-		}
-		for (Match match : matchesToRemove) {
-			winMssMatches.remove(match);
-		}
-		System.out.println("\n\n *** Found " + winMssMatches.size() + " matches with classifier stages from WinMSS:");
-		for (Match match : winMssMatches) {
-			System.out.println(match.getName()); {
-				for (Stage stage : match.getStages()) {
-					System.out.println("STAGE: " + stage.getName() + ", " + stage.getStageScoreSheets().size() + " score cards");
-				}
+			if (stagesWithNewResults.size() > 0) {
+				match.setStages(stagesWithNewResults);
+				matchesWithNewResults.add(match);
 			}
 		}
 		
-		MatchService.saveToHaurRankingDb(winMssMatches);
+		// Persist matches with new results. Check for existing matches. Existing stage score sheets have already been
+		// filtered out and therefore there is no need to check them or for existing stages (all score sheets for a stage
+		// are always treated together).
+		for (Match newMatch : matchesWithNewResults) {
+			Match existingMatch = MatchRepository.find(newMatch, entityManager);
+			if (existingMatch != null) {
+				for (Stage stage : newMatch.getStages()) {
+					stage.setMatch(existingMatch);
+				}
+				existingMatch.getStages().addAll(newMatch.getStages());
+			}
+			else {
 				
-		System.out.println("\nIMPORT DONE");
-		////////
+				MatchRepository.persist(newMatch, entityManager);
+			}
+		}
+		
+		System.out.println(matchesWithNewResults.size() + " MATCHES WITH NEW RESULTS");
+		entityManager.getTransaction().commit();
+		entityManager.close();
+		System.out.println("\n*** IMPORT DONE");
 	}
 }

@@ -5,9 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+
 import fi.haur_ranking.domain.ClassifierStage;
 import fi.haur_ranking.domain.IPSCDivision;
-import fi.haur_ranking.domain.Stage;
+import fi.haur_ranking.repository.haur_ranking_repository.CompetitorRepository;
+import fi.haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
 
 public class RankingService {
 	public static Map<IPSCDivision, List<String[]>> generateRanking() {
@@ -20,11 +23,28 @@ public class RankingService {
 	}
 	private static List<String[]> generateRankingForDivision(IPSCDivision division) {
 		List<String[]> divisionRankingLineItems = new ArrayList<String[]>();
-		List<ClassifierStage> stagesWithEnoughResults = StageService.getClassifierStagesWithTwoOrMoreResults(division);
-		System.out.println("Got " + stagesWithEnoughResults.size() + " classifier stages with at least two results for " + division.toString());
-		for (ClassifierStage stage : stagesWithEnoughResults) {
-			System.out.println(stage.toString());
-		}
+		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
+		
+		// Get a list of classifier stages for which results will be taken into account in ranking 
+		// (stages with min. 2 results). Get average of two best results for each.
+		Map<ClassifierStage, Double> classifierStageTopResultAvgerages = StageService.getClassifierStagesWithTwoOrMoreResults(division);
+		
+		
+		CompetitorRepository.getCompetitorRankingScoresForClassifierStages(classifierStageTopResultAvgerages, division, entityManager);
+		
+		
+		// Generate competitor ranking scores. Get stage comparison numbers (competitors hit factor divided by average of two 
+		// best hit factors for the stage, max value 2) for 8 most recent results for competitors with min. 4 results
+		// for valid classifier stages in classifierStageTopResultAvgerages. Calculate average of 4 best comparison numbers.
+		// Competitors' position in ranking is based on this average.
+		
+		
+		// Generate ranking list for division based on competitors' score.
+		
+		// Calculate hit factor average for competitor (for 4 best results?) which does not affect ranking. Calculate percentages
+		// (100% for first, others based on ranking score divided by the score for the top competitor)
+			entityManager.close();
+			System.out.println("RANKING DONE!");
 		return divisionRankingLineItems;
 	}
 }

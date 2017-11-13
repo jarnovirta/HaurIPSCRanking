@@ -9,6 +9,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -23,8 +24,10 @@ public class Stage {
 	private String name;
 	private Long winMssMatchId;
 	
+	@ManyToOne(cascade = CascadeType.MERGE)
 	private Match match;
-	@OneToMany(cascade = CascadeType.ALL)
+	
+	@OneToMany(mappedBy = "stage", cascade = CascadeType.ALL)
 	private List<StageScoreSheet> stageScoreSheets;
 	
 	@Enumerated(EnumType.STRING)

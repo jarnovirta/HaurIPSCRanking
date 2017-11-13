@@ -73,7 +73,7 @@ public class MainWindow {
 		
 		mainFrame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent windowEvent){
-			WinMssDatabaseUtil.closeConnecion();
+			WinMssDatabaseUtil.closeConnection();
 			System.exit(0);
 			}        
 		});    

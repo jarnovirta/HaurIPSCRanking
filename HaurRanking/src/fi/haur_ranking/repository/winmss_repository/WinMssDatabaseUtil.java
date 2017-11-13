@@ -2,14 +2,16 @@ package fi.haur_ranking.repository.winmss_repository;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
-// Methods for using a Ucanaccess connection to a Microsoft Access database file (.mdb).
+// Methods for using a Ucanaccess connection to WinMSS database (Microsoft Access database file, .mdb).
 public class WinMssDatabaseUtil {
 	static Connection connection = null;
 	public static Connection getConnection() {
 		return connection;
 	}
- 	public static Connection getConnection(String fileLocation) {
+ 	public static Connection createConnection(String fileLocation) {
 		if (connection != null) return connection;
 		
 		try {
@@ -19,19 +21,25 @@ public class WinMssDatabaseUtil {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 		return connection;
 	}
 
-	public static void closeConnecion() {
+ 	public static void closeConnection() {
+ 		
 		try {
-			if (connection != null) {
-				connection.commit();
-				connection.close();
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
+			if (connection != null) connection.close();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		} 		
+ 	}
+	public static void closeStatementResultSet(Statement statement, ResultSet resultSet) {
+		try {
+			if (statement != null) statement.close();
+			if (resultSet != null) resultSet.close();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
-	
 }

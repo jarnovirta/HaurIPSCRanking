@@ -26,7 +26,7 @@ public class Match {
 	private String winMssDateString; 
 	private Long winMssMatchId;
 	private String name;
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "match", cascade = CascadeType.ALL)
 	private List<Stage> stages;
 	
 	public Match() { }

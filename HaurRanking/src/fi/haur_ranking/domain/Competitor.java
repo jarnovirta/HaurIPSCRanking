@@ -5,6 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name="Competitor")
@@ -22,6 +23,7 @@ public class Competitor {
 	private String ssiDisqualificationReason = "no";
 	private int winMssTypeDisqualifyRuleId;
 	private int winMssTypeDisqualificationRuleId;
+	
 	public Competitor() { }
 	
 	public Competitor(String firstName, String lastName, String ICS) {

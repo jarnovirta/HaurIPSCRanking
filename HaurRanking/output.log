@@ -1,23 +1,2 @@
-[EL Info]: 2017-11-12 12:25:58.366--ServerSession(690343059)--EclipseLink, version: Eclipse Persistence Services - 2.6.5.v20170607-b3d05bd
-[EL Info]: connection: 2017-11-12 12:25:58.521--ServerSession(690343059)--/file:/C:/Users/Jarno/git/HaurIPSCRanking/HaurRanking/target/classes/_fi.haur_ranking.jpa login successful
-[EL Warning]: 2017-11-12 12:25:58.566--ServerSession(690343059)--Exception [EclipseLink-4002] (Eclipse Persistence Services - 2.6.5.v20170607-b3d05bd): org.eclipse.persistence.exceptions.DatabaseException
-Internal Exception: java.sql.SQLSyntaxErrorException: object name already exists: FK_STAGE_MATCH_ID in statement [ALTER TABLE Stage ADD CONSTRAINT FK_Stage_MATCH_ID FOREIGN KEY (MATCH_ID) REFERENCES Match (ID)]
-Error Code: -5504
-Call: ALTER TABLE Stage ADD CONSTRAINT FK_Stage_MATCH_ID FOREIGN KEY (MATCH_ID) REFERENCES Match (ID)
-Query: DataModifyQuery(sql="ALTER TABLE Stage ADD CONSTRAINT FK_Stage_MATCH_ID FOREIGN KEY (MATCH_ID) REFERENCES Match (ID)")
-[EL Warning]: 2017-11-12 12:25:58.567--ServerSession(690343059)--Exception [EclipseLink-4002] (Eclipse Persistence Services - 2.6.5.v20170607-b3d05bd): org.eclipse.persistence.exceptions.DatabaseException
-Internal Exception: java.sql.SQLSyntaxErrorException: object name already exists: FK_STAGESCORESHEET_COMPETITOR_ID in statement [ALTER TABLE StageScoreSheet ADD CONSTRAINT FK_StageScoreSheet_COMPETITOR_ID FOREIGN KEY (COMPETITOR_ID) REFERENCES Competitor (ID)]
-Error Code: -5504
-Call: ALTER TABLE StageScoreSheet ADD CONSTRAINT FK_StageScoreSheet_COMPETITOR_ID FOREIGN KEY (COMPETITOR_ID) REFERENCES Competitor (ID)
-Query: DataModifyQuery(sql="ALTER TABLE StageScoreSheet ADD CONSTRAINT FK_StageScoreSheet_COMPETITOR_ID FOREIGN KEY (COMPETITOR_ID) REFERENCES Competitor (ID)")
-[EL Warning]: 2017-11-12 12:25:58.567--ServerSession(690343059)--Exception [EclipseLink-4002] (Eclipse Persistence Services - 2.6.5.v20170607-b3d05bd): org.eclipse.persistence.exceptions.DatabaseException
-Internal Exception: java.sql.SQLSyntaxErrorException: object name already exists: FK_STAGE_STAGESCORESHEET_STAGESCORESHEETS_ID in statement [ALTER TABLE Stage_StageScoreSheet ADD CONSTRAINT FK_Stage_StageScoreSheet_stageScoreSheets_ID FOREIGN KEY (stageScoreSheets_ID) REFERENCES StageScoreSheet (ID)]
-Error Code: -5504
-Call: ALTER TABLE Stage_StageScoreSheet ADD CONSTRAINT FK_Stage_StageScoreSheet_stageScoreSheets_ID FOREIGN KEY (stageScoreSheets_ID) REFERENCES StageScoreSheet (ID)
-Query: DataModifyQuery(sql="ALTER TABLE Stage_StageScoreSheet ADD CONSTRAINT FK_Stage_StageScoreSheet_stageScoreSheets_ID FOREIGN KEY (stageScoreSheets_ID) REFERENCES StageScoreSheet (ID)")
-[EL Warning]: 2017-11-12 12:25:58.567--ServerSession(690343059)--Exception [EclipseLink-4002] (Eclipse Persistence Services - 2.6.5.v20170607-b3d05bd): org.eclipse.persistence.exceptions.DatabaseException
-Internal Exception: java.sql.SQLSyntaxErrorException: object name already exists: FK_MATCH_STAGE_STAGES_ID in statement [ALTER TABLE Match_Stage ADD CONSTRAINT FK_Match_Stage_stages_ID FOREIGN KEY (stages_ID) REFERENCES Stage (ID)]
-Error Code: -5504
-Call: ALTER TABLE Match_Stage ADD CONSTRAINT FK_Match_Stage_stages_ID FOREIGN KEY (stages_ID) REFERENCES Stage (ID)
-Query: DataModifyQuery(sql="ALTER TABLE Match_Stage ADD CONSTRAINT FK_Match_Stage_stages_ID FOREIGN KEY (stages_ID) REFERENCES Stage (ID)")
-[EL Info]: connection: 2017-11-12 12:25:58.706--ServerSession(690343059)--/file:/C:/Users/Jarno/git/HaurIPSCRanking/HaurRanking/target/classes/_fi.haur_ranking.jpa logout successful
+[EL Info]: 2017-11-13 20:55:38.186--ServerSession(1863980798)--EclipseLink, version: Eclipse Persistence Services - 2.6.5.v20170607-b3d05bd
+[EL Info]: connection: 2017-11-13 20:55:38.664--ServerSession(1863980798)--/file:/C:/Users/Jarno/git/HaurIPSCRanking/HaurRanking/target/classes/_fi.haur_ranking.jpa login successful

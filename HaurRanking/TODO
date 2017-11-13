@@ -1,4 +1,3 @@
 TODO:
 
-- Lis‰‰ hyl‰ttyjen kilpailijoiden tarkistus: tblMatchCompetitor: MatchId ja CompetitorId tai MemberId ja sitten IsDisqualified boolean.
-Hylk‰ys ei v‰ltt‰m‰tt‰ n‰y scorecardissa diskauksena tai nollauksena.
+- P‰iv‰m‰‰r‰t Date muotoon ja niiden vertailu Date.
