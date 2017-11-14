@@ -46,6 +46,13 @@ public class StageScoreSheet {
 	private int procedurals;
 	boolean scoresZeroedForStage = false;
 	private String comment = "";
+	
+	public StageScoreSheet() { }
+	
+	public StageScoreSheet(double hitFactor, Stage stage) {
+		this.hitFactor = hitFactor;
+		this.stage = stage;
+	}
 	public Long getId() {
 		return id;
 	}

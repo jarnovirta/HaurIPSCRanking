@@ -15,9 +15,9 @@ public class WinMSSCompetitorRepository {
 		try {
 			connection = WinMssDatabaseUtil.getConnection();
 			statement = connection.createStatement();
-			resultSet = statement.executeQuery("SELECT Firstname, Lastname, ICS FROM tblMember WHERE MemberId = " + winMSSMemberId);
+			resultSet = statement.executeQuery("SELECT Firstname, Lastname FROM tblMember WHERE MemberId = " + winMSSMemberId);
 			if (resultSet.next()) {
-				competitor = new Competitor(resultSet.getString(1), resultSet.getString(2), resultSet.getString(3));
+				competitor = new Competitor(resultSet.getString(1), resultSet.getString(2));
 			}
 		}
 		catch (Exception e) {

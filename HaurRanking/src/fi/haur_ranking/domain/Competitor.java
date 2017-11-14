@@ -26,10 +26,9 @@ public class Competitor {
 	
 	public Competitor() { }
 	
-	public Competitor(String firstName, String lastName, String ICS) {
+	public Competitor(String firstName, String lastName) {
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.ICS = ICS; 
 	}
 
 	public Long getId() {

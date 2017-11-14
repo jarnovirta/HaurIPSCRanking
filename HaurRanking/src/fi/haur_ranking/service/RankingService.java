@@ -43,8 +43,10 @@ public class RankingService {
 				List<StageScoreSheet> competitorLatestScoreSheets = 
 						StageScoreSheetRepository.findClassifierStageResultsForCompetitor(competitor, division, 
 								classifierStageTopResultAvgerages.keySet(), entityManager);
-				resultList.addAll(calculateCompetitorRelativeScores(competitorLatestScoreSheets, classifierStageTopResultAvgerages));
+				double competitorRelativeScore = calculateCompetitorTopScoresAverage(competitorLatestScoreSheets, classifierStageTopResultAvgerages);
+				if (competitorRelativeScore >= 0) resultList.add(new Object[]{competitor, competitorRelativeScore});
 			}
+		
 		sortResultList(resultList);
 		int position = 1;
 		for (Object[] rankingItem : resultList) {
@@ -56,13 +58,12 @@ public class RankingService {
 		entityManager.close();
 		return divisionRankingLineItems;
 	}
-	private static List<Object[]> calculateCompetitorRelativeScores(List<StageScoreSheet> competitorLatestScoreSheets, 
+	private static double calculateCompetitorTopScoresAverage(List<StageScoreSheet> competitorLatestScoreSheets, 
 			Map<ClassifierStage, Double> classifierStageTopResultAvgerages) {
-
+		
 		// If minimum 4 classifier results for competitor, calculate relative score for each of 8 latest results (competitor hit factor
 		// divided by average of top two results for classifier stage). Then calculate average of 4 best relative scores.
 		
-		List<Object[]> unorderedResultList = new ArrayList<Object[]>();
 		if (competitorLatestScoreSheets.size() >= 4) {
 			List<Double> competitorRelativeScores = new ArrayList<Double>();
 			int resultCounter = 0;
@@ -74,16 +75,16 @@ public class RankingService {
 			}
 			Collections.sort(competitorRelativeScores);
 			Collections.reverse(competitorRelativeScores);
-			Double competitorTopResultsAverage; 
+			Double competitorTopScoresAverage; 
 			double scoreSum = 0;
 			for (Double score : competitorRelativeScores) scoreSum += score;
-			competitorTopResultsAverage = scoreSum / competitorRelativeScores.size();
-			Object[] competitorTotalScore = new Object[] { competitorLatestScoreSheets.get(0).getCompetitor(), 
-					competitorTopResultsAverage };
-			unorderedResultList.add(competitorTotalScore);
+			competitorTopScoresAverage = scoreSum / competitorRelativeScores.size();
+			
+			return competitorTopScoresAverage;
 		}
-		return unorderedResultList;
+		return -1;
 	}
+
 	private static void sortResultList(List<Object[]> unorderedResultList) {
 		// Generate a list of ordered competitor-score Object arrays. 
 		List<Object[]> orderedResultList = new ArrayList<Object[]>();

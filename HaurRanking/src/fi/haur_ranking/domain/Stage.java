@@ -33,6 +33,12 @@ public class Stage {
 	@Enumerated(EnumType.STRING)
 	private ClassifierStage classifierStage;
 	
+	public Stage() { }
+	
+	public Stage(String name, ClassifierStage classifierStage) {
+		this.name = name;
+		this.classifierStage = classifierStage;
+	}
 	public Long getId() {
 		return id;
 	}
