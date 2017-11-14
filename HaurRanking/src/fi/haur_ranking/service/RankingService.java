@@ -75,10 +75,14 @@ public class RankingService {
 				ClassifierStage classifierStage = sheet.getStage().getClassifierStage();
 				double classifierStageTopTwoResultsAverage = classifierStageTopResultAvgerages.get(classifierStage);
 				competitorRelativeScores.add(sheet.getHitFactor() / classifierStageTopTwoResultsAverage);
-				if (++resultCounter == 8) break;
+				if (++resultCounter == 8) continue;
 			}
 			Collections.sort(competitorRelativeScores);
 			Collections.reverse(competitorRelativeScores);
+			if (competitorRelativeScores.size() > 4) {
+				competitorRelativeScores.subList(4, competitorRelativeScores.size()).clear();
+			}
+			
 			Double competitorTopScoresAverage; 
 			double scoreSum = 0;
 			for (Double score : competitorRelativeScores) scoreSum += score;

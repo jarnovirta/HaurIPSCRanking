@@ -21,7 +21,7 @@ import fi.haur_ranking.service.RankingService;
 //	Jarno 	4.0, 3.9				0.65041, 0.63414
 //	Jerry 	3.2, 0.0				0.52033, 0	
 //	JC 		2.0, 3.1, 6.8			0.32520, 0.524065, 1,10569
-//	Ben 	4.1, 3.2, 5.5, 2.3		0.66667, 0.520325, 0.89430, 0.37398
+//	Ben 	4.1, 3.2, 5.5, 2.3		0.66667, 0.520325, 0.89430, 0.37398, 0.1521
 //
 //	TOP 2 hf: 	6.8, 5.5 - AVG: 6.15
 //===============	
@@ -80,7 +80,7 @@ public class RankingServiceTests {
 		double[] jcTranCLC01HfList = { 2.0, 3.1, 6.8 };
 		double[] jcTranCLC02HfList = { 4.1, 3.6 };
 		 
-		double[] benStoegerCLC01HfList = { 4.1, 3.2,5.5, 2.3 };
+		double[] benStoegerCLC01HfList = { 4.1, 3.2,5.5, 2.3, 0.1521 };
 		double[] benStoegerCLC02HfList = { 3.3, 2.1, 1.1, 3.4 };
 		
 		jarnoVirtaLatestScoreSheets = getScoreSheetList(jarnoVirtaCLC01HfList, jarnoVirtaCLC02HfList);
@@ -98,8 +98,18 @@ public class RankingServiceTests {
 		try {
 			Method method = RankingService.class.getDeclaredMethod("calculateCompetitorTopScoresAverage", List.class, Map.class);
 			method.setAccessible(true);
+			
+			// Test for competitor with required minimum of four score sheets
 			double jarnoTopScoresAverage = (double) method.invoke(RankingService.class, jarnoVirtaLatestScoreSheets, classifierStageTopResultAverages);
 			assertEquals("Top scores average for test competitor Jarno must be 0.780",  0.780, jarnoTopScoresAverage, 0.001);
+			// Test for competitor with three score sheets instead of the required four
+			double jerryTopScoresAverage = (double) method.invoke(RankingService.class, jerryMiculekLatestScoreSheets, classifierStageTopResultAverages);
+			assertEquals("calculateCompetitorRelativeScores method must return -1 for competitor Jerry (not enough score sheets)",  -1, jerryTopScoresAverage, 0.0);
+			// Test for competitor with more than eight score sheets. Only eight should count.
+			double benTopScoresAverage = (double) method.invoke(RankingService.class, benStoegerLatestScoreSheets, classifierStageTopResultAverages);
+			assertEquals("Top scores average for competitor Ben must be 0.663 (competitor with more than 8 score sheets, only 8 count).",  
+					0.663, benTopScoresAverage, 0.001);
+			
 		}
 		catch (Exception e) {
 			
@@ -149,6 +159,7 @@ public class RankingServiceTests {
 		for (double hf : CLC02HitFactors) sheets.add(new StageScoreSheet(hf, CLC02));
 		return sheets;
 	}
+	
 	private List<Object[]> getCompetitorAverageScoreList() {
 		List<Object[]> averageScoreList = new ArrayList<Object[]>();
 		averageScoreList.add(new Object[] { jarnoVirta, 0.78049 });
