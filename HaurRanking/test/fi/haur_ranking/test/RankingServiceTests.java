@@ -17,21 +17,21 @@ import fi.haur_ranking.service.RankingService;
 
 
 //PRODUCTION DIVISION
-//STAGE CLC01: 						REL. SCORES
+//STAGE CLC01 HF: 					REL. SCORES
 //	Jarno 	4.0, 3.9				0.65041, 0.63414
 //	Jerry 	3.2, 0.0				0.52033, 0	
 //	JC 		2.0, 3.1, 6.8			0.32520, 0.524065, 1,10569
 //	Ben 	4.1, 3.2, 5.5, 2.3		0.66667, 0.520325, 0.89430, 0.37398
 //
-//	TOP 2: 	6.8, 5.5, AVG: 6.15
+//	TOP 2 hf: 	6.8, 5.5 - AVG: 6.15
 //===============	
-//STAGE CLC02:						REL. SCORES					
+//STAGE CLC02 HF:					REL. SCORES					
 //	Jarno 	6.2, 5.1				1.008130, 0.82927
 //	Jerry 	6.1						0.991870
 //	JC 		4.1, 3.6				0.666667, 0.585366
 //	Ben 	3.3, 2.1, 1.1, 3.4		0.536585, 0.341463, 0.1788612, 0.552846
 //	
-//	TOP 2: 	6.2, 6.1, AVG: 6.15
+//	TOP 2 hf: 	6.2, 6.1 - AVG: 6.15
 //===============
 //
 //RESULTS:													AVG 
@@ -109,6 +109,10 @@ public class RankingServiceTests {
 	@Test
 	public void sortResultListTest() {
 		List<Object[]> unorderedResultList = getCompetitorAverageScoreList();
+		Object[] objToMove = unorderedResultList.get(0);
+		unorderedResultList.add(objToMove);
+		unorderedResultList.remove(0);
+		
 		try {
 			Method method = RankingService.class.getDeclaredMethod("sortResultList", List.class);
 			method.setAccessible(true);
