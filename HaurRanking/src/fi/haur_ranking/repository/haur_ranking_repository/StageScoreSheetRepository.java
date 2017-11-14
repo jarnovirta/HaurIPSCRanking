@@ -2,12 +2,16 @@ package fi.haur_ranking.repository.haur_ranking_repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 
+import fi.haur_ranking.domain.ClassifierStage;
+import fi.haur_ranking.domain.Competitor;
+import fi.haur_ranking.domain.IPSCDivision;
 import fi.haur_ranking.domain.StageScoreSheet;
 
 public class StageScoreSheetRepository {
@@ -42,7 +46,29 @@ public class StageScoreSheetRepository {
 			return -1;
 		}
 	}
-
+	
+	public static List<StageScoreSheet> findClassifierStageResultsForCompetitor(Competitor competitor, IPSCDivision division, Set<ClassifierStage> classifierStages, 
+			EntityManager entityManager) {
+		List<StageScoreSheet> scoreSheets = new ArrayList<StageScoreSheet>();
+		try {
+			// KORJATTAVA ORDER BY DATE
+			String queryString = "SELECT s FROM StageScoreSheet s WHERE s.competitor = :competitor AND s.stage.classifierStage IN :classifierStage "
+					+ "AND s.ipscDivision = :division ORDER BY s.lastModifiedInWinMSSDatabaseString DESC";
+					 
+			final TypedQuery<StageScoreSheet> query = entityManager.createQuery(queryString, StageScoreSheet.class);
+			query.setParameter("classifierStage", classifierStages);
+			query.setParameter("division", division);
+			query.setParameter("competitor", competitor);
+			query.setMaxResults(8);
+			scoreSheets = query.getResultList();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		return scoreSheets;
+	}
+	
 	public static void filterStageScoreSheetsExistingInDatabase(List<StageScoreSheet> sheets, EntityManager entityManager) {
 		
 		List<StageScoreSheet> removeScoreSheets = new ArrayList<StageScoreSheet>();
