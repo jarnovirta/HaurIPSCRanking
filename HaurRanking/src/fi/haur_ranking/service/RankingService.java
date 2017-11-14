@@ -1,6 +1,9 @@
 package fi.haur_ranking.service;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -48,10 +51,11 @@ public class RankingService {
 			}
 		
 		sortResultList(resultList);
+		convertAverageScoresToPercentage(resultList);
 		int position = 1;
 		for (Object[] rankingItem : resultList) {
 			Competitor competitor = (Competitor) rankingItem[0];
-			Double result = (Double) rankingItem[1];
+			Integer result = (Integer) rankingItem[1];
 			System.out.println(position + ". " + competitor.getFirstName() + " " + competitor.getLastName() + " / score : " + result);
 			position++;
 		}
@@ -101,6 +105,25 @@ public class RankingService {
 			unorderedResultList.remove(unorderedResultList.get(indexOfTopScore));
 		}
 		unorderedResultList.addAll(orderedResultList);
+	}
+	// Expects resultList to be ordered, top score first.
+	private static void convertAverageScoresToPercentage(List<Object[]> resultList) {
+		if (resultList != null && resultList.size() > 0 && (double) resultList.get(0)[1] > 0) {
+			double topScore = (double) resultList.get(0)[1];
+			for (Object[] resultLineItem : resultList) {
+				resultLineItem[1] = round(((double) resultLineItem[1]) / topScore * 100);
+			}
+		}
+	}
+	private static int round(double d){
+	    double dAbs = Math.abs(d);
+	    int i = (int) dAbs;
+	    double result = dAbs - (double) i;
+	    if(result<0.5){
+	        return d<0 ? -i : i;            
+	    }else{
+	        return d<0 ? -(i+1) : i+1;          
+	    }
 	}
 }
 

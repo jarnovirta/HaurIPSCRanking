@@ -107,19 +107,32 @@ public class RankingServiceTests {
 	}
 	
 	@Test
-	public void ortResultListTest() {
-		List<Object[]> unorderedResultList = new ArrayList<Object[]>();
-		unorderedResultList.add(new Object[] { benStoeger, 0.66260 });
-		unorderedResultList.add(new Object[] { jarnoVirta, 0.78049 });
-		unorderedResultList.add(new Object[] { jcTran, 0.72045 });
+	public void sortResultListTest() {
+		List<Object[]> unorderedResultList = getCompetitorAverageScoreList();
 		try {
 			Method method = RankingService.class.getDeclaredMethod("sortResultList", List.class);
 			method.setAccessible(true);
 			method.invoke(RankingService.class, unorderedResultList);
-			assertEquals(((Competitor) unorderedResultList.get(0)[0]).getFirstName(), "Jarno");
-			assertEquals(((Competitor) unorderedResultList.get(1)[0]).getFirstName(), "JC");
-			assertEquals(((Competitor) unorderedResultList.get(2)[0]).getFirstName(), "Ben");
+			assertEquals("Jarno", ((Competitor) unorderedResultList.get(0)[0]).getFirstName());
+			assertEquals("JC", ((Competitor) unorderedResultList.get(1)[0]).getFirstName());
+			assertEquals("Ben", ((Competitor) unorderedResultList.get(2)[0]).getFirstName());
 			
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	@Test
+	public void convertAverageScoresToPercentageTest() {
+		// 
+		List<Object[]> averageScoresList = getCompetitorAverageScoreList();
+		try {
+			Method method = RankingService.class.getDeclaredMethod("convertAverageScoresToPercentage", List.class);
+			method.setAccessible(true);
+			method.invoke(RankingService.class, averageScoresList);
+			assertEquals(100, (int) averageScoresList.get(0)[1]);
+			assertEquals(92, (int) averageScoresList.get(1)[1]);
+			assertEquals(85, (int) averageScoresList.get(2)[1]);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -131,5 +144,12 @@ public class RankingServiceTests {
 		for (double hf : CLC01HitFactors) sheets.add(new StageScoreSheet(hf, CLC01));
 		for (double hf : CLC02HitFactors) sheets.add(new StageScoreSheet(hf, CLC02));
 		return sheets;
+	}
+	private List<Object[]> getCompetitorAverageScoreList() {
+		List<Object[]> averageScoreList = new ArrayList<Object[]>();
+		averageScoreList.add(new Object[] { jarnoVirta, 0.78049 });
+		averageScoreList.add(new Object[] { jcTran, 0.72045 });
+		averageScoreList.add(new Object[] { benStoeger, 0.66260 });
+		return averageScoreList;
 	}
 }
