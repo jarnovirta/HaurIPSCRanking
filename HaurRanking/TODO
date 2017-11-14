@@ -1,10 +1,10 @@
 TODO:
 
-- P‰iv‰m‰‰r‰t Date muotoon ja niiden vertailu Date.
-- lis‰‰ toisen nimen alkukirjain kilpailijoille
-- Varmista ett‰ DQ kisaajat eiv‰t ole mukana
+- P√§iv√§m√§√§r√§t Date muotoon ja niiden vertailu Date.
+- lis√§√§ toisen nimen alkukirjain kilpailijoille
+- Varmista ett√§ DQ kisaajat eiv√§t ole mukana
 - katso service-repository koodinjako
-- tarkista viel‰ koko tuontilogiikka, eli onko lastmodified p‰iv‰n perusteella ok vai voiko k‰ytt‰‰ jotain muuta p‰iv‰‰.
-
-// RIITTƒISIK÷ PELKKƒ STAGEN NIMI, KISAN NIMI, AIKA FILTTER÷INTIIN, ILMAN TULOSKORTTEJA? VOIKO TULOSKORTTIEN FILTTER÷INTIƒ 
+- tarkista viel√§ koko tuontilogiikka, eli onko lastmodified p√§iv√§n perusteella ok vai voiko k√§ytt√§√§ jotain muuta p√§iv√§√§.
+- tietokantahakujen sivutus
+// RIITT√ÑISIK√ñ PELKK√Ñ STAGEN NIMI, KISAN NIMI, AIKA FILTTER√ñINTIIN, ILMAN TULOSKORTTEJA? VOIKO TULOSKORTTIEN FILTTER√ñINTI√Ñ 
 			// NOPETUTTAA?
