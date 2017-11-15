@@ -33,35 +33,8 @@ public class RankingServiceTests {
 	private List<StageScoreSheet> benStoegerLatestScoreSheets;
 	
 	public RankingServiceTests() {
-		
-		CLC01 = new Stage("CLC01", ClassifierStage.CLC01);
-		CLC02 = new Stage("CLC02", ClassifierStage.CLC02);
-		
-		jarnoVirta = new Competitor("Jarno", "Virta");
-		jerryMiculek = new Competitor("Jerry", "Miculek");
-		maxMichel = new Competitor("JC", "Tran");
-		benStoeger = new Competitor("Ben", "Stoeger");
-		
-		double[] jarnoVirtaCLC01HfList = { 4.0, 3.9 };
-		double[] jarnoVirtaCLC02HfList = { 6.2, 5.1 };
-		
-		double[] jerryMiculekCLC01HfList = { 3.2, 0.0 };
-		double[] jerryMiculekCLC02HfList = { 6.1 };
-		
-		double[] jcTranCLC01HfList = { 2.0, 3.1, 6.8 };
-		double[] jcTranCLC02HfList = { 4.1, 3.6 };
-		 
-		double[] benStoegerCLC01HfList = { 4.1, 3.2,5.5, 2.3, 0.1521 };
-		double[] benStoegerCLC02HfList = { 3.3, 2.1, 1.1, 3.4 };
-		
-		jarnoVirtaLatestScoreSheets = getScoreSheetList(jarnoVirtaCLC01HfList, jarnoVirtaCLC02HfList);
-		jerryMiculekLatestScoreSheets = getScoreSheetList(jerryMiculekCLC01HfList, jerryMiculekCLC02HfList);
-		maxMichelLatestScoreSheets = getScoreSheetList(jcTranCLC01HfList, jcTranCLC01HfList);
-		benStoegerLatestScoreSheets = getScoreSheetList(benStoegerCLC01HfList, benStoegerCLC02HfList);
-		
-		classifierStageTopResultAverages = new HashMap<ClassifierStage, Double>();
-		classifierStageTopResultAverages.put(CLC01.getClassifierStage(), 6.15);
-		classifierStageTopResultAverages.put(CLC02.getClassifierStage(), 6.15);
+		createTestData();
+
 	}
 	
 	@Test
@@ -83,7 +56,6 @@ public class RankingServiceTests {
 			
 		}
 		catch (Exception e) {
-			
 		}
 	}
 	
@@ -137,5 +109,35 @@ public class RankingServiceTests {
 		averageScoreList.add(new Object[] { maxMichel, 0.72045 });
 		averageScoreList.add(new Object[] { benStoeger, 0.66260 });
 		return averageScoreList;
+	}
+	private void createTestData() {
+		CLC01 = new Stage("CLC01", ClassifierStage.CLC01);
+		CLC02 = new Stage("CLC02", ClassifierStage.CLC02);
+		
+		jarnoVirta = new Competitor("Jarno", "Virta");
+		jerryMiculek = new Competitor("Jerry", "Miculek");
+		maxMichel = new Competitor("JC", "Tran");
+		benStoeger = new Competitor("Ben", "Stoeger");
+		
+		double[] jarnoVirtaCLC01HfList = { 4.0, 3.9 };
+		double[] jarnoVirtaCLC02HfList = { 6.2, 5.1 };
+		
+		double[] jerryMiculekCLC01HfList = { 3.2, 0.0 };
+		double[] jerryMiculekCLC02HfList = { 6.1 };
+		
+		double[] maxMichelCLC01HfList = { 2.0, 3.1, 6.8 };
+		double[] maxMichelCLC02HfList = { 4.1, 3.6 };
+		 
+		double[] benStoegerCLC01HfList = { 4.1, 3.2,5.5, 2.3, 0.1521 };
+		double[] benStoegerCLC02HfList = { 3.3, 2.1, 1.1, 3.4 };
+		
+		jarnoVirtaLatestScoreSheets = getScoreSheetList(jarnoVirtaCLC01HfList, jarnoVirtaCLC02HfList);
+		jerryMiculekLatestScoreSheets = getScoreSheetList(jerryMiculekCLC01HfList, jerryMiculekCLC02HfList);
+		maxMichelLatestScoreSheets = getScoreSheetList(maxMichelCLC01HfList, maxMichelCLC02HfList);
+		benStoegerLatestScoreSheets = getScoreSheetList(benStoegerCLC01HfList, benStoegerCLC02HfList);
+		
+		classifierStageTopResultAverages = new HashMap<ClassifierStage, Double>();
+		classifierStageTopResultAverages.put(CLC01.getClassifierStage(), 6.15);
+		classifierStageTopResultAverages.put(CLC02.getClassifierStage(), 6.15);
 	}
 }

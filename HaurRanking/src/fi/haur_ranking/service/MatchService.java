@@ -49,7 +49,7 @@ public class MatchService {
 				if (ClassifierStage.contains(stage.getName())) stage.setClassifierStage(ClassifierStage.parseString(stage.getName()));
 				
 				stage.setStageScoreSheets(WinMSSStageScoreSheetRepository.find(match, stage));
-				StageScoreSheetRepository.filterStageScoreSheetsExistingInDatabase(stage.getStageScoreSheets(), entityManager);
+				StageScoreSheetService.filterStageScoreSheetsExistingInDatabase(stage.getStageScoreSheets(), entityManager);
 								
 				// Handle new stage score sheets 
 				if (stage.getStageScoreSheets().size() > 0) {

@@ -44,7 +44,7 @@ public class RankingService {
 		List<Object[]> resultList = new ArrayList<Object[]>();
 		for (Competitor competitor : allCompetitors) {
 				List<StageScoreSheet> competitorLatestScoreSheets = 
-						StageScoreSheetRepository.findClassifierStageResultsForCompetitor(competitor, division, 
+						StageScoreSheetService.findClassifierStageResultsForCompetitor(competitor, division, 
 								classifierStageTopResultAvgerages.keySet(), entityManager);
 				double competitorRelativeScore = calculateCompetitorTopScoresAverage(competitorLatestScoreSheets, classifierStageTopResultAvgerages);
 				if (competitorRelativeScore >= 0) resultList.add(new Object[]{competitor, competitorRelativeScore});
