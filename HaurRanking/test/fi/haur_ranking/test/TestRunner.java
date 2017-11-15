@@ -7,7 +7,7 @@ import fi.haur_ranking.test.RankingServiceTests;
 
 public class TestRunner {
 	public static void main(String[] args) {
-	  Result result = JUnitCore.runClasses(RankingServiceTests.class);
+	  Result result = JUnitCore.runClasses(RankingServiceTests.class, StageScoreSheetServiceTests.class);
 	  for (Failure failure : result.getFailures()) {
 	    System.out.println(failure.toString());
 	  }

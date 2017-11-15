@@ -49,7 +49,8 @@ public class StageScoreSheet {
 	
 	public StageScoreSheet() { }
 	
-	public StageScoreSheet(double hitFactor, Stage stage) {
+	public StageScoreSheet(Competitor competitor, double hitFactor, Stage stage) {
+		this.competitor = competitor;
 		this.hitFactor = hitFactor;
 		this.stage = stage;
 	}

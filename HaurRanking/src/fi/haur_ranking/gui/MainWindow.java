@@ -26,6 +26,7 @@ import javax.swing.plaf.FontUIResource;
 
 import fi.haur_ranking.domain.DatabaseStatistics;
 import fi.haur_ranking.gui.filters.WinMSSFileFilter;
+import fi.haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
 import fi.haur_ranking.repository.winmss_repository.WinMssDatabaseUtil;
 import fi.haur_ranking.service.DatabaseStatisticsService;
 import fi.haur_ranking.service.MatchService;
@@ -74,6 +75,7 @@ public class MainWindow {
 		mainFrame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent windowEvent){
 			WinMssDatabaseUtil.closeConnection();
+			HaurRankingDatabaseUtils.closeEntityManagerFactories();
 			System.exit(0);
 			}        
 		});    

@@ -8,17 +8,25 @@ public class HaurRankingDatabaseUtils {
 	private static EntityManagerFactory productionEntityManagerFactory;
 	private static EntityManagerFactory testsEntityManagerFactory;
 		static {
-	        try {
-	        	productionEntityManagerFactory = Persistence.createEntityManagerFactory("fi.haur_ranking.jpa");
-	        	testsEntityManagerFactory = Persistence.createEntityManagerFactory("fi.haur_ranking_testdatabase.jpa");
-	        } catch(ExceptionInInitializerError e) {
-	            throw e;
-	        }
+			initialize();
 	    }
 	public static EntityManager createEntityManager() {    
 		return productionEntityManagerFactory.createEntityManager();
 	}
+	
 	public static EntityManager createTestsEntityManager() {    
 		return testsEntityManagerFactory.createEntityManager();
-	}	
+	}
+	public static void closeEntityManagerFactories() {
+		if (productionEntityManagerFactory != null) productionEntityManagerFactory.close();
+		if (testsEntityManagerFactory != null) testsEntityManagerFactory.close();
+	}
+	public static void initialize() {
+        try {
+        	productionEntityManagerFactory = Persistence.createEntityManagerFactory("fi.haur_ranking.jpa");
+        	testsEntityManagerFactory = Persistence.createEntityManagerFactory("fi.haur_ranking_testdatabase.jpa");
+        } catch(ExceptionInInitializerError e) {
+            throw e;
+        }
+	}
 }

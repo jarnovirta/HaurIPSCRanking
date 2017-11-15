@@ -1,29 +1,57 @@
 package fi.haur_ranking.test;
 
-import java.util.List;
-import java.util.Set;
-
 import javax.persistence.EntityManager;
 
-import fi.haur_ranking.domain.ClassifierStage;
-import fi.haur_ranking.domain.Competitor;
-import fi.haur_ranking.domain.IPSCDivision;
-import fi.haur_ranking.domain.StageScoreSheet;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import fi.haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
 
 public class StageScoreSheetServiceTests {
+	EntityManager entityManager;
+		
+    @Before
+    public void setUpDB() {
+    	HaurRankingDatabaseUtils.initialize();
+    	entityManager = HaurRankingDatabaseUtils.createTestsEntityManager();
+    	addData();
+    }
 
-//	public static List<StageScoreSheet> findAllFromHaurRankingDB() {
-//		return StageScoreSheetRepository.findAll();
-//	}
-//	public static int getTotalStageScoreSheetCount() {
-//		return StageScoreSheetRepository.getTotalStageScoreSheetCount();
-//	}
+    @After
+    public void tearDown() {
+        try {
+        	entityManager.getTransaction().begin();
+        	entityManager.createQuery("DELETE FROM Match m").executeUpdate();
+        	entityManager.createQuery("DELETE FROM Stage s").executeUpdate();
+            entityManager.createQuery("DELETE FROM StageScoreSheet s").executeUpdate();
+            entityManager.createQuery("DELETE FROM Competitor c").executeUpdate();
+            entityManager.getTransaction().commit();
+            HaurRankingDatabaseUtils.closeEntityManagerFactories();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void addData() {
+        
+    }
+
 	
-//	REPO:
-//		
-//	public static List<StageScoreSheet> findClassifierStageResultsForCompetitor(Competitor competitor, IPSCDivision division, Set<ClassifierStage> classifierStages, 
-//				EntityManager entityManager) {
-//	
-//	public static void filterStageScoreSheetsExistingInDatabase(List<StageScoreSheet> sheets, EntityManager entityManager) {
-//}
+	@Test
+	public void findAllFromHaurRankingDBTest() {
+	}
+	@Test
+	public void getTotalStageScoreSheetCountTest() {
+		
+	}
+	@Test
+	public void findClassifierStageResultsForCompetitorTest() {
+		
+	}
+	@Test
+	public void filterStageScoreSheetsExistingInDatabase() {
+		
+	}
+
 }
