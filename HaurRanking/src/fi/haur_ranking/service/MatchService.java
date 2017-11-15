@@ -26,7 +26,11 @@ public class MatchService {
 		entityManager.close();
 		return count;
 	}
-	
+	public static void persist(Match match) {
+		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
+		MatchRepository.persist(match, entityManager);
+		entityManager.close();
+	}
 	public static void importWinMssDatabase(String winMssDbLocation) {
 		
 		System.out.println("\n*** STARTING IMPORT");

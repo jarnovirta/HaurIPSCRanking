@@ -13,12 +13,11 @@ import fi.haur_ranking.domain.StageScoreSheet;
 
 public class TestUtils {
 
-	protected static List<Match> createTestMatches() {
-		List<Match> testMatches = new ArrayList<Match>();
+	protected static Match createTestMatch() {
 		Match testMatchCLC01 = new Match();
 		testMatchCLC01.setName("Test Match with CLC01 and CLC02");
 		testMatchCLC01.setStages(createTestStages());
-		return testMatches;
+		return testMatchCLC01;
 	}
 	
 	protected static List<Stage> createTestStages() {
@@ -58,15 +57,16 @@ public class TestUtils {
 	}
 	protected static List<StageScoreSheet> getSheetsForCompetitorAndClassifier(String firstName, ClassifierStage classifierStage) {
 		if (firstName.equals("Jarno")) {
-			if (classifierStage.equals(ClassifierStage.CLC01)) {
+			if (classifierStage == ClassifierStage.CLC01) {
 				return createScoreSheetList(new Competitor("Jarno", "Virta"), 
 						new double[] { 4.0, 3.9 }, ClassifierStage.CLC01);
 			}
-			else createScoreSheetList(new Competitor("Jarno", "Virta"), 
-					new double[] { 6.2, 5.1 }, ClassifierStage.CLC02);
+			else 
+				return createScoreSheetList(new Competitor("Jarno", "Virta"),
+						new double[] { 6.2, 5.1 }, ClassifierStage.CLC02);
 		}
 		if (firstName.equals("Jerry")) {
-			if (classifierStage.equals(ClassifierStage.CLC01)) {
+			if (classifierStage == ClassifierStage.CLC01) {
 				return createScoreSheetList(new Competitor("Jerry", "Miculek"), 
 						new double[] { 3.2, 0.0 }, ClassifierStage.CLC01);
 			}
@@ -74,7 +74,7 @@ public class TestUtils {
 					new double[] { 6.1 }, ClassifierStage.CLC02);
 		}
 		if (firstName.equals("Max")) {
-			if (classifierStage.equals(ClassifierStage.CLC01)) {
+			if (classifierStage == ClassifierStage.CLC01) {
 				return createScoreSheetList(new Competitor("Max", "Michel"), 
 						new double[] { 2.0, 3.1, 6.8 }, ClassifierStage.CLC01);
 			}
@@ -82,14 +82,14 @@ public class TestUtils {
 					new double[] { 4.1, 3.6 }, ClassifierStage.CLC02);
 			}
 		else {
-			if (classifierStage.equals(ClassifierStage.CLC01)) {
+			if (classifierStage == ClassifierStage.CLC01) {
 					return createScoreSheetList(new Competitor("Ben", "Stoeger"), 
 							new double[] { 4.1, 3.2,5.5, 2.3, 0.15 }, ClassifierStage.CLC01);
 			}
-			else createScoreSheetList(new Competitor("Ben", "Stoeger"), 
+			else return createScoreSheetList(new Competitor("Ben", "Stoeger"), 
 					new double[] { 3.3, 2.1, 1.1, 3.4 }, ClassifierStage.CLC02);
 		}
-		return null;
+		
 	}
 	
 	protected static List<StageScoreSheet> createScoreSheetList(Competitor competitor, double[] hitFactors, ClassifierStage classifier) {

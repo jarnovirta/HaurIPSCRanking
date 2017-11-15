@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import fi.haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
+import fi.haur_ranking.service.MatchService;
 
 public class StageScoreSheetServiceTests {
 	EntityManager entityManager;
@@ -20,6 +21,7 @@ public class StageScoreSheetServiceTests {
 
     @After
     public void tearDown() {
+    	System.out.println("\nDatabase service tests done. Clearing database");
         try {
         	entityManager.getTransaction().begin();
         	entityManager.createQuery("DELETE FROM Match m").executeUpdate();
@@ -34,24 +36,26 @@ public class StageScoreSheetServiceTests {
     }
 
     private void addData() {
-        
+    	System.out.println("\nStarting database service tests. Adding data to database.");
+        MatchService.persist(TestUtils.createTestMatch());
     }
 
 	
 	@Test
 	public void findAllFromHaurRankingDBTest() {
+		System.out.println("Test ok");
 	}
-	@Test
-	public void getTotalStageScoreSheetCountTest() {
-		
-	}
-	@Test
-	public void findClassifierStageResultsForCompetitorTest() {
-		
-	}
-	@Test
-	public void filterStageScoreSheetsExistingInDatabase() {
-		
-	}
+//	@Test
+//	public void getTotalStageScoreSheetCountTest() {
+//		
+//	}
+//	@Test
+//	public void findClassifierStageResultsForCompetitorTest() {
+//		
+//	}
+//	@Test
+//	public void filterStageScoreSheetsExistingInDatabase() {
+//		
+//	}
 
 }
