@@ -5,15 +5,20 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 public class HaurRankingDatabaseUtils {
-	private static EntityManagerFactory emf;
+	private static EntityManagerFactory productionEntityManagerFactory;
+	private static EntityManagerFactory testsEntityManagerFactory;
 		static {
 	        try {
-	        	emf = Persistence.createEntityManagerFactory("fi.haur_ranking.jpa");
+	        	productionEntityManagerFactory = Persistence.createEntityManagerFactory("fi.haur_ranking.jpa");
+	        	testsEntityManagerFactory = Persistence.createEntityManagerFactory("fi.haur_ranking_testdatabase.jpa");
 	        } catch(ExceptionInInitializerError e) {
 	            throw e;
 	        }
 	    }
 	public static EntityManager createEntityManager() {    
-		return emf.createEntityManager();
+		return productionEntityManagerFactory.createEntityManager();
 	}
+	public static EntityManager createTestsEntityManager() {    
+		return testsEntityManagerFactory.createEntityManager();
+	}	
 }

@@ -7,12 +7,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+
 import org.junit.Test;
 
 import fi.haur_ranking.domain.ClassifierStage;
 import fi.haur_ranking.domain.Competitor;
 import fi.haur_ranking.domain.Stage;
 import fi.haur_ranking.domain.StageScoreSheet;
+import fi.haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
 import fi.haur_ranking.service.RankingService;
 
 public class RankingServiceTests {

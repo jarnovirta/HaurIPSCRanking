@@ -17,33 +17,19 @@
 			<property name="eclipselink.logging.file" value="output.log"/>
 		</properties>
 	</persistence-unit>
-</persistence>
-<!-- 
-
-
-<?xml version="1.0" encoding="UTF-8"?>
-
-	<persistence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
-    version="2.0" xmlns="http://java.sun.com/xml/ns/persistence">
-
-	<persistence-unit name="HaurRanking" transaction-type="RESOURCE_LOCAL">
+	<persistence-unit name="fi.haur_ranking_testdatabase.jpa" transaction-type="RESOURCE_LOCAL">
 		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-		<class>fi.haur_ranking.domain.StageScoreSheet</class>
+		<exclude-unlisted-classes>false</exclude-unlisted-classes>
 		<properties>
-			<property name="showSql" value="true" />
-			
-			<property name="javax.persistence.jdbc.driver" value="org.apache.derby.jdbc.EmbeddedDriver" />
+			<!-- <property name="showSql" value="true" /> -->
+			<property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbc.JDBCDriver" />
 			<property name="javax.persistence.jdbc.url"
-				value="jdbc:hsqldb:file:data;create=true" />
-			<property name="javax.persistence.jdbc.user" value="" />
+				value="jdbc:hsqldb:file:test\data\haurrankingdb;shutdown=true;hsqldb.default_table_type=cached" />
+			<property name="javax.persistence.jdbc.user" value="sa" />
 			<property name="javax.persistence.jdbc.password" value="" />
 			<property name="eclipselink.ddl-generation" value="create-or-extend-tables" />
 			<property name="eclipselink.ddl-generation.output-mode" value="database" />
-			<property name="eclipselink.weaving" value="false" />
-			<property name="eclipselink.logging.level" value="SEVERE" />
-			<property name="eclipselink.logging.level.sql" value="SEVERE" />
-			<property name="eclipselink.target-database" value="MySQL4"/> 
+			<property name="eclipselink.logging.file" value="output.log"/>
 		</properties>
-	</persistence-unit> 
-</persistence>-->
+	</persistence-unit>
+</persistence>
