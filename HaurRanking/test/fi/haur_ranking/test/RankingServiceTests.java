@@ -20,13 +20,13 @@ public class RankingServiceTests {
 	private Stage CLC02;
 	private Competitor jarnoVirta;
 	private Competitor jerryMiculek;
-	private Competitor jcTran;
+	private Competitor maxMichel;
 	private Competitor benStoeger;
 	
 	Map<ClassifierStage, Double> classifierStageTopResultAverages;
 	private List<StageScoreSheet> jarnoVirtaLatestScoreSheets;
 	private List<StageScoreSheet> jerryMiculekLatestScoreSheets;
-	private List<StageScoreSheet> jcTranLatestScoreSheets;
+	private List<StageScoreSheet> maxMichelLatestScoreSheets;
 	private List<StageScoreSheet> benStoegerLatestScoreSheets;
 	
 	public RankingServiceTests() {
@@ -36,7 +36,7 @@ public class RankingServiceTests {
 		
 		jarnoVirta = new Competitor("Jarno", "Virta");
 		jerryMiculek = new Competitor("Jerry", "Miculek");
-		jcTran = new Competitor("JC", "Tran");
+		maxMichel = new Competitor("JC", "Tran");
 		benStoeger = new Competitor("Ben", "Stoeger");
 		
 		double[] jarnoVirtaCLC01HfList = { 4.0, 3.9 };
@@ -53,7 +53,7 @@ public class RankingServiceTests {
 		
 		jarnoVirtaLatestScoreSheets = getScoreSheetList(jarnoVirtaCLC01HfList, jarnoVirtaCLC02HfList);
 		jerryMiculekLatestScoreSheets = getScoreSheetList(jerryMiculekCLC01HfList, jerryMiculekCLC02HfList);
-		jcTranLatestScoreSheets = getScoreSheetList(jcTranCLC01HfList, jcTranCLC01HfList);
+		maxMichelLatestScoreSheets = getScoreSheetList(jcTranCLC01HfList, jcTranCLC01HfList);
 		benStoegerLatestScoreSheets = getScoreSheetList(benStoegerCLC01HfList, benStoegerCLC02HfList);
 		
 		classifierStageTopResultAverages = new HashMap<ClassifierStage, Double>();
@@ -131,7 +131,7 @@ public class RankingServiceTests {
 	private List<Object[]> getCompetitorAverageScoreList() {
 		List<Object[]> averageScoreList = new ArrayList<Object[]>();
 		averageScoreList.add(new Object[] { jarnoVirta, 0.78049 });
-		averageScoreList.add(new Object[] { jcTran, 0.72045 });
+		averageScoreList.add(new Object[] { maxMichel, 0.72045 });
 		averageScoreList.add(new Object[] { benStoeger, 0.66260 });
 		return averageScoreList;
 	}
