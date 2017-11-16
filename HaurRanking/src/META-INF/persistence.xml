@@ -15,21 +15,7 @@
 			<property name="eclipselink.ddl-generation" value="create-or-extend-tables" />
 			<property name="eclipselink.ddl-generation.output-mode" value="database" />
 			<property name="eclipselink.logging.file" value="output.log"/>
-		</properties>
-	</persistence-unit>
-	<persistence-unit name="fi.haur_ranking_testdatabase.jpa" transaction-type="RESOURCE_LOCAL">
-		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-		<exclude-unlisted-classes>false</exclude-unlisted-classes>
-		<properties>
-			<!-- <property name="showSql" value="true" /> -->
-			<property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbc.JDBCDriver" />
-			<property name="javax.persistence.jdbc.url"
-				value="jdbc:hsqldb:file:test\data\haurrankingdb;shutdown=true;hsqldb.default_table_type=cached" />
-			<property name="javax.persistence.jdbc.user" value="sa" />
-			<property name="javax.persistence.jdbc.password" value="" />
-			<property name="eclipselink.ddl-generation" value="create-or-extend-tables" />
-			<property name="eclipselink.ddl-generation.output-mode" value="database" />
-			<property name="eclipselink.logging.file" value="output.log"/>
+			<property name="PERSISTENCE_UNIT_NAME" value="fi.haur_ranking.jpa"/>
 		</properties>
 	</persistence-unit>
 </persistence>

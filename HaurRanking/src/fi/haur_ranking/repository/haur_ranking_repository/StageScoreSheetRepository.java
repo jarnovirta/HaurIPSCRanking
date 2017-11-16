@@ -50,6 +50,7 @@ public class StageScoreSheetRepository {
 	public static List<StageScoreSheet> findClassifierStageResultsForCompetitor(Competitor competitor, IPSCDivision division, Set<ClassifierStage> classifierStages, 
 			EntityManager entityManager) {
 		List<StageScoreSheet> scoreSheets = new ArrayList<StageScoreSheet>();
+		
 		try {
 			// KORJATTAVA ORDER BY DATE
 			String queryString = "SELECT s FROM StageScoreSheet s WHERE s.competitor = :competitor AND s.stage.classifierStage IN :classifierStage "
@@ -63,6 +64,7 @@ public class StageScoreSheetRepository {
 			scoreSheets = query.getResultList();
 		}
 		catch (Exception e) {
+			System.out.println("ERROR in scoresheetrepo");
 			e.printStackTrace();
 			return null;
 		}

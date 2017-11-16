@@ -1,16 +1,11 @@
 package fi.haur_ranking.repository.haur_ranking_repository;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
-import fi.haur_ranking.domain.ClassifierStage;
 import fi.haur_ranking.domain.Competitor;
-import fi.haur_ranking.domain.IPSCDivision;
-import fi.haur_ranking.domain.StageScoreSheet;
 
 public class CompetitorRepository {
 	public static int getTotalCompetitorCount(EntityManager entityManager) {

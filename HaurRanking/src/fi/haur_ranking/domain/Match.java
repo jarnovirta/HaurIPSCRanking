@@ -37,6 +37,10 @@ public class Match {
 		this.winMssDateString = winMssDateString;
 		
 	}
+	public Match(String matchName, String winMssDateString) {
+		this.name = matchName;
+		this.winMssDateString = winMssDateString;
+	}
 	
 	public Long getWinMssMatchId() {
 		return winMssMatchId;

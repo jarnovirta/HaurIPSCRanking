@@ -35,7 +35,8 @@ public class Stage {
 	
 	public Stage() { }
 	
-	public Stage(String name, ClassifierStage classifierStage) {
+	public Stage(Match match, String name, ClassifierStage classifierStage) {
+		this.match = match;
 		this.name = name;
 		this.classifierStage = classifierStage;
 	}

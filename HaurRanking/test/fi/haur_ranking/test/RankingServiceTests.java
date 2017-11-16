@@ -2,25 +2,17 @@ package fi.haur_ranking.test;
 import static org.junit.Assert.assertEquals;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.EntityManager;
-
 import org.junit.Test;
 
-import fi.haur_ranking.domain.ClassifierStage;
 import fi.haur_ranking.domain.Competitor;
-import fi.haur_ranking.domain.Stage;
-import fi.haur_ranking.domain.StageScoreSheet;
-import fi.haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
+import fi.haur_ranking.domain.Match;
 import fi.haur_ranking.service.RankingService;
 
 public class RankingServiceTests {
 	public RankingServiceTests() {
-
 
 	}
 	
@@ -32,15 +24,15 @@ public class RankingServiceTests {
 			
 			// Test for competitor with required minimum of four score sheets
 			double jarnoTopScoresAverage = (double) method.invoke(RankingService.class, 
-					TestUtils.getAllStageScoreSheetsForCompetitor("Jarno"), TestUtils.getAverageOfTopTwoForStage());
+					TestUtils.getAllStageScoreSheetsForCompetitor(new Match("JarnoTestMatch", "1.1.2017"), new Competitor("Jarno", "Virta")), TestUtils.getAverageOfTopTwoForStage());
 			assertEquals("Top scores average for test competitor Jarno must be 0.780",  0.780, jarnoTopScoresAverage, 0.001);
 			// Test for competitor with three score sheets instead of the required four
 			double jerryTopScoresAverage = (double) method.invoke(RankingService.class, 
-					TestUtils.getAllStageScoreSheetsForCompetitor("Jerry"), TestUtils.getAverageOfTopTwoForStage());
+					TestUtils.getAllStageScoreSheetsForCompetitor(new Match("JerryTestMatch", "2.4.2017"), new Competitor("Jerry", "Miculek")), TestUtils.getAverageOfTopTwoForStage());
 			assertEquals("calculateCompetitorRelativeScores method must return -1 for competitor Jerry (not enough score sheets)",  -1, jerryTopScoresAverage, 0.0);
 			// Test for competitor with more than eight score sheets. Only eight should count.
 			double benTopScoresAverage = (double) method.invoke(RankingService.class, 
-					TestUtils.getAllStageScoreSheetsForCompetitor("Ben"), TestUtils.getAverageOfTopTwoForStage());
+					TestUtils.getAllStageScoreSheetsForCompetitor(new Match("BenTestMatch", "5.5.2017"), new Competitor("Ben", "Stoeger")), TestUtils.getAverageOfTopTwoForStage());
 			assertEquals("Top scores average for competitor Ben must be 0.663 (competitor with more than 8 score sheets, only 8 count).",  
 					0.663, benTopScoresAverage, 0.001);
 			
@@ -71,7 +63,7 @@ public class RankingServiceTests {
 	}
 	@Test
 	public void convertAverageScoresToPercentageTest() {
-		// 
+		 
 		List<Object[]> averageScoresList = TestUtils.getCompetitorAverageScoreList();
 		try {
 			Method method = RankingService.class.getDeclaredMethod("convertAverageScoresToPercentage", List.class);

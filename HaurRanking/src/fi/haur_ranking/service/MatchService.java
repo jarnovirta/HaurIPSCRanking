@@ -2,6 +2,7 @@ package fi.haur_ranking.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 
@@ -13,7 +14,6 @@ import fi.haur_ranking.domain.StageScoreSheet;
 import fi.haur_ranking.repository.haur_ranking_repository.CompetitorRepository;
 import fi.haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
 import fi.haur_ranking.repository.haur_ranking_repository.MatchRepository;
-import fi.haur_ranking.repository.haur_ranking_repository.StageScoreSheetRepository;
 import fi.haur_ranking.repository.winmss_repository.WinMSSMatchRepository;
 import fi.haur_ranking.repository.winmss_repository.WinMSSStageRepository;
 import fi.haur_ranking.repository.winmss_repository.WinMSSStageScoreSheetRepository;
@@ -26,10 +26,13 @@ public class MatchService {
 		entityManager.close();
 		return count;
 	}
-	public static void persist(Match match) {
+	public static Match persist(Match match) {
 		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
-		MatchRepository.persist(match, entityManager);
+		entityManager.getTransaction().begin();
+		Match dbMatch = MatchRepository.save(match, entityManager);
+		entityManager.getTransaction().commit();
 		entityManager.close();
+		return dbMatch;
 	}
 	public static void importWinMssDatabase(String winMssDbLocation) {
 		
@@ -88,7 +91,7 @@ public class MatchService {
 			}
 			else {
 				
-				MatchRepository.persist(newMatch, entityManager);
+				MatchRepository.save(newMatch, entityManager);
 			}
 		}
 		

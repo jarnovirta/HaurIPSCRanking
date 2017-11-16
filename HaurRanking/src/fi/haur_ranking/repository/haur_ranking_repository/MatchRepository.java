@@ -8,17 +8,17 @@ import javax.persistence.TypedQuery;
 import fi.haur_ranking.domain.Match;
 
 public class MatchRepository {
-	public static Match persist(Match match, EntityManager entityManager) { 
+	public static Match save(Match match, EntityManager entityManager) { 
 		try {
-			entityManager.persist(match);
-			return find(match, entityManager);
+			return entityManager.merge(match);
 		}
 		catch (Exception e) {
+			
 			e.printStackTrace();
 			return null;
 		}
 	}
- 
+	
 	public static Match find(Match match, EntityManager entityManager) {
 		try {
 			String queryString = "SELECT m FROM Match m WHERE m.name = :name AND m.winMssDateString = :dateString";
@@ -27,7 +27,9 @@ public class MatchRepository {
 			query.setParameter("dateString", match.getWinMssDateString());
 			List<Match> result = query.getResultList();
 			if (result.size() == 0) return null;
-			else return result.get(0);
+			else {
+				return result.get(0);
+			}
 		}
 		catch (Exception e) {
 			e.printStackTrace();

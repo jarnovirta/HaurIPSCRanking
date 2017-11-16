@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name="StageScoreSheet")
@@ -23,6 +24,7 @@ public class StageScoreSheet {
 	private Long winMssPrimaryKey;
 	private Long winMssStageId;
 	private Long winMssMemberId;
+	
 	@ManyToOne
 	private Stage stage;
 	private int aHits;
@@ -49,10 +51,11 @@ public class StageScoreSheet {
 	
 	public StageScoreSheet() { }
 	
-	public StageScoreSheet(Competitor competitor, double hitFactor, Stage stage) {
+	public StageScoreSheet(Competitor competitor, double hitFactor, Stage stage, IPSCDivision division) {
 		this.competitor = competitor;
 		this.hitFactor = hitFactor;
 		this.stage = stage;
+		this.ipscDivision = division;
 	}
 	public Long getId() {
 		return id;
