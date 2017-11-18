@@ -1,10 +1,26 @@
 package fi.haur_ranking.test;
 
+import static org.junit.Assert.assertEquals;
+
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class RankingServiceTests {
-	public RankingServiceTests() {
+import fi.haur_ranking.domain.DivisionRanking;
+import fi.haur_ranking.domain.DivisionRankingLine;
+import fi.haur_ranking.domain.IPSCDivision;
+import fi.haur_ranking.domain.Ranking;
+import fi.haur_ranking.service.RankingService;
 
+public class RankingServiceTests {
+	@AfterClass
+	public static void cleanup() {
+		TestUtils.cleanup();
+	}
+
+	@BeforeClass
+	public static void init() {
+		TestUtils.setupDatabase();
 	}
 
 	@Test
@@ -66,6 +82,22 @@ public class RankingServiceTests {
 		// } catch (Exception e) {
 		// e.printStackTrace();
 		// }
+	}
+
+	@Test
+	public void generateRankingTest() {
+		System.out.println("Generating ranking");
+		Ranking ranking = RankingService.generateRanking();
+		System.out.println("Done");
+		DivisionRanking productionRanking = ranking.getDivisionRankings().get(IPSCDivision.PRODUCTION);
+		DivisionRankingLine firstLine = productionRanking.getRankingLines().get(0);
+		for (DivisionRankingLine line : productionRanking.getRankingLines()) {
+			System.out.println(line.getCompetitor().getFirstName() + " " + line.getBestResultsAverage());
+		}
+		assertEquals("Jerry Miculek should be #1 for Production Division ranking.", "Jerry",
+				firstLine.getCompetitor().getFirstName());
+		assertEquals("Jerry Miculek should have bestResultsAverage of 1,14 for Production Division.", 1.14492,
+				firstLine.getBestResultsAverage(), 1.01);
 	}
 
 	@Test

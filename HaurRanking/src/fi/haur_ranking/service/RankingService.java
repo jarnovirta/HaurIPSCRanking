@@ -15,7 +15,7 @@ import fi.haur_ranking.domain.StageScoreSheet;
 
 public class RankingService {
 	private static double calculateCompetitorTopScoresAverage(List<StageScoreSheet> competitorLatestScoreSheets,
-			Map<ClassifierStage, Double> classifierStageTopResultAvgerages) {
+			Map<ClassifierStage, Double> classifierStageTopResultAverages) {
 
 		// If minimum 4 classifier results for competitor, calculate relative
 		// score for each of 8 latest results (competitor hit factor
@@ -24,14 +24,24 @@ public class RankingService {
 
 		if (competitorLatestScoreSheets.size() >= 4) {
 			List<Double> competitorRelativeScores = new ArrayList<Double>();
-			int resultCounter = 0;
+
 			for (StageScoreSheet sheet : competitorLatestScoreSheets) {
 				ClassifierStage classifierStage = sheet.getStage().getClassifierStage();
-				double classifierStageTopTwoResultsAverage = classifierStageTopResultAvgerages.get(classifierStage);
-				competitorRelativeScores.add(sheet.getHitFactor() / classifierStageTopTwoResultsAverage);
-				if (++resultCounter == 8)
-					continue;
+				if (classifierStageTopResultAverages.keySet().contains(classifierStage)) {
+
+					double classifierStageTopTwoResultsAverage = classifierStageTopResultAverages.get(classifierStage);
+
+					competitorRelativeScores.add(sheet.getHitFactor() / classifierStageTopTwoResultsAverage);
+				}
+				if (sheet.getCompetitor().getFirstName().equals("Jarno")) {
+					System.out.println("JARNON SCORET:");
+					Collections.sort(competitorRelativeScores);
+					Collections.reverse(competitorRelativeScores);
+					for (Double score : competitorRelativeScores)
+						System.out.println(score);
+				}
 			}
+
 			Collections.sort(competitorRelativeScores);
 			Collections.reverse(competitorRelativeScores);
 			if (competitorRelativeScores.size() > 4) {
@@ -64,8 +74,13 @@ public class RankingService {
 
 		Map<ClassifierStage, Double> classifierStageTopResultAvgerages = StageService
 				.getClassifierStagesWithTwoOrMoreResults(division);
+		for (ClassifierStage stage : classifierStageTopResultAvgerages.keySet()) {
+			System.out.println("Classifier: " + stage.toString() + " Top two average: "
+					+ classifierStageTopResultAvgerages.get(stage));
+		}
 		List<DivisionRankingLine> resultList = new ArrayList<DivisionRankingLine>();
 		List<Competitor> competitors = CompetitorService.findAll();
+
 		for (Competitor competitor : competitors) {
 			List<StageScoreSheet> scoreSheets = StageScoreSheetService.findClassifierStageResultsForCompetitor(
 					competitor.getFirstName(), competitor.getLastName(), division);
@@ -85,7 +100,7 @@ public class RankingService {
 	}
 
 	public static Ranking generateRanking() {
-
+		System.out.println("Ranking service start");
 		Ranking ranking = new Ranking();
 
 		for (IPSCDivision division : IPSCDivision.values()) {

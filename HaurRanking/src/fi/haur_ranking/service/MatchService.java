@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 
 import fi.haur_ranking.domain.ClassifierStage;
+import fi.haur_ranking.domain.Competitor;
 import fi.haur_ranking.domain.DivisionRanking;
 import fi.haur_ranking.domain.DivisionRankingLine;
 import fi.haur_ranking.domain.IPSCDivision;
@@ -124,9 +125,20 @@ public class MatchService {
 		// existing stages (all score sheets for a stage
 		// are always treated together).
 		for (Match newMatch : matches) {
-			for (Stage stage : newMatch.getStages())
-				if (stage.getStageScoreSheets() != null)
+			for (Stage stage : newMatch.getStages()) {
+				if (stage.getStageScoreSheets() != null) {
 					newStageScoreSheets.addAll(stage.getStageScoreSheets());
+				}
+				for (StageScoreSheet sheet : stage.getStageScoreSheets()) {
+					Competitor existingCompetitor = CompetitorService.findByName(sheet.getCompetitor().getFirstName(),
+							sheet.getCompetitor().getLastName(), entityManager);
+					if (existingCompetitor != null) {
+						System.out.println("FOUND EXISTING COMPETITOR");
+						sheet.setCompetitor(existingCompetitor);
+					}
+
+				}
+			}
 			Match existingMatch = find(newMatch, entityManager);
 			if (existingMatch != null) {
 				for (Stage stage : newMatch.getStages()) {
@@ -135,7 +147,9 @@ public class MatchService {
 				existingMatch.getStages().addAll(newMatch.getStages());
 			} else {
 				MatchRepository.save(newMatch, entityManager);
+
 			}
+			entityManager.flush();
 		}
 		entityManager.getTransaction().commit();
 		entityManager.close();

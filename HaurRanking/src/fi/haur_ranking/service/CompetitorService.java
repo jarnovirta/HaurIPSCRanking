@@ -20,10 +20,15 @@ public class CompetitorService {
 	public static Competitor findByName(String firstName, String lastName) {
 		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
 		entityManager.getTransaction().begin();
-		Competitor competitor = CompetitorRepository.findByName(firstName, lastName, entityManager);
+		Competitor competitor = findByName(firstName, lastName, entityManager);
 		entityManager.getTransaction().commit();
 		entityManager.close();
 		return competitor;
+
+	}
+
+	public static Competitor findByName(String firstName, String lastName, EntityManager entityManager) {
+		return CompetitorRepository.findByName(firstName, lastName, entityManager);
 
 	}
 
