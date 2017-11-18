@@ -12,55 +12,103 @@ import fi.haur_ranking.domain.Match;
 import fi.haur_ranking.domain.Stage;
 import fi.haur_ranking.domain.StageScoreSheet;
 
+// LUO LAPPUJA MUIHIN DIVISIOONIIN
+
 public class TestUtils {
 
-	static Competitor jarno;
-	static Competitor jerry;
-	static Competitor ben;
-	static Competitor max;
-	static
-		{
-			jarno = new Competitor("Jarno", "Virta");
-			jerry = new Competitor("Jerry", "Miculek");
-			ben = new Competitor("Ben", "Stoeger");
-			max = new Competitor("Max", "Michel");
-		}
-	protected static Match createTestMatch() {
-		jarno = new Competitor("Jarno", "Virta");
-		jerry = new Competitor("Jerry", "Miculek");
-		ben = new Competitor("Ben", "Stoeger");
-		max = new Competitor("Max", "Michel");
+	static List<Match> testMatches = null;
 		
-		Match testMatch = new Match();
-		testMatch.setName("Test Match with CLC01 and CLC02");
-		testMatch.setStages(createTestStages(testMatch));
+	static ClassifierStage[] classifierStages = new ClassifierStage[] { 
+			ClassifierStage.CLC01,ClassifierStage.CLC02, ClassifierStage.CLC03, ClassifierStage.CLC04, ClassifierStage.CLC05,
+			ClassifierStage.CLC06, ClassifierStage.CLC07, ClassifierStage.CLC08, ClassifierStage.CLC09	};
+	static Competitor jarno = new Competitor("Jarno", "Virta");
+	static Competitor jerry = new Competitor("Jerry", "Miculek");
+	static Competitor ben = new Competitor("Ben", "Stoeger");
+	static Competitor max = new Competitor("Max", "Michel");
+	static Competitor clint= new Competitor("Clint", "Upchurch");
+	
+	static Double[] jarnoNewMatchHitFactors = new Double[] {
+			4.0, 3.9, 2.0, 5.1, 5.5, 4.0, 4.5, 3.6, 5.2 };
+	
+	static Double[] jerryNewMatchHitFactors = new Double[] {
+			3.9, 4.5, 5.1, 3.9, 4.4, 2.3, 3.9, null, null };
+	
+	static Double[] maxNewMatchHitFactors = new Double[] {
+			 2.3, null, 0.0, 3.9, 4.5, null, null, null, null};
+	
+	static Double[] benNewMatchHitFactors = new Double[] {
+			 3.2, 4.1, 2.9, 0.0, 4.8, 5.1, null, null, null};
+	
+	static Double[] clintNewMatchHitFactors = new Double[] {
+			 3.2, 4.0, 3.6, null, null, null, null, null, null};
+	
+	static Double[] jarnoOldMatchHitFactors = new Double[] {
+			null, null, null, null, 6.0, null, null, null, null};
+	
+	static Double[] jerryOldMatchHitFactors = new Double[] {
+			null, null, null, 4.2, null, null, null, null, null};
+	
+	static Double[] maxOldMatchHitFactors = new Double[] {
+			null, 3.1, null, null, null, null, null, null, null};
+	
 		
-		return testMatch;
+	
+	protected static List<Match> createTestMatches() {
+		List<Match> matches = new ArrayList<Match>();
+		Match newTestMatch = new Match();
+		newTestMatch.setName("New match");
+		newTestMatch.setWinMssDateString("18.11.2017");
+		newTestMatch.setStages(createTestStages(newTestMatch));
+		matches.add(newTestMatch);
+		
+		Match oldTestMatch = new Match();
+		oldTestMatch.setName("Old match");
+		oldTestMatch.setWinMssDateString("12.11.2017");
+		oldTestMatch.setStages(createTestStages(oldTestMatch));
+		
+		matches.add(oldTestMatch);
+		
+		return matches;
 	}
 	
 	protected static List<Stage> createTestStages(Match match) {
 		List<Stage> testStages = new ArrayList<Stage>();
-		Stage CLC01 = new Stage(match, "CLC01", ClassifierStage.CLC01);
-		Stage CLC02 = new Stage(match, "CLC02", ClassifierStage.CLC02);
-		List<StageScoreSheet> sheetList = new ArrayList<StageScoreSheet>();
 		
-		sheetList.addAll(getSheetsForCompetitorAndClassifier(match, jarno, ClassifierStage.CLC01));
-		sheetList.addAll(getSheetsForCompetitorAndClassifier(match, jerry, ClassifierStage.CLC01));
-		sheetList.addAll(getSheetsForCompetitorAndClassifier(match, max, ClassifierStage.CLC01));
-		sheetList.addAll(getSheetsForCompetitorAndClassifier(match, ben, ClassifierStage.CLC01));
-		CLC01.setStageScoreSheets(sheetList);
-		testStages.add(CLC01);
-		
-		sheetList = new ArrayList<StageScoreSheet>();
-		sheetList.addAll(getSheetsForCompetitorAndClassifier(match, jarno, ClassifierStage.CLC02));
-		sheetList.addAll(getSheetsForCompetitorAndClassifier(match, jerry, ClassifierStage.CLC02));
-		sheetList.addAll(getSheetsForCompetitorAndClassifier(match, max, ClassifierStage.CLC02));
-		sheetList.addAll(getSheetsForCompetitorAndClassifier(match, ben, ClassifierStage.CLC02));
-		CLC02.setStageScoreSheets(sheetList);
-		testStages.add(CLC02);
-		
+		for (ClassifierStage classifier : classifierStages) {
+			testStages.add(createStage(match, classifier));
+		}
 		return testStages;
 	}
+	private static Stage createStage(Match match, ClassifierStage classifier) {
+		Stage stage = new Stage(match, classifier.toString(), classifier);
+		stage.setStageScoreSheets(createStageScoreSheets(stage));
+		
+		return stage;
+	}
+	
+	public static List<StageScoreSheet> createStageScoreSheets(Stage stage) {
+		List<StageScoreSheet> sheets = new ArrayList<StageScoreSheet>();
+		int index = 0;
+		for (ClassifierStage classifier : ClassifierStage.values()) {
+			if (classifier.equals(stage.getClassifierStage())) break;
+			index++;
+		}
+		if (stage.getMatch().getName().equals("New match")) {
+				if (jarnoNewMatchHitFactors[index] != null) sheets.add(new StageScoreSheet(jarno, jarnoNewMatchHitFactors[index], stage, IPSCDivision.PRODUCTION));
+				if (jerryNewMatchHitFactors[index] != null) sheets.add(new StageScoreSheet(jerry, jerryNewMatchHitFactors[index], stage, IPSCDivision.PRODUCTION));
+				if (benNewMatchHitFactors[index] != null) sheets.add(new StageScoreSheet(ben, benNewMatchHitFactors[index], stage, IPSCDivision.PRODUCTION));
+				if (maxNewMatchHitFactors[index] != null) sheets.add(new StageScoreSheet(max, maxNewMatchHitFactors[index], stage, IPSCDivision.PRODUCTION));
+				if (clintNewMatchHitFactors[index] != null) sheets.add(new StageScoreSheet(clint, clintNewMatchHitFactors[index], stage, IPSCDivision.PRODUCTION));
+		
+		}
+		else {
+			if (jarnoOldMatchHitFactors[index] != null) sheets.add(new StageScoreSheet(jarno, jarnoOldMatchHitFactors[index], stage, IPSCDivision.PRODUCTION));
+			if (jerryOldMatchHitFactors[index] != null) sheets.add(new StageScoreSheet(jerry, jerryOldMatchHitFactors[index], stage, IPSCDivision.PRODUCTION));
+			if (maxOldMatchHitFactors[index] != null) sheets.add(new StageScoreSheet(max, maxOldMatchHitFactors[index], stage, IPSCDivision.PRODUCTION));
+		}
+		return sheets;
+	}
+		
 	public static Map<ClassifierStage, Double> getAverageOfTopTwoForStage() {
 		Map<ClassifierStage, Double> averages = new HashMap<ClassifierStage, Double>();
 		averages.put(ClassifierStage.CLC01, 6.15);
@@ -124,4 +172,8 @@ public class TestUtils {
 		averageScoreList.add(new Object[] { ben, 0.66260 });
 		return averageScoreList;
 	}
+	
+	
+	
+	
 }

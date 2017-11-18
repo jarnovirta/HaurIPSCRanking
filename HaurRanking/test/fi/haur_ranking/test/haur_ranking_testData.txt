@@ -1,4 +1,22 @@
 PRODUCTION DIVISION
+
+				CLC01	CLC02	CLC03	CLC04	CLC05	CLC06	CLC07	CLC08	CLC09
+
+Competitor1
+Jerry
+Max
+Ben
+
+
+
+
+
+
+
+
+
+
+
 STAGE CLC01 HF: 				REL. SCORES
 	Jarno 	4.0, 3.9			0.65041, 0.63414
 	Jerry 	3.2, 0.0			0.52033, 0	

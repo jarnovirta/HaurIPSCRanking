@@ -40,6 +40,7 @@ public class Stage {
 		this.name = name;
 		this.classifierStage = classifierStage;
 	}
+	
 	public Long getId() {
 		return id;
 	}
