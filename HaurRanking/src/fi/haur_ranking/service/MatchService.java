@@ -128,15 +128,15 @@ public class MatchService {
 			for (Stage stage : newMatch.getStages()) {
 				if (stage.getStageScoreSheets() != null) {
 					newStageScoreSheets.addAll(stage.getStageScoreSheets());
-				}
-				for (StageScoreSheet sheet : stage.getStageScoreSheets()) {
-					Competitor existingCompetitor = CompetitorService.findByName(sheet.getCompetitor().getFirstName(),
-							sheet.getCompetitor().getLastName(), entityManager);
-					if (existingCompetitor != null) {
-						System.out.println("FOUND EXISTING COMPETITOR");
-						sheet.setCompetitor(existingCompetitor);
-					}
 
+					for (StageScoreSheet sheet : stage.getStageScoreSheets()) {
+						Competitor existingCompetitor = CompetitorService.findByName(
+								sheet.getCompetitor().getFirstName(), sheet.getCompetitor().getLastName(),
+								entityManager);
+						if (existingCompetitor != null) {
+							sheet.setCompetitor(existingCompetitor);
+						}
+					}
 				}
 			}
 			Match existingMatch = find(newMatch, entityManager);

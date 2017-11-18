@@ -86,14 +86,10 @@ public class RankingServiceTests {
 
 	@Test
 	public void generateRankingTest() {
-		System.out.println("Generating ranking");
 		Ranking ranking = RankingService.generateRanking();
-		System.out.println("Done");
 		DivisionRanking productionRanking = ranking.getDivisionRankings().get(IPSCDivision.PRODUCTION);
 		DivisionRankingLine firstLine = productionRanking.getRankingLines().get(0);
-		for (DivisionRankingLine line : productionRanking.getRankingLines()) {
-			System.out.println(line.getCompetitor().getFirstName() + " " + line.getBestResultsAverage());
-		}
+
 		assertEquals("Jerry Miculek should be #1 for Production Division ranking.", "Jerry",
 				firstLine.getCompetitor().getFirstName());
 		assertEquals("Jerry Miculek should have bestResultsAverage of 1,14 for Production Division.", 1.14492,

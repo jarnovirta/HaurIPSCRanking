@@ -1,5 +1,8 @@
 package fi.haur_ranking.test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,6 +13,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import fi.haur_ranking.domain.ClassifierStage;
+import fi.haur_ranking.domain.IPSCDivision;
+import fi.haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
+import fi.haur_ranking.service.StageScoreSheetService;
 
 public class StageScoreSheetServiceTests {
 
@@ -38,59 +44,6 @@ public class StageScoreSheetServiceTests {
 
 	}
 
-	@Test
-	public void findClassifierStageResultsForCompetitorTest() {
-
-		// try {
-		// EntityManager entityManager =
-		// HaurRankingDatabaseUtils.createEntityManager();
-		//
-		// int jarnoCLC01ResultCount =
-		// StageScoreSheetService.findClassifierStageResultsForCompetitor("Jarno",
-		// "Virta",
-		// IPSCDivision.PRODUCTION, ClassifierStage.CLC01,
-		// entityManager).size();
-		// executeCompetitorTotalResultCountTest("Jarno", "Virta", 9,
-		// entityManager);
-		// executeCompetitorTotalResultCountTest("Jerry", "Miculek", 8,
-		// entityManager);
-		// executeCompetitorTotalResultCountTest("Max", "Michel", 5,
-		// entityManager);
-		// executeCompetitorTotalResultCountTest("Ben", "Stoeger", 6,
-		// entityManager);
-		// executeCompetitorTotalResultCountTest("Clint", "Upchurch", 3,
-		// entityManager);
-		//
-		// int totalCount = StageScoreSheetService.findAll().size();
-		// assertEquals("Total score sheet count for all competitors should be
-		// 31.", 31, totalCount);
-		//
-		// //
-		// // assertEquals("Competitor Jarno should have 1 result for CLC01",
-		// // 1, jarnoCLC01ResultCount);
-		// //
-		// // List<StageScoreSheet> jarnoCLC05Results =
-		// // StageScoreSheetService.findClassifierStageResultsForCompetitor(
-		// // "Jarno", "Virta", IPSCDivision.PRODUCTION, ClassifierStage.CLC05,
-		// // entityManager);
-		// // int jarnoCLC05ResultCount = jarnoCLC05Results.size();
-		// // assertEquals("Competitor Jarno should have 1 result for CLC05",
-		// // 1, jarnoCLC05ResultCount);
-		// //
-		// // StageScoreSheet jarnoCLC05ScoreSheet = jarnoCLC05Results.get(0);
-		// // assertEquals("Competitor Jarno should have hit factor 5,5 for
-		// // CLC05 (newer result)", 5.5,
-		// // jarnoCLC05ScoreSheet.getHitFactor(), 0.01);
-		// //
-		//
-		// entityManager.close();
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// fail("Error during test");
-		// }
-
-	}
-
 	private Set<ClassifierStage> getClassifierStages() {
 		Set<ClassifierStage> classifiers = new HashSet<ClassifierStage>();
 		classifiers.add(ClassifierStage.CLC01);
@@ -104,4 +57,39 @@ public class StageScoreSheetServiceTests {
 		classifiers.add(ClassifierStage.CLC09);
 		return classifiers;
 	}
+
+	@Test
+	public void totalResultsInDatabaseForCompetitorAndDivisionTest() {
+
+		try {
+			EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
+			int jarnoTotalResultsCount = StageScoreSheetService
+					.findDivisionForCompetitor("Jarno", "Virta", IPSCDivision.PRODUCTION, entityManager).size();
+			assertEquals("Jarno should have 8 results for Production Division.", 8, jarnoTotalResultsCount);
+
+			int clintTotalResultsCount = StageScoreSheetService
+					.findDivisionForCompetitor("Clint", "Upchurch", IPSCDivision.PRODUCTION, entityManager).size();
+			assertEquals("Clint should have 3 results for Production Division.", 3, clintTotalResultsCount);
+
+			int jerryTotalResultsCount = StageScoreSheetService
+					.findDivisionForCompetitor("Jerry", "Miculek", IPSCDivision.PRODUCTION, entityManager).size();
+			assertEquals("Jerry should have 8 results for Production Division.", 8, jerryTotalResultsCount);
+
+			int maxTotalResultsCount = StageScoreSheetService
+					.findDivisionForCompetitor("Max", "Michel", IPSCDivision.PRODUCTION, entityManager).size();
+			assertEquals("Max should have 5 results for Production Division.", 5, maxTotalResultsCount);
+
+			int benTotalResultsCount = StageScoreSheetService
+					.findDivisionForCompetitor("Ben", "Stoeger", IPSCDivision.PRODUCTION, entityManager).size();
+			assertEquals("Ben should have  results for Production Division.", 6, benTotalResultsCount);
+
+			entityManager.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Error during test");
+		}
+
+	}
+
 }

@@ -1,7 +1,9 @@
 package fi.haur_ranking.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
@@ -90,7 +92,18 @@ public class StageScoreSheetService {
 		List<Long> sheetsToBeRemoved = new ArrayList<Long>();
 		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
 
+		Map<Competitor, List<IPSCDivision>> competitorsWithNewResults = new HashMap<Competitor, List<IPSCDivision>>();
+		// Remove old score sheets for same competitor, division and classifier
 		for (StageScoreSheet sheet : newlyAddedScoreSheets) {
+			if (!competitorsWithNewResults.keySet().contains(sheet.getCompetitor())) {
+				List<IPSCDivision> divisionList = new ArrayList<IPSCDivision>();
+				divisionList.add(sheet.getIpscDivision());
+				competitorsWithNewResults.put(sheet.getCompetitor(), divisionList);
+			} else {
+				if (!competitorsWithNewResults.get(sheet.getCompetitor()).contains(sheet.getIpscDivision())) {
+					competitorsWithNewResults.get(sheet.getCompetitor()).add(sheet.getIpscDivision());
+				}
+			}
 			List<StageScoreSheet> databaseScoreSheets = StageScoreSheetRepository
 					.findClassifierStageResultsForCompetitor(sheet.getCompetitor().getFirstName(),
 							sheet.getCompetitor().getLastName(), sheet.getIpscDivision(),
@@ -111,9 +124,30 @@ public class StageScoreSheetService {
 					}
 				}
 			}
+
 		}
 		entityManager.close();
 		removeInBatch(sheetsToBeRemoved);
+		entityManager = HaurRankingDatabaseUtils.createEntityManager();
+
+		// Remove old score sheets for competitor with more than 8 results
+		// in the division.
+		List<Long> removeSheetsIdList = new ArrayList<Long>();
+		for (Competitor competitor : competitorsWithNewResults.keySet()) {
+			for (IPSCDivision division : competitorsWithNewResults.get(competitor)) {
+				List<StageScoreSheet> sheets = StageScoreSheetRepository.findDivisionResultsForCompetitorOrderByDate(
+						competitor.getFirstName(), competitor.getLastName(), division, entityManager);
+				if (sheets.size() > 8) {
+					for (StageScoreSheet removeSheet : sheets.subList(8, sheets.size())) {
+						removeSheetsIdList.add(removeSheet.getId());
+					}
+				}
+			}
+		}
+
+		entityManager.close();
+		removeInBatch(removeSheetsIdList);
+
 	}
 
 	public static void setCompetitorsToStageScoreSheets(List<StageScoreSheet> sheets, EntityManager entityManager) {

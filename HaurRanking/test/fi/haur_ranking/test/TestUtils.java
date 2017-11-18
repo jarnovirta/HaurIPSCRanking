@@ -25,28 +25,29 @@ public class TestUtils {
 
 	static ClassifierStage[] classifierStages = new ClassifierStage[] { ClassifierStage.CLC01, ClassifierStage.CLC02,
 			ClassifierStage.CLC03, ClassifierStage.CLC04, ClassifierStage.CLC05, ClassifierStage.CLC06,
-			ClassifierStage.CLC07, ClassifierStage.CLC08, ClassifierStage.CLC09 };
+			ClassifierStage.CLC07, ClassifierStage.CLC08, ClassifierStage.CLC09, ClassifierStage.CLC10 };
 	static Competitor jarno = new Competitor("Jarno", "Virta");
 	static Competitor jerry = new Competitor("Jerry", "Miculek");
 	static Competitor ben = new Competitor("Ben", "Stoeger");
 	static Competitor max = new Competitor("Max", "Michel");
 	static Competitor clint = new Competitor("Clint", "Upchurch");
 
-	static Double[] jarnoNewMatchHitFactors = new Double[] { 4.0, 3.9, 2.0, 5.1, 5.5, 4.0, 4.5, 3.6, 5.2 };
+	static Double[] jarnoNewMatchHitFactors = new Double[] { 4.0, 3.9, 2.0, 5.1, 5.5, 4.0, 4.5, 3.6, 5.2, 1.2 };
 
-	static Double[] jerryNewMatchHitFactors = new Double[] { 3.9, 4.5, 5.1, 3.9, 4.4, 2.3, 3.9, null, null };
+	static Double[] jerryNewMatchHitFactors = new Double[] { 3.9, 4.5, 5.1, 3.9, 4.4, 2.3, 3.9, null, null, 1.5 };
 
-	static Double[] maxNewMatchHitFactors = new Double[] { 2.3, null, 0.0, 3.9, 4.5, null, null, null, null };
+	static Double[] maxNewMatchHitFactors = new Double[] { 2.3, null, 0.0, 3.9, 4.5, null, null, null, null, null };
 
-	static Double[] benNewMatchHitFactors = new Double[] { 3.2, 4.1, 2.9, 0.0, 4.8, 5.1, null, null, null };
+	static Double[] benNewMatchHitFactors = new Double[] { 3.2, 4.1, 2.9, 0.0, 4.8, 5.1, null, null, null, null };
 
-	static Double[] clintNewMatchHitFactors = new Double[] { 3.2, 4.0, 3.6, null, null, null, null, null, null };
+	static Double[] clintNewMatchHitFactors = new Double[] { 3.2, 4.0, 3.6, null, null, null, null, null, null, null };
 
-	static Double[] jarnoOldMatchHitFactors = new Double[] { null, null, null, null, 6.0, null, null, null, null };
+	static Double[] jarnoOldMatchHitFactors = new Double[] { null, null, null, null, 6.0, null, null, null, null,
+			null };
 
-	static Double[] jerryOldMatchHitFactors = new Double[] { null, null, null, 4.2, null, null, null, 3.2, null };
+	static Double[] jerryOldMatchHitFactors = new Double[] { null, null, null, 4.2, null, null, null, 3.2, null, null };
 
-	static Double[] maxOldMatchHitFactors = new Double[] { null, 3.1, null, null, null, null, null, null, null };
+	static Double[] maxOldMatchHitFactors = new Double[] { null, 3.1, null, null, null, null, null, null, null, null };
 
 	protected static void cleanup() {
 		try {

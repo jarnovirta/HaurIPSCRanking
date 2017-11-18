@@ -28,17 +28,8 @@ public class RankingService {
 			for (StageScoreSheet sheet : competitorLatestScoreSheets) {
 				ClassifierStage classifierStage = sheet.getStage().getClassifierStage();
 				if (classifierStageTopResultAverages.keySet().contains(classifierStage)) {
-
 					double classifierStageTopTwoResultsAverage = classifierStageTopResultAverages.get(classifierStage);
-
 					competitorRelativeScores.add(sheet.getHitFactor() / classifierStageTopTwoResultsAverage);
-				}
-				if (sheet.getCompetitor().getFirstName().equals("Jarno")) {
-					System.out.println("JARNON SCORET:");
-					Collections.sort(competitorRelativeScores);
-					Collections.reverse(competitorRelativeScores);
-					for (Double score : competitorRelativeScores)
-						System.out.println(score);
 				}
 			}
 
@@ -74,10 +65,6 @@ public class RankingService {
 
 		Map<ClassifierStage, Double> classifierStageTopResultAvgerages = StageService
 				.getClassifierStagesWithTwoOrMoreResults(division);
-		for (ClassifierStage stage : classifierStageTopResultAvgerages.keySet()) {
-			System.out.println("Classifier: " + stage.toString() + " Top two average: "
-					+ classifierStageTopResultAvgerages.get(stage));
-		}
 		List<DivisionRankingLine> resultList = new ArrayList<DivisionRankingLine>();
 		List<Competitor> competitors = CompetitorService.findAll();
 
@@ -100,9 +87,7 @@ public class RankingService {
 	}
 
 	public static Ranking generateRanking() {
-		System.out.println("Ranking service start");
 		Ranking ranking = new Ranking();
-
 		for (IPSCDivision division : IPSCDivision.values()) {
 			ranking.getDivisionRankings().put(division, generateDivisionRanking(division));
 		}
