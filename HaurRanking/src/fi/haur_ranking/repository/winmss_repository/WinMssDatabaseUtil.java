@@ -7,16 +7,19 @@ import java.sql.Statement;
 
 // Methods for using a Ucanaccess connection to WinMSS database (Microsoft Access database file, .mdb).
 public class WinMssDatabaseUtil {
+	
 	static Connection connection = null;
+	static String fileLocation = null;
+	
 	public static Connection getConnection() {
 		return connection;
 	}
- 	public static Connection createConnection(String fileLocation) {
-		if (connection != null) return connection;
+ 	public static Connection createConnection(String newFileLocation) {
+		if (connection != null && fileLocation != null && fileLocation.equals(newFileLocation)) return connection;
 		
 		try {
 			Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
-			String dbConnectionString = "jdbc:ucanaccess://" + fileLocation + ";jackcessOpener=fi.haur_ranking.repository.winmss_repository.CryptCodecOpener";
+			String dbConnectionString = "jdbc:ucanaccess://" + newFileLocation + ";jackcessOpener=fi.haur_ranking.repository.winmss_repository.CryptCodecOpener";
 			connection = DriverManager.getConnection(dbConnectionString, null, null);
 		} catch (Exception e) {
 			e.printStackTrace();

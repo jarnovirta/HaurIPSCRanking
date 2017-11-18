@@ -2,6 +2,7 @@ package fi.haur_ranking.repository.haur_ranking_repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
@@ -47,6 +48,30 @@ public class StageScoreSheetRepository {
 		}
 	}
 	
+	public static List<StageScoreSheet> findClassifierStageResultsForCompetitor(String firstName, String lastName, IPSCDivision division, 
+			ClassifierStage classifierStage, EntityManager entityManager) {
+
+		try {
+			// KORJATTAVA ORDER BY DATE
+			String queryString = "SELECT s FROM StageScoreSheet s WHERE s.competitor.firstName = :firstName "
+					+ "AND s.competitor.lastName = :lastName AND s.stage.classifierStage = :classifierStage "
+					+ "AND s.ipscDivision = :division ORDER BY s.stage.match.winMssDateString DESC";
+					 
+			final TypedQuery<StageScoreSheet> query = entityManager.createQuery(queryString, StageScoreSheet.class);
+			query.setParameter("firstName", firstName);
+			query.setParameter("lastName", lastName);
+			query.setParameter("classifierStage", classifierStage);
+			query.setParameter("division", division);
+			return query.getResultList();
+			
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+	}
+	
 	public static List<StageScoreSheet> findClassifierStageResultsForCompetitor(Competitor competitor, IPSCDivision division, Set<ClassifierStage> classifierStages, 
 			EntityManager entityManager) {
 		List<StageScoreSheet> scoreSheets = new ArrayList<StageScoreSheet>();
@@ -64,7 +89,6 @@ public class StageScoreSheetRepository {
 			scoreSheets = query.getResultList();
 		}
 		catch (Exception e) {
-			System.out.println("ERROR in scoresheetrepo");
 			e.printStackTrace();
 			return null;
 		}
@@ -104,5 +128,55 @@ public class StageScoreSheetRepository {
 				sheets.remove(removeSheet);
 			}
 		}
+	public static List<StageScoreSheet> findCompetitorClassifierResults(Competitor competitor, ClassifierStage classifier, 
+		IPSCDivision division, EntityManager entityManager) {
+		
+		try {
+			String queryString = "SELECT s FROM StageScoreSheet s WHERE s.competitor = :competitor AND s.ipscDivision = :division "
+					+ "AND s.stage.classifierStage = :classifier";
+			final TypedQuery<StageScoreSheet> query = entityManager.createQuery(queryString, StageScoreSheet.class);
+			query.setParameter("competitor", competitor);
+			query.setParameter("division", division);
+			query.setParameter("classifier", classifier);
+			return query.getResultList();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+	}
+	public static StageScoreSheet save(StageScoreSheet sheet, EntityManager entityManager) {
+		try {
+				return entityManager.merge(sheet);
+		}
+		catch (Exception e){
+			e.printStackTrace();
+			return null;
+		}
+	}
+	public static void removeInBatch(List<Long> idList, EntityManager entityManager) {
+		
+		try {
+			entityManager.createQuery("DELETE FROM StageScoreSheet s where s.id IN :idList")
+			.setParameter("idList", idList).executeUpdate();
+		}
+		catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+	public static StageScoreSheet find(Long id, EntityManager entityManager) {
+		try {
+			String queryString = "SELECT s FROM StageScoreSheet s WHERE s.id = :id";
+			TypedQuery<StageScoreSheet> query = entityManager.createQuery(queryString, StageScoreSheet.class);
+			query.setParameter("id", id);
+			return query.getSingleResult();
+
+		}
+		catch (Exception e){
+			e.printStackTrace();
+			return null;
+		}
+	}
 }
 

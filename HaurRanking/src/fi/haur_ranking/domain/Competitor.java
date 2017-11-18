@@ -30,7 +30,29 @@ public class Competitor {
 		this.firstName = firstName;
 		this.lastName = lastName;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+	    if (obj == null) {
+	        return false;
+	    }
+	    if (obj == this) return true;
+	    if (!(obj instanceof Competitor)) return false;
+	    
+	    final Competitor other = (Competitor) obj;
+		if (other.getFirstName().equals(this.firstName) 
+				&& other.getLastName().equals(this.lastName))
+			return true;
+		else return false;
+	}
 
+	@Override
+	public int hashCode() {
+	    int hash = 3;
+	    hash = 53 * hash + (this.firstName != null ? this.firstName.hashCode() : 0);
+	    hash = 53 * hash + (this.lastName != null ? this.lastName.hashCode() : 0);
+	    return hash;
+	}
 	public Long getId() {
 		return id;
 	}

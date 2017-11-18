@@ -5,13 +5,11 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 
 import fi.haur_ranking.domain.ClassifierStage;
 import fi.haur_ranking.domain.IPSCDivision;
-import fi.haur_ranking.domain.StageScoreSheet;
+import fi.haur_ranking.domain.Stage;
 
 public class StageRepository {
 	// Returns a list of ClassifierStage for which there are at least two results in database.
@@ -39,5 +37,33 @@ public class StageRepository {
 			e.printStackTrace();
 		}
 		return resultClassifierStages;
+	}
+	public static Stage find(Long id, EntityManager entityManager) {
+		try {
+			String queryString = "SELECT s FROM Stage s WHERE s.id = " + id;
+			TypedQuery<Stage> query = entityManager.createQuery(queryString, Stage.class);
+			return query.getSingleResult();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	public static Stage find(Stage stage, EntityManager entityManager) {
+		try {
+			String queryString = "SELECT s FROM Stage s WHERE s.name = :stageName AND s.match.name = :matchName and s.match.winMssDateString = :matchDate";
+			
+			TypedQuery<Stage> query = entityManager.createQuery(queryString, Stage.class);
+			query.setParameter("stageName", stage.getName());
+			query.setParameter("matchName", stage.getMatch().getName());
+			query.setParameter("matchDate", stage.getMatch().getWinMssDateString());
+			List<Stage> stages = query.getResultList();
+			if (stages != null && stages.size() > 0) return stages.get(0);
+			else return null;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 }
