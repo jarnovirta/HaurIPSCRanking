@@ -1,102 +1,107 @@
 package fi.haur_ranking.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
-import java.io.File;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import fi.haur_ranking.domain.ClassifierStage;
-import fi.haur_ranking.domain.Competitor;
-import fi.haur_ranking.domain.IPSCDivision;
-import fi.haur_ranking.domain.Match;
-import fi.haur_ranking.domain.Stage;
-import fi.haur_ranking.domain.StageScoreSheet;
-import fi.haur_ranking.repository.haur_ranking_repository.CompetitorRepository;
-import fi.haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
-import fi.haur_ranking.repository.haur_ranking_repository.MatchRepository;
-import fi.haur_ranking.repository.haur_ranking_repository.StageScoreSheetRepository;
-import fi.haur_ranking.service.CompetitorService;
 
 public class StageScoreSheetServiceTests {
-	
-	Match testMatch;
-	Competitor competitorJarno;
-	
-    @BeforeClass
-    public static void setUpDB() {
-//    	deleteDatabase();
-    	List<Match> testMatches = TestUtils.createTestMatches();
-//    	EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
-//    	entityManager.getTransaction().begin();
-//    	testMatch = MatchRepository.save(testMatch, entityManager);
 
-    	System.out.println("TEST MATCHES COUNT: " + testMatches.size());
-    	Match match = testMatches.get(0);
-    	System.out.println("MATCH: " + match.getName());
-    	System.out.println(match.getStages().get(0).getName());
-    	System.out.println(match.getStages().get(0).getStageScoreSheets().size());
-    	System.out.println(match.getStages().get(8).getStageScoreSheets().get(0).getCompetitor().getFirstName());
-    	System.out.println(match.getStages().get(8).getStageScoreSheets().get(0).getHitFactor());
-//    	entityManager.getTransaction().commit();
-//    	entityManager.close();
-//    	HaurRankingDatabaseUtils.closeEntityManagerFactory();
-    }
-
-    @AfterClass
-    public static void cleanup() {
-//        try {
-//            HaurRankingDatabaseUtils.closeEntityManagerFactory();
-//            deleteDatabase();
-//            
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-    }
-
-
-    @Test
-    public void findClassifierStageResultsForCompetitorTest() {
-    	System.out.println("Test run");
-//    	try {
-//    		Set<ClassifierStage> classifiers = new HashSet<ClassifierStage>();
-//			classifiers.add(ClassifierStage.CLC01);
-//			classifiers.add(ClassifierStage.CLC02);
-//			Competitor competitorJarno = CompetitorService.findByName("Jarno", "Virta");
-//			
-//    		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
-//    		
-//			List<StageScoreSheet> jarnoStageScoreSheets = StageScoreSheetRepository.findClassifierStageResultsForCompetitor(competitorJarno, IPSCDivision.PRODUCTION, classifiers, entityManager);
-//			assertEquals("Database should have 4 classifier score sheets for competitor Jarno ", 4, jarnoStageScoreSheets.size());
-//			
-//			entityManager.close();
-//    	}
-//    	catch (Exception e) {
-//    		e.printStackTrace();
-//    		fail("Error during test");
-//    	}
-//    	
+	@AfterClass
+	public static void cleanup() {
+		TestUtils.cleanup();
 	}
-//	@Test
-//	public void filterStageScoreSheetsExistingInDatabase() {
-//		
-//	}
-//    private static void deleteDatabase() {
-//    	try {
-//    		FileUtils.deleteDirectory(new File("data"));
-//    	}
-//    	catch (Exception e) {
-//    		e.printStackTrace();
-//    	}
-//    }
+
+	@BeforeClass
+	public static void init() {
+		TestUtils.setupDatabase();
+	}
+
+	private void executeCompetitorTotalResultCountTest(String firstName, String lastName, int expectedCount,
+			EntityManager entityManager) {
+		// int totalCount = 0;
+		// for (ClassifierStage stage : getClassifierStages()) {
+		// totalCount +=
+		// StageScoreSheetService.findClassifierStageResultsForCompetitor(firstName,
+		// lastName,
+		// IPSCDivision.PRODUCTION, stage, entityManager).size();
+		// }
+		// assertEquals("Competitor " + firstName + " " + lastName + " should
+		// have " + expectedCount + " result(s) ",
+		// expectedCount, totalCount);
+
+	}
+
+	@Test
+	public void findClassifierStageResultsForCompetitorTest() {
+
+		// try {
+		// EntityManager entityManager =
+		// HaurRankingDatabaseUtils.createEntityManager();
+		//
+		// int jarnoCLC01ResultCount =
+		// StageScoreSheetService.findClassifierStageResultsForCompetitor("Jarno",
+		// "Virta",
+		// IPSCDivision.PRODUCTION, ClassifierStage.CLC01,
+		// entityManager).size();
+		// executeCompetitorTotalResultCountTest("Jarno", "Virta", 9,
+		// entityManager);
+		// executeCompetitorTotalResultCountTest("Jerry", "Miculek", 8,
+		// entityManager);
+		// executeCompetitorTotalResultCountTest("Max", "Michel", 5,
+		// entityManager);
+		// executeCompetitorTotalResultCountTest("Ben", "Stoeger", 6,
+		// entityManager);
+		// executeCompetitorTotalResultCountTest("Clint", "Upchurch", 3,
+		// entityManager);
+		//
+		// int totalCount = StageScoreSheetService.findAll().size();
+		// assertEquals("Total score sheet count for all competitors should be
+		// 31.", 31, totalCount);
+		//
+		// //
+		// // assertEquals("Competitor Jarno should have 1 result for CLC01",
+		// // 1, jarnoCLC01ResultCount);
+		// //
+		// // List<StageScoreSheet> jarnoCLC05Results =
+		// // StageScoreSheetService.findClassifierStageResultsForCompetitor(
+		// // "Jarno", "Virta", IPSCDivision.PRODUCTION, ClassifierStage.CLC05,
+		// // entityManager);
+		// // int jarnoCLC05ResultCount = jarnoCLC05Results.size();
+		// // assertEquals("Competitor Jarno should have 1 result for CLC05",
+		// // 1, jarnoCLC05ResultCount);
+		// //
+		// // StageScoreSheet jarnoCLC05ScoreSheet = jarnoCLC05Results.get(0);
+		// // assertEquals("Competitor Jarno should have hit factor 5,5 for
+		// // CLC05 (newer result)", 5.5,
+		// // jarnoCLC05ScoreSheet.getHitFactor(), 0.01);
+		// //
+		//
+		// entityManager.close();
+		// } catch (Exception e) {
+		// e.printStackTrace();
+		// fail("Error during test");
+		// }
+
+	}
+
+	private Set<ClassifierStage> getClassifierStages() {
+		Set<ClassifierStage> classifiers = new HashSet<ClassifierStage>();
+		classifiers.add(ClassifierStage.CLC01);
+		classifiers.add(ClassifierStage.CLC02);
+		classifiers.add(ClassifierStage.CLC03);
+		classifiers.add(ClassifierStage.CLC04);
+		classifiers.add(ClassifierStage.CLC05);
+		classifiers.add(ClassifierStage.CLC06);
+		classifiers.add(ClassifierStage.CLC07);
+		classifiers.add(ClassifierStage.CLC08);
+		classifiers.add(ClassifierStage.CLC09);
+		return classifiers;
+	}
 }
