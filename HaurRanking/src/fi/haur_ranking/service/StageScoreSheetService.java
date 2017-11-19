@@ -4,11 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.persistence.EntityManager;
 
-import fi.haur_ranking.domain.ClassifierStage;
 import fi.haur_ranking.domain.Competitor;
 import fi.haur_ranking.domain.IPSCDivision;
 import fi.haur_ranking.domain.Stage;
@@ -20,41 +18,17 @@ import fi.haur_ranking.repository.haur_ranking_repository.StageScoreSheetReposit
 
 public class StageScoreSheetService {
 
-	public static void filterStageScoreSheetsExistingInDatabase(List<StageScoreSheet> sheets,
-			EntityManager entityManager) {
-		StageScoreSheetRepository.filterStageScoreSheetsExistingInDatabase(sheets, entityManager);
-	}
-
 	public static List<StageScoreSheet> findAll() {
 		return StageScoreSheetRepository.findAll();
 	}
 
-	public static List<StageScoreSheet> findAllForClassifier(IPSCDivision division, ClassifierStage classifier) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
-		List<StageScoreSheet> sheets = StageScoreSheetRepository.findAllForClassifier(division, classifier,
-				entityManager);
-		entityManager.close();
-		return sheets;
-	}
-
-	public static List<StageScoreSheet> findClassifierStageResultsForCompetitor(Competitor competitor,
-			IPSCDivision division, Set<ClassifierStage> classifierStages, EntityManager entityManager) {
-		return StageScoreSheetRepository.findClassifierStageResultsForCompetitor(competitor, division, classifierStages,
-				entityManager);
-	}
-
-	public static List<StageScoreSheet> findClassifierStageResultsForCompetitor(String firstName, String lastName,
+	public static List<StageScoreSheet> find(String firstName, String lastName,
 			IPSCDivision division) {
 		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
-		List<StageScoreSheet> sheets = StageScoreSheetRepository.findDivisionResultsForCompetitor(firstName, lastName,
+		List<StageScoreSheet> sheets = StageScoreSheetRepository.find(firstName, lastName,
 				division, entityManager);
 		entityManager.close();
 		return sheets;
-	}
-
-	public static List<StageScoreSheet> findDivisionForCompetitor(String firstName, String lastName,
-			IPSCDivision division, EntityManager entityManager) {
-		return StageScoreSheetRepository.findDivisionResultsForCompetitor(firstName, lastName, division, entityManager);
 	}
 
 	public static int getTotalStageScoreSheetCount() {
@@ -62,7 +36,7 @@ public class StageScoreSheetService {
 	}
 
 	public static void removeExtraStageScoreSheets(List<StageScoreSheet> newlyAddedScoreSheets) {
-		removeExtraStageScoreSheetsForSameClassifier(newlyAddedScoreSheets);
+		removeSheetsForSameCompetitorAndClassifier(newlyAddedScoreSheets);
 
 		Map<Competitor, List<IPSCDivision>> competitorsWithNewResults = new HashMap<Competitor, List<IPSCDivision>>();
 		// Remove old score sheets for same competitor, division and classifier
@@ -78,38 +52,6 @@ public class StageScoreSheetService {
 			}
 		}
 		removeOldStageScoreSheets(competitorsWithNewResults);
-	}
-
-	private static void removeExtraStageScoreSheetsForSameClassifier(List<StageScoreSheet> newlyAddedScoreSheets) {
-		List<Long> sheetsToBeRemoved = new ArrayList<Long>();
-		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
-
-		// Remove old score sheets for same competitor, division and classifier
-		for (StageScoreSheet sheet : newlyAddedScoreSheets) {
-			List<StageScoreSheet> databaseScoreSheets = StageScoreSheetRepository
-					.findClassifierStageResultsForCompetitor(sheet.getCompetitor().getFirstName(),
-							sheet.getCompetitor().getLastName(), sheet.getIpscDivision(),
-							sheet.getStage().getClassifierStage(), entityManager);
-			// Remove scores for same classifier where match date is older
-			// (StageScoreSheetRepository returns list in descending order by
-			// match date)
-			if (databaseScoreSheets.size() > 1) {
-				for (StageScoreSheet dbSheet : databaseScoreSheets.subList(1, databaseScoreSheets.size())) {
-					boolean idAlreadyListed = false;
-					// Check if Id has already been added to list for removal
-					for (Long listedId : sheetsToBeRemoved) {
-						if (listedId.equals(dbSheet.getId()))
-							idAlreadyListed = true;
-					}
-					if (!idAlreadyListed) {
-						sheetsToBeRemoved.add(dbSheet.getId());
-					}
-				}
-			}
-
-		}
-		entityManager.close();
-		removeInBatch(sheetsToBeRemoved);
 	}
 
 	public static void removeInBatch(List<Long> idLIst) {
@@ -146,7 +88,7 @@ public class StageScoreSheetService {
 		List<Long> removeSheetsIdList = new ArrayList<Long>();
 		for (Competitor competitor : competitorsWithNewResults.keySet()) {
 			for (IPSCDivision division : competitorsWithNewResults.get(competitor)) {
-				List<StageScoreSheet> sheets = StageScoreSheetRepository.findDivisionResultsForCompetitorOrderByDate(
+				List<StageScoreSheet> sheets = StageScoreSheetRepository.find(
 						competitor.getFirstName(), competitor.getLastName(), division, entityManager);
 				if (sheets.size() > 8) {
 					for (StageScoreSheet removeSheet : sheets.subList(8, sheets.size())) {
@@ -160,10 +102,41 @@ public class StageScoreSheetService {
 		removeInBatch(removeSheetsIdList);
 	}
 
+	private static void removeSheetsForSameCompetitorAndClassifier(List<StageScoreSheet> newlyAddedScoreSheets) {
+		List<Long> sheetsToBeRemoved = new ArrayList<Long>();
+		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
+
+		// Remove old score sheets for same competitor, division and classifier
+		for (StageScoreSheet sheet : newlyAddedScoreSheets) {
+			List<StageScoreSheet> databaseScoreSheets = StageScoreSheetRepository.find(
+					sheet.getCompetitor().getFirstName(), sheet.getCompetitor().getLastName(), sheet.getIpscDivision(),
+					sheet.getStage().getClassifierStage(), entityManager);
+			// Remove scores for same classifier where match date is older
+			// (StageScoreSheetRepository returns list in descending order by
+			// match date)
+			if (databaseScoreSheets.size() > 1) {
+				for (StageScoreSheet dbSheet : databaseScoreSheets.subList(1, databaseScoreSheets.size())) {
+					boolean idAlreadyListed = false;
+					// Check if Id has already been added to list for removal
+					for (Long listedId : sheetsToBeRemoved) {
+						if (listedId.equals(dbSheet.getId()))
+							idAlreadyListed = true;
+					}
+					if (!idAlreadyListed) {
+						sheetsToBeRemoved.add(dbSheet.getId());
+					}
+				}
+			}
+
+		}
+		entityManager.close();
+		removeInBatch(sheetsToBeRemoved);
+	}
+
 	public static void setCompetitorsToStageScoreSheets(List<StageScoreSheet> sheets, EntityManager entityManager) {
 		for (StageScoreSheet sheet : sheets) {
 			// Check if competitor exists in database.
-			Competitor existingCompetitor = CompetitorRepository.findByName(sheet.getCompetitor().getFirstName(),
+			Competitor existingCompetitor = CompetitorRepository.find(sheet.getCompetitor().getFirstName(),
 					sheet.getCompetitor().getLastName(), entityManager);
 			if (existingCompetitor != null)
 				sheet.setCompetitor(existingCompetitor);

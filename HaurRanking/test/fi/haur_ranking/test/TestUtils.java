@@ -168,7 +168,7 @@ public class TestUtils {
 		deleteDatabase();
 		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
 		entityManager.getTransaction().begin();
-		MatchService.persist(TestUtils.createTestMatches());
+		MatchService.save(TestUtils.createTestMatches());
 
 		entityManager.getTransaction().commit();
 		entityManager.close();

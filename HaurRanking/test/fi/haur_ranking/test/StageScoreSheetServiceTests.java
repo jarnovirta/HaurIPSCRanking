@@ -14,7 +14,6 @@ import org.junit.Test;
 
 import fi.haur_ranking.domain.ClassifierStage;
 import fi.haur_ranking.domain.IPSCDivision;
-import fi.haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
 import fi.haur_ranking.service.StageScoreSheetService;
 
 public class StageScoreSheetServiceTests {
@@ -62,28 +61,25 @@ public class StageScoreSheetServiceTests {
 	public void totalResultsInDatabaseForCompetitorAndDivisionTest() {
 
 		try {
-			EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
 			int jarnoTotalResultsCount = StageScoreSheetService
-					.findDivisionForCompetitor("Jarno", "Virta", IPSCDivision.PRODUCTION, entityManager).size();
+					.find("Jarno", "Virta", IPSCDivision.PRODUCTION).size();
 			assertEquals("Jarno should have 8 results for Production Division.", 8, jarnoTotalResultsCount);
 
 			int clintTotalResultsCount = StageScoreSheetService
-					.findDivisionForCompetitor("Clint", "Upchurch", IPSCDivision.PRODUCTION, entityManager).size();
+					.find("Clint", "Upchurch", IPSCDivision.PRODUCTION).size();
 			assertEquals("Clint should have 3 results for Production Division.", 3, clintTotalResultsCount);
 
 			int jerryTotalResultsCount = StageScoreSheetService
-					.findDivisionForCompetitor("Jerry", "Miculek", IPSCDivision.PRODUCTION, entityManager).size();
+					.find("Jerry", "Miculek", IPSCDivision.PRODUCTION).size();
 			assertEquals("Jerry should have 8 results for Production Division.", 8, jerryTotalResultsCount);
 
 			int maxTotalResultsCount = StageScoreSheetService
-					.findDivisionForCompetitor("Max", "Michel", IPSCDivision.PRODUCTION, entityManager).size();
+					.find("Max", "Michel", IPSCDivision.PRODUCTION).size();
 			assertEquals("Max should have 5 results for Production Division.", 5, maxTotalResultsCount);
 
 			int benTotalResultsCount = StageScoreSheetService
-					.findDivisionForCompetitor("Ben", "Stoeger", IPSCDivision.PRODUCTION, entityManager).size();
+					.find("Ben", "Stoeger", IPSCDivision.PRODUCTION).size();
 			assertEquals("Ben should have  results for Production Division.", 6, benTotalResultsCount);
-
-			entityManager.close();
 
 		} catch (Exception e) {
 			e.printStackTrace();

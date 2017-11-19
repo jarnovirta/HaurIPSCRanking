@@ -86,7 +86,7 @@ public class RankingServiceTests {
 
 	@Test
 	public void generateRankingTest() {
-		Ranking ranking = RankingService.generateRanking();
+		Ranking ranking = RankingService.getRanking();
 		DivisionRanking productionRanking = ranking.getDivisionRankings().get(IPSCDivision.PRODUCTION);
 		DivisionRankingLine firstLine = productionRanking.getRankingLines().get(0);
 

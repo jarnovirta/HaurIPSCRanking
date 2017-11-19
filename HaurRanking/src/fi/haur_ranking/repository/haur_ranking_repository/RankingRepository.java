@@ -5,7 +5,7 @@ import javax.persistence.EntityManager;
 import fi.haur_ranking.domain.Ranking;
 
 public class RankingRepository {
-	public static void persist(Ranking ranking, EntityManager entityManager) {
+	public static void save(Ranking ranking, EntityManager entityManager) {
 		try {
 			entityManager.persist(ranking);
 		} catch (Exception e) {

@@ -18,7 +18,7 @@ import fi.haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUti
 import fi.haur_ranking.repository.haur_ranking_repository.RankingRepository;
 
 public class RankingService {
-	private static double calculateCompetitorTopScoresAverage(List<StageScoreSheet> competitorLatestScoreSheets,
+	private static double competitorTopScoresAverage(List<StageScoreSheet> competitorLatestScoreSheets,
 			Map<ClassifierStage, Double> classifierStageTopResultAverages) {
 
 		// If minimum 4 classifier results for competitor, calculate relative
@@ -64,7 +64,7 @@ public class RankingService {
 		}
 	}
 
-	private static DivisionRanking generateDivisionRanking(IPSCDivision division) {
+	private static DivisionRanking getDivisionRanking(IPSCDivision division) {
 		DivisionRanking divisionRanking = new DivisionRanking(division);
 
 		Map<ClassifierStage, Double> classifierStageTopResultAvgerages = StageService
@@ -73,9 +73,9 @@ public class RankingService {
 		List<Competitor> competitors = CompetitorService.findAll();
 
 		for (Competitor competitor : competitors) {
-			List<StageScoreSheet> scoreSheets = StageScoreSheetService.findClassifierStageResultsForCompetitor(
-					competitor.getFirstName(), competitor.getLastName(), division);
-			double competitorResult = calculateCompetitorTopScoresAverage(scoreSheets,
+			List<StageScoreSheet> scoreSheets = StageScoreSheetService
+					.find(competitor.getFirstName(), competitor.getLastName(), division);
+			double competitorResult = competitorTopScoresAverage(scoreSheets,
 					classifierStageTopResultAvgerages);
 			if (competitorResult >= 0.0) {
 
@@ -90,10 +90,10 @@ public class RankingService {
 		return divisionRanking;
 	}
 
-	public static Ranking generateRanking() {
+	public static Ranking getRanking() {
 		Ranking ranking = new Ranking();
 		for (IPSCDivision division : IPSCDivision.values()) {
-			ranking.getDivisionRankings().put(division, generateDivisionRanking(division));
+			ranking.getDivisionRankings().put(division, getDivisionRanking(division));
 		}
 		persist(ranking);
 
@@ -117,7 +117,7 @@ public class RankingService {
 	public static void persist(Ranking ranking) {
 		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
 		entityManager.getTransaction().begin();
-		RankingRepository.persist(ranking, entityManager);
+		RankingRepository.save(ranking, entityManager);
 		entityManager.getTransaction().commit();
 		entityManager.close();
 	}

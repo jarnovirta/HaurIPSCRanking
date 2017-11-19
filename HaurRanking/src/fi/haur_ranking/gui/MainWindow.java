@@ -41,7 +41,7 @@ public class MainWindow {
 				importCompetitionsCommandHandler();
 			}
 			if (command.equals("generateRanking")) {
-				RankingService.generateRanking();
+				RankingService.getRanking();
 			}
 		}
 	}

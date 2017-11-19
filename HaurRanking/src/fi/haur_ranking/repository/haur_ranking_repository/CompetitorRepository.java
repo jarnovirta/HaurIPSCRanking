@@ -29,7 +29,7 @@ public class CompetitorRepository {
 			return null;
 		}
 	}
-	public static Competitor findByName(String firstName, String lastName, EntityManager entityManager) {
+	public static Competitor find(String firstName, String lastName, EntityManager entityManager) {
 		String queryString = "SELECT c FROM Competitor c WHERE c.firstName = :firstName AND c.lastName = :lastName";
 		try {
 			TypedQuery<Competitor> query = entityManager.createQuery(queryString, Competitor.class);
@@ -47,7 +47,7 @@ public class CompetitorRepository {
 	public static Competitor persist(Competitor competitor, EntityManager entityManager) {
 		try {
 			entityManager.persist(competitor);
-			return findByName(competitor.getFirstName(), competitor.getLastName(), entityManager);
+			return find(competitor.getFirstName(), competitor.getLastName(), entityManager);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
