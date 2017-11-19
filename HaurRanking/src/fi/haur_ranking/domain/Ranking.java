@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,7 +22,7 @@ public class Ranking {
 	@GeneratedValue(strategy = GenerationType.TABLE)
 	private Long id;
 
-	@OneToMany
+	@OneToMany(cascade = CascadeType.ALL)
 	Map<IPSCDivision, DivisionRanking> divisionRankings = new HashMap<IPSCDivision, DivisionRanking>();
 
 	@Temporal(TemporalType.TIMESTAMP)

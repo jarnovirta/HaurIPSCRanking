@@ -2,6 +2,7 @@ package fi.haur_ranking.domain;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -22,7 +23,7 @@ public class DivisionRanking {
 	@Enumerated(EnumType.STRING)
 	IPSCDivision division;
 
-	@OneToMany(fetch = FetchType.EAGER)
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	List<DivisionRankingLine> rankingLines;
 
 	public DivisionRanking() {

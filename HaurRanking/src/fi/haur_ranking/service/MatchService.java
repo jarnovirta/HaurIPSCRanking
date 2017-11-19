@@ -7,11 +7,8 @@ import javax.persistence.EntityManager;
 
 import fi.haur_ranking.domain.ClassifierStage;
 import fi.haur_ranking.domain.Competitor;
-import fi.haur_ranking.domain.DivisionRanking;
-import fi.haur_ranking.domain.DivisionRankingLine;
 import fi.haur_ranking.domain.IPSCDivision;
 import fi.haur_ranking.domain.Match;
-import fi.haur_ranking.domain.Ranking;
 import fi.haur_ranking.domain.Stage;
 import fi.haur_ranking.domain.StageScoreSheet;
 import fi.haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
@@ -94,24 +91,13 @@ public class MatchService {
 		System.out.println("FOUND NEW RESULTS FOR " + matchesWithNewResults.size() + " MATCHES AND "
 				+ divisionsWithNewResults.size() + " DIVISIONS");
 
-		persist(matchesWithNewResults);
-
-		System.out.println("\n*** IMPORT DONE");
-
-		Ranking ranking = RankingService.generateRanking();
-		System.out.println("\n*** HAUR VARJORANKING ***");
-		System.out.println(ranking.getDate());
-
-		for (IPSCDivision div : ranking.getDivisionRankings().keySet()) {
-			System.out.println(div.toString() + ":");
-			DivisionRanking divRank = ranking.getDivisionRankings().get(div);
-			int pos = 1;
-			for (DivisionRankingLine line : divRank.getRankingLines()) {
-				System.out.println(
-						pos++ + ". " + line.getCompetitor().getFirstName() + " " + line.getCompetitor().getLastName()
-								+ ": " + line.getResultPercentage() + "% " + line.getBestResultsAverage());
-			}
+		if (matchesWithNewResults.size() > 0) {
+			System.out.println("\nSaving new results...");
+			persist(matchesWithNewResults);
+			System.out.println("\nGenerating ranking...");
+			RankingService.generateRanking();
 		}
+		System.out.println("\n*** DONE!");
 	}
 
 	public static void persist(List<Match> matches) {

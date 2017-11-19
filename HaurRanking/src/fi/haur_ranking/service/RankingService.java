@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+
 import fi.haur_ranking.domain.ClassifierStage;
 import fi.haur_ranking.domain.Competitor;
 import fi.haur_ranking.domain.DivisionRanking;
@@ -12,6 +14,8 @@ import fi.haur_ranking.domain.DivisionRankingLine;
 import fi.haur_ranking.domain.IPSCDivision;
 import fi.haur_ranking.domain.Ranking;
 import fi.haur_ranking.domain.StageScoreSheet;
+import fi.haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
+import fi.haur_ranking.repository.haur_ranking_repository.RankingRepository;
 
 public class RankingService {
 	private static double calculateCompetitorTopScoresAverage(List<StageScoreSheet> competitorLatestScoreSheets,
@@ -91,7 +95,31 @@ public class RankingService {
 		for (IPSCDivision division : IPSCDivision.values()) {
 			ranking.getDivisionRankings().put(division, generateDivisionRanking(division));
 		}
+		persist(ranking);
+
+		System.out.println("\n*** HAUR VARJORANKING ***");
+		System.out.println(ranking.getDate());
+
+		for (IPSCDivision div : ranking.getDivisionRankings().keySet()) {
+			System.out.println(div.toString() + ":");
+			DivisionRanking divRank = ranking.getDivisionRankings().get(div);
+			int pos = 1;
+			for (DivisionRankingLine line : divRank.getRankingLines()) {
+				System.out.println(
+						pos++ + ". " + line.getCompetitor().getFirstName() + " " + line.getCompetitor().getLastName()
+								+ ": " + line.getResultPercentage() + "% " + line.getBestResultsAverage());
+			}
+		}
+
 		return ranking;
+	}
+
+	public static void persist(Ranking ranking) {
+		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
+		entityManager.getTransaction().begin();
+		RankingRepository.persist(ranking, entityManager);
+		entityManager.getTransaction().commit();
+		entityManager.close();
 	}
 
 	private static int round(double d) {
