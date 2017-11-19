@@ -15,12 +15,24 @@ import fi.haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUti
 import fi.haur_ranking.repository.haur_ranking_repository.MatchRepository;
 import fi.haur_ranking.repository.winmss_repository.WinMSSMatchRepository;
 import fi.haur_ranking.repository.winmss_repository.WinMSSStageRepository;
+import fi.haur_ranking.repository.winmss_repository.WinMSSStageScoreSheetRepository;
 
 public class MatchService {
 	private static EntityManager entityManager;
 
 	public static Match find(Match match, EntityManager entityManager) {
 		return MatchRepository.find(match, entityManager);
+	}
+
+	private static void findNewWinMssStageScoreSheets(Stage stage) {
+		stage.setStageScoreSheets(WinMSSStageScoreSheetRepository.find(stage.getMatch(), stage));
+		for (StageScoreSheet sheet : stage.getStageScoreSheets())
+			sheet.setStage(stage);
+
+		// Handle new stage score sheets
+		if (stage.getStageScoreSheets().size() > 0) {
+			StageScoreSheetService.setCompetitorsToStageScoreSheets(stage.getStageScoreSheets(), entityManager);
+		}
 	}
 
 	public static int getTotalMatchCount() {
@@ -60,6 +72,15 @@ public class MatchService {
 				/////
 				if (StageService.find(stage, entityManager) != null)
 					continue;
+
+				findNewWinMssStageScoreSheets(stage);
+				if (stage.getStageScoreSheets() != null && stage.getStageScoreSheets().size() > 0) {
+					stagesWithNewResults.add(stage);
+					for (StageScoreSheet sheet : stage.getStageScoreSheets()) {
+						if (!divisionsWithNewResults.contains(sheet.getIpscDivision()))
+							divisionsWithNewResults.add(sheet.getIpscDivision());
+					}
+				}
 			}
 			if (stagesWithNewResults.size() > 0)
 				matchesWithNewResults.add(match);
@@ -94,9 +115,8 @@ public class MatchService {
 					newStageScoreSheets.addAll(stage.getStageScoreSheets());
 
 					for (StageScoreSheet sheet : stage.getStageScoreSheets()) {
-						Competitor existingCompetitor = CompetitorService.find(
-								sheet.getCompetitor().getFirstName(), sheet.getCompetitor().getLastName(),
-								entityManager);
+						Competitor existingCompetitor = CompetitorService.find(sheet.getCompetitor().getFirstName(),
+								sheet.getCompetitor().getLastName(), entityManager);
 						if (existingCompetitor != null) {
 							sheet.setCompetitor(existingCompetitor);
 						}

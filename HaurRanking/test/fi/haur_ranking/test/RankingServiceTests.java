@@ -87,7 +87,10 @@ public class RankingServiceTests {
 	@Test
 	public void generateRankingTest() {
 		Ranking ranking = RankingService.getRanking();
-		DivisionRanking productionRanking = ranking.getDivisionRankings().get(IPSCDivision.PRODUCTION);
+		DivisionRanking productionRanking = new DivisionRanking();
+		for (DivisionRanking div : ranking.getDivisionRankings())
+			if (div.getDivision().equals(IPSCDivision.PRODUCTION))
+				productionRanking = div;
 		DivisionRankingLine firstLine = productionRanking.getRankingLines().get(0);
 
 		assertEquals("Jerry Miculek should be #1 for Production Division ranking.", "Jerry",

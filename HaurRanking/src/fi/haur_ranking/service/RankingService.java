@@ -26,7 +26,10 @@ public class RankingService {
 		// divided by average of top two results for classifier stage). Then
 		// calculate average of 4 best relative scores.
 
-		if (competitorLatestScoreSheets.size() >= 4) {
+		// TESTING change to >= 4
+		//
+		if (competitorLatestScoreSheets.size() >= 1) {
+			///////
 			List<Double> competitorRelativeScores = new ArrayList<Double>();
 
 			for (StageScoreSheet sheet : competitorLatestScoreSheets) {
@@ -73,10 +76,9 @@ public class RankingService {
 		List<Competitor> competitors = CompetitorService.findAll();
 
 		for (Competitor competitor : competitors) {
-			List<StageScoreSheet> scoreSheets = StageScoreSheetService
-					.find(competitor.getFirstName(), competitor.getLastName(), division);
-			double competitorResult = competitorTopScoresAverage(scoreSheets,
-					classifierStageTopResultAvgerages);
+			List<StageScoreSheet> scoreSheets = StageScoreSheetService.find(competitor.getFirstName(),
+					competitor.getLastName(), division);
+			double competitorResult = competitorTopScoresAverage(scoreSheets, classifierStageTopResultAvgerages);
 			if (competitorResult >= 0.0) {
 
 				resultList.add(new DivisionRankingLine(competitor, competitorResult));
@@ -93,18 +95,18 @@ public class RankingService {
 	public static Ranking getRanking() {
 		Ranking ranking = new Ranking();
 		for (IPSCDivision division : IPSCDivision.values()) {
-			ranking.getDivisionRankings().put(division, getDivisionRanking(division));
+			ranking.getDivisionRankings().add(getDivisionRanking(division));
 		}
 		persist(ranking);
 
 		System.out.println("\n*** HAUR VARJORANKING ***");
 		System.out.println(ranking.getDate());
 
-		for (IPSCDivision div : ranking.getDivisionRankings().keySet()) {
-			System.out.println(div.toString() + ":");
-			DivisionRanking divRank = ranking.getDivisionRankings().get(div);
+		for (DivisionRanking div : ranking.getDivisionRankings()) {
+			System.out.println(div.getDivision().toString() + ":");
+
 			int pos = 1;
-			for (DivisionRankingLine line : divRank.getRankingLines()) {
+			for (DivisionRankingLine line : div.getRankingLines()) {
 				System.out.println(
 						pos++ + ". " + line.getCompetitor().getFirstName() + " " + line.getCompetitor().getLastName()
 								+ ": " + line.getResultPercentage() + "% " + line.getBestResultsAverage());

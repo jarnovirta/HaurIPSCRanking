@@ -1,8 +1,8 @@
 package fi.haur_ranking.domain;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -23,7 +23,7 @@ public class Ranking {
 	private Long id;
 
 	@OneToMany(cascade = CascadeType.ALL)
-	Map<IPSCDivision, DivisionRanking> divisionRankings = new HashMap<IPSCDivision, DivisionRanking>();
+	List<DivisionRanking> divisionRankings = new ArrayList<DivisionRanking>();
 
 	@Temporal(TemporalType.TIMESTAMP)
 	Date date;
@@ -36,7 +36,7 @@ public class Ranking {
 		return date;
 	}
 
-	public Map<IPSCDivision, DivisionRanking> getDivisionRankings() {
+	public List<DivisionRanking> getDivisionRankings() {
 		return divisionRankings;
 	}
 
@@ -48,7 +48,7 @@ public class Ranking {
 		this.date = date;
 	}
 
-	public void setDivisionRankings(Map<IPSCDivision, DivisionRanking> divisionRankings) {
+	public void setDivisionRankings(List<DivisionRanking> divisionRankings) {
 		this.divisionRankings = divisionRankings;
 	}
 

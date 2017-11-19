@@ -14,7 +14,6 @@ import fi.haur_ranking.domain.StageScoreSheet;
 
 public class WinMSSStageScoreSheetRepository {
 	public static List<StageScoreSheet> find(Match match, Stage stage) {
-		System.out.println("FINDING SCORE SHEETS FOR MATCH " + match.getName() + " STAGE " + stage.getName());
 
 		List<StageScoreSheet> resultScoreSheets = new ArrayList<StageScoreSheet>();
 		Connection connection = WinMssDatabaseUtil.getConnection();
