@@ -70,7 +70,8 @@ public class StageScoreSheetRepository {
 		try {
 			EntityManagerFactory emf = Persistence.createEntityManagerFactory("fi.haur_ranking.jpa");
 			EntityManager em = emf.createEntityManager();
-			List<StageScoreSheet> sheets = em.createQuery("SELECT s from StageScoreSheet s").getResultList();
+			List<StageScoreSheet> sheets = em.createQuery("SELECT s from StageScoreSheet s", StageScoreSheet.class)
+					.getResultList();
 			emf.close();
 			return sheets;
 		} catch (Exception e) {
