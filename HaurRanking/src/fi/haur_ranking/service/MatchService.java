@@ -153,7 +153,7 @@ public class MatchService {
 		}
 		entityManager.getTransaction().commit();
 		entityManager.close();
-		StageScoreSheetService.removeOldClassifierResults(newStageScoreSheets);
+		StageScoreSheetService.removeExtraStageScoreSheets(newStageScoreSheets);
 
 	}
 }

@@ -125,8 +125,8 @@ public class TestUtils {
 
 	protected static List<Match> createTestMatches() {
 		List<Match> matches = new ArrayList<Match>();
-		matches.add(createOldTestMatch());
 		matches.add(createNewTestMatch());
+		matches.add(createOldTestMatch());
 		return matches;
 	}
 
