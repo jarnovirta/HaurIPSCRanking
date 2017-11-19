@@ -44,7 +44,7 @@
 		    <manifest>
 		    <addClasspath>true</addClasspath>
 		    <classpathPrefix>lib/</classpathPrefix>
-			<mainClass>fi.haur_ranking.core.App</mainClass>
+			<mainClass>haur_ranking.core.App</mainClass>
 		    </manifest>
 		  </archive>
 		</configuration>

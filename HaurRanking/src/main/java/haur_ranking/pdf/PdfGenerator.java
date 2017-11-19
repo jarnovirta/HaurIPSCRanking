@@ -4,10 +4,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 
+import javax.imageio.ImageIO;
+
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Rectangle;
@@ -138,12 +141,12 @@ public class PdfGenerator {
 			para.setSpacingAfter(20);
 
 			PdfPTable table = new PdfPTable(new float[] { 20, 80 });
-
-			// Image img = Image.getInstance("medium_haur_logo.png");
+			java.awt.Image awtImage = ImageIO.read(ClassLoader.getSystemResource("images/medium_haur_logo.png"));
+			Image pdfImage = Image.getInstance(awtImage, null);
 			PdfPCell cell = new PdfPCell();
-			// cell.setBorder(Rectangle.NO_BORDER);
-			// cell.addElement(img);
-			// table.addCell(cell);
+			cell.setBorder(Rectangle.NO_BORDER);
+			cell.addElement(pdfImage);
+			table.addCell(cell);
 			cell = new PdfPCell();
 			cell.addElement(new Chunk("HAUR Ranking"));
 			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);

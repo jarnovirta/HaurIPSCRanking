@@ -3,13 +3,17 @@ package haur_ranking.gui;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -94,14 +98,14 @@ public class MainWindow {
 		mainFrame = new JFrame("HAUR varjoranking");
 		mainFrame.setSize(800, 600);
 		mainFrame.setLayout(new GridLayout(3, 1));
-		// List<Image> icons = new ArrayList<Image>();
-		// try {
-		// icons.add(ImageIO.read(new File("images/small_haur_logo.png")));
-		// icons.add(ImageIO.read(new File("images/large_haur_logo.png")));
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// }
-		// mainFrame.setIconImages(icons);
+		List<Image> icons = new ArrayList<Image>();
+		try {
+			icons.add(ImageIO.read(ClassLoader.getSystemResource("images/small_haur_logo.png")));
+			icons.add(ImageIO.read(ClassLoader.getSystemResource("images/large_haur_logo.png")));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		mainFrame.setIconImages(icons);
 
 		headerLabel = new JLabel("", JLabel.CENTER);
 
