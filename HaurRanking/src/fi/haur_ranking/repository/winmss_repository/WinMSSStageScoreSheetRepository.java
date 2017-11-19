@@ -6,38 +6,34 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.TypedQuery;
-
 import fi.haur_ranking.domain.Competitor;
 import fi.haur_ranking.domain.IPSCDivision;
 import fi.haur_ranking.domain.Match;
 import fi.haur_ranking.domain.Stage;
 import fi.haur_ranking.domain.StageScoreSheet;
-import fi.haur_ranking.repository.haur_ranking_repository.StageScoreSheetRepository;
 
 public class WinMSSStageScoreSheetRepository {
 	public static List<StageScoreSheet> find(Match match, Stage stage) {
 		System.out.println("FINDING SCORE SHEETS FOR MATCH " + match.getName() + " STAGE " + stage.getName());
-		
+
 		List<StageScoreSheet> resultScoreSheets = new ArrayList<StageScoreSheet>();
-		Connection connection = WinMssDatabaseUtil.getConnection();		
+		Connection connection = WinMssDatabaseUtil.getConnection();
 		Statement statement = null;
 		ResultSet resultSet = null;
 
 		try {
 			statement = connection.createStatement();
-			resultSet = statement.executeQuery("SELECT * FROM tblMatchStageScore WHERE MatchId=" + match.getWinMssMatchId()
-					+ " AND StageId = " + stage.getWinMssId());
+			resultSet = statement.executeQuery("SELECT * FROM tblMatchStageScore WHERE MatchId="
+					+ match.getWinMssMatchId() + " AND StageId = " + stage.getWinMssId());
 			while (resultSet.next()) {
 				StageScoreSheet sheet = new StageScoreSheet();
 				sheet.setStage(stage);
 				sheet.setWinMssStageId(resultSet.getLong(2));
 				sheet.setWinMssMemberId(resultSet.getLong(3));
-				Competitor competitor = WinMSSCompetitorRepository.findCompetitor(sheet.getWinMssMemberId(), match.getWinMssMatchId());
-				if (WinMSSCompetitorRepository.isDisqualified(sheet.getWinMssMemberId(), match.getWinMssMatchId())) continue;
+				Competitor competitor = WinMSSCompetitorRepository.findCompetitor(sheet.getWinMssMemberId(),
+						match.getWinMssMatchId());
+				if (WinMSSCompetitorRepository.isDisqualified(sheet.getWinMssMemberId(), match.getWinMssMatchId()))
+					continue;
 				sheet.setCompetitor(competitor);
 				sheet.setaHits(resultSet.getInt(4));
 				sheet.setbHits(resultSet.getInt(5));
@@ -57,24 +53,28 @@ public class WinMSSStageScoreSheetRepository {
 			resultSet.close();
 
 			List<StageScoreSheet> removeScoreSheets = new ArrayList<StageScoreSheet>();
-			// Add IPSC division and remove sheets for competitors who failed power factor. Also remove sheets
-			// with last modification date null in WinMSS database. These are blank score sheets where no result has 
+			// Add IPSC division and remove sheets for competitors who failed
+			// power factor. Also remove sheets
+			// with last modification date null in WinMSS database. These are
+			// blank score sheets where no result has
 			// been entered at any point.
 			for (StageScoreSheet sheet : resultScoreSheets) {
 				statement = connection.createStatement();
-				resultSet = statement.executeQuery("SELECT TypeDivisionId, FailedPowerFactor FROM tblMatchCompetitor WHERE MemberId="+ sheet.getWinMssMemberId() 
-							+ " AND MatchId=" + match.getWinMssMatchId());
+				resultSet = statement
+						.executeQuery("SELECT TypeDivisionId, FailedPowerFactor FROM tblMatchCompetitor WHERE MemberId="
+								+ sheet.getWinMssMemberId() + " AND MatchId=" + match.getWinMssMatchId());
 				if (resultSet.next()) {
 					sheet.setIpscDivision(IPSCDivision.getDivisionByWinMSSTypeId(resultSet.getInt(1)));
-					if (resultSet.getBoolean(2)) removeScoreSheets.add(sheet);
+					if (resultSet.getBoolean(2))
+						removeScoreSheets.add(sheet);
 				}
-				if (sheet.getLastModifiedInWinMSSDatabaseString() == null) removeScoreSheets.add(sheet);
+				if (sheet.getLastModifiedInWinMSSDatabaseString() == null)
+					removeScoreSheets.add(sheet);
 			}
 			resultScoreSheets.removeAll(removeScoreSheets);
 		} catch (Exception ex) {
 			ex.printStackTrace();
-		}
-		finally {
+		} finally {
 			WinMssDatabaseUtil.closeStatementResultSet(statement, resultSet);
 		}
 		return resultScoreSheets;

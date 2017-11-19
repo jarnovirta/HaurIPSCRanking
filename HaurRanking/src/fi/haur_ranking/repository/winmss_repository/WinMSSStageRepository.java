@@ -6,20 +6,19 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-
 import fi.haur_ranking.domain.Match;
 import fi.haur_ranking.domain.Stage;
 
 public class WinMSSStageRepository {
 	public static List<Stage> findAllHandgunStages() {
 		List<Stage> stages = new ArrayList<Stage>();
-		Connection connection = WinMssDatabaseUtil.getConnection();		
+		Connection connection = WinMssDatabaseUtil.getConnection();
 		Statement statement = null;
 		ResultSet resultSet = null;
 		try {
 			statement = connection.createStatement();
-			resultSet = statement.executeQuery("SELECT MatchId, StageId, StageName FROM tblMatchStage WHERE TypeFirearmId=1");
+			resultSet = statement
+					.executeQuery("SELECT MatchId, StageId, StageName FROM tblMatchStage WHERE TypeFirearmId=1");
 			while (resultSet.next()) {
 				Stage stage = new Stage();
 				stage.setWinMssMatchId(resultSet.getLong(1));
@@ -29,12 +28,12 @@ public class WinMSSStageRepository {
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
-		}
-		finally {
+		} finally {
 			WinMssDatabaseUtil.closeStatementResultSet(statement, resultSet);
 		}
 		return stages;
 	}
+
 	public static List<Stage> findStagesForMatch(Match match) {
 		List<Stage> stages = new ArrayList<Stage>();
 		Connection connection = null;
@@ -43,7 +42,8 @@ public class WinMSSStageRepository {
 		try {
 			connection = WinMssDatabaseUtil.getConnection();
 			statement = connection.createStatement();
-			resultSet = statement.executeQuery("SELECT MatchId, StageId, StageName FROM tblMatchStage WHERE MatchId=" + match.getWinMssMatchId());
+			resultSet = statement.executeQuery(
+					"SELECT MatchId, StageId, StageName FROM tblMatchStage WHERE MatchId=" + match.getWinMssMatchId());
 			while (resultSet.next()) {
 				Stage stage = new Stage();
 				stage.setMatch(match);
@@ -54,8 +54,7 @@ public class WinMSSStageRepository {
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
-		}
-		finally {
+		} finally {
 			WinMssDatabaseUtil.closeStatementResultSet(statement, resultSet);
 		}
 		return stages;
