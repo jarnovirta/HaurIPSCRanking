@@ -159,7 +159,7 @@ public class PdfGenerator {
 	}
 
 	private static void writeToFile(ByteArrayOutputStream baos, String path) {
-		try (OutputStream outputStream = new FileOutputStream(path + "haurranking.pdf")) {
+		try (OutputStream outputStream = new FileOutputStream(path + "HaurRanking.pdf")) {
 			baos.writeTo(outputStream);
 		} catch (Exception e) {
 			e.printStackTrace();
