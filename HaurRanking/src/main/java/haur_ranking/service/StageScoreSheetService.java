@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 
+import haur_ranking.domain.ClassifierStage;
 import haur_ranking.domain.Competitor;
 import haur_ranking.domain.IPSCDivision;
 import haur_ranking.domain.Stage;
@@ -27,6 +29,21 @@ public class StageScoreSheetService {
 
 	public static List<StageScoreSheet> findAll() {
 		return StageScoreSheetRepository.findAll();
+	}
+
+	// Returns a list of score sheets for classifiers which are valid for
+	// ranking, ie. have minimum two results.
+	public static List<StageScoreSheet> findCompetitorScoreSheetsForValidClassifiers(String firstName, String lastName,
+			IPSCDivision division, EntityManager entityManager) {
+		try {
+			Set<ClassifierStage> classifiersWithTwoOrMoreResults = StageService
+					.getClassifierStagesWithTwoOrMoreResults(division).keySet();
+			return StageScoreSheetRepository.findScoreSheetsForValidClassifiers(firstName, lastName, division,
+					classifiersWithTwoOrMoreResults, entityManager);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	public static int getTotalStageScoreSheetCount() {
@@ -84,14 +101,16 @@ public class StageScoreSheetService {
 		// Remove old score sheets for competitor with more than 8 results
 		// in the division.
 		List<Long> removeSheetsIdList = new ArrayList<Long>();
+
 		for (Competitor competitor : competitorsWithNewResults.keySet()) {
 			for (IPSCDivision division : competitorsWithNewResults.get(competitor)) {
-				List<StageScoreSheet> sheets = StageScoreSheetRepository.find(competitor.getFirstName(),
+				List<StageScoreSheet> sheets = findCompetitorScoreSheetsForValidClassifiers(competitor.getFirstName(),
 						competitor.getLastName(), division, entityManager);
 				if (sheets.size() > 8) {
 					for (StageScoreSheet removeSheet : sheets.subList(8, sheets.size())) {
 						removeSheetsIdList.add(removeSheet.getId());
 					}
+
 				}
 			}
 		}

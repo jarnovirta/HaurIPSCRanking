@@ -1,6 +1,7 @@
 package haur_ranking.repository.haur_ranking_repository;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -92,6 +93,27 @@ public class StageScoreSheetRepository {
 					.getResultList();
 			emf.close();
 			return sheets;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public static List<StageScoreSheet> findScoreSheetsForValidClassifiers(String firstName, String lastName,
+			IPSCDivision division, Set<ClassifierStage> classifiers, EntityManager entityManager) {
+		try {
+			// KORJATTAVA ORDER BY DATE
+			String queryString = "SELECT s FROM StageScoreSheet s WHERE s.competitor.firstName = :firstName "
+					+ "AND s.competitor.lastName = :lastName AND s.stage.classifierStage IN :classifierStages "
+					+ "AND s.ipscDivision = :division ORDER BY s.stage.match.winMssDateString DESC";
+
+			final TypedQuery<StageScoreSheet> query = entityManager.createQuery(queryString, StageScoreSheet.class);
+			query.setParameter("firstName", firstName);
+			query.setParameter("lastName", lastName);
+			query.setParameter("classifierStages", classifiers);
+			query.setParameter("division", division);
+			return query.getResultList();
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

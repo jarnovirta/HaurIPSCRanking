@@ -26,10 +26,7 @@ public class RankingService {
 		// divided by average of top two results for classifier stage). Then
 		// calculate average of 4 best relative scores.
 
-		// TESTING change to >= 4
-		//
-		if (competitorLatestScoreSheets.size() >= 1) {
-			///////
+		if (competitorLatestScoreSheets.size() >= 4) {
 			List<Double> competitorRelativeScores = new ArrayList<Double>();
 
 			for (StageScoreSheet sheet : competitorLatestScoreSheets) {

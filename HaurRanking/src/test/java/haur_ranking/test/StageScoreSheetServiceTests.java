@@ -1,9 +1,11 @@
 package haur_ranking.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
@@ -14,6 +16,8 @@ import org.junit.Test;
 
 import haur_ranking.domain.ClassifierStage;
 import haur_ranking.domain.IPSCDivision;
+import haur_ranking.domain.StageScoreSheet;
+import haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
 import haur_ranking.service.StageScoreSheetService;
 
 public class StageScoreSheetServiceTests {
@@ -58,25 +62,46 @@ public class StageScoreSheetServiceTests {
 	}
 
 	@Test
-	public void totalResultsInDatabaseForCompetitorAndDivisionTest() {
-
+	public void scoreSheetSaveMethodsTest() {
+		// Competitor Jarno should have 8 results. Has 11 score sheets in total
+		// in inserted results. Older score sheets for same classifier should be
+		// removed (CLC-05). Inserted data has results for Jarno for 9 valid
+		// classifiers. Oldest result (CLC-04 in match "Spring match" should be
+		// removed.
 		try {
-			int jarnoTotalResultsCount = StageScoreSheetService.find("Jarno", "Virta", IPSCDivision.PRODUCTION).size();
-			assertEquals("Jarno should have 8 results for Production Division.", 8, jarnoTotalResultsCount);
 
-			int clintTotalResultsCount = StageScoreSheetService.find("Clint", "Upchurch", IPSCDivision.PRODUCTION)
-					.size();
-			assertEquals("Clint should have 3 results for Production Division.", 3, clintTotalResultsCount);
+			int jarnoTotalResultsCount = StageScoreSheetService.find("Jarno", "Virta", IPSCDivision.PRODUCTION).size();
+			assertEquals("Jarno should have 9 results for Production Division.", 9, jarnoTotalResultsCount);
+
+			EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
+
+			// Check that competitor Jarno has only 8 results. Score sheet for
+			// Spring match (1.4.2017) should have been
+			// removed.
+			List<StageScoreSheet> jarnoScoreSheetsForValidClassifiers = StageScoreSheetService
+					.findCompetitorScoreSheetsForValidClassifiers("Jarno", "Virta", IPSCDivision.PRODUCTION,
+							entityManager);
+			int jarnoScoreSheetCountForValidClassifiers = jarnoScoreSheetsForValidClassifiers.size();
+			entityManager.close();
+			assertEquals("Jarno should have results for 8 valid classifiers (ie. with 2 or more results each).", 8,
+					jarnoScoreSheetCountForValidClassifiers);
+
+			boolean includesCLC04Result = false;
+			for (StageScoreSheet sheet : jarnoScoreSheetsForValidClassifiers) {
+				if (sheet.getStage().getClassifierStage().equals(ClassifierStage.CLC04))
+					includesCLC04Result = true;
+			}
+			assertTrue("Jarno's result for CLC-04 should have "
+					+ "been removed as oldest, because he has too many results.", includesCLC04Result == false);
+			int robTotalResultsCount = StageScoreSheetService.find("Rob", "Leatham", IPSCDivision.PRODUCTION).size();
+			assertEquals("Rob should have 3 results for Production Division.", 3, robTotalResultsCount);
 
 			int jerryTotalResultsCount = StageScoreSheetService.find("Jerry", "Miculek", IPSCDivision.PRODUCTION)
 					.size();
-			assertEquals("Jerry should have 8 results for Production Division.", 8, jerryTotalResultsCount);
-
-			int maxTotalResultsCount = StageScoreSheetService.find("Max", "Michel", IPSCDivision.PRODUCTION).size();
-			assertEquals("Max should have 5 results for Production Division.", 5, maxTotalResultsCount);
+			assertEquals("Jerry should have 6 results for Production Division.", 6, jerryTotalResultsCount);
 
 			int benTotalResultsCount = StageScoreSheetService.find("Ben", "Stoeger", IPSCDivision.PRODUCTION).size();
-			assertEquals("Ben should have  results for Production Division.", 6, benTotalResultsCount);
+			assertEquals("Ben should have 5 results for Production Division.", 5, benTotalResultsCount);
 
 		} catch (Exception e) {
 			e.printStackTrace();

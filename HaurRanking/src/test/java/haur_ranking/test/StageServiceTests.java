@@ -27,14 +27,14 @@ public class StageServiceTests {
 	}
 
 	// Test that all test stages are found for which test data was saved to
-	// database
+	// database.
 	@Test
 	public void findTest() {
 		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
 		List<Match> testMatches = TestUtils.createTestMatches();
 		for (Match match : testMatches) {
 			for (Stage stage : match.getStages()) {
-				assertNotNull("All test stages should be in database.", StageService.find(stage, entityManager));
+				assertNotNull("find() should find all stages in database.", StageService.find(stage, entityManager));
 			}
 		}
 		entityManager.close();

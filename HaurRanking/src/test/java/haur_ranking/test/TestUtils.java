@@ -2,7 +2,9 @@ package haur_ranking.test;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 
@@ -29,25 +31,22 @@ public class TestUtils {
 	static Competitor jarno = new Competitor("Jarno", "Virta");
 	static Competitor jerry = new Competitor("Jerry", "Miculek");
 	static Competitor ben = new Competitor("Ben", "Stoeger");
-	static Competitor max = new Competitor("Max", "Michel");
-	static Competitor clint = new Competitor("Clint", "Upchurch");
+	static Competitor rob = new Competitor("Rob", "Leatham");
 
-	static Double[] jarnoNewMatchHitFactors = new Double[] { 4.0, 3.9, 2.0, 5.1, 5.5, 4.0, 4.5, 3.6, 5.2, 1.2 };
+	static Double[] jarnoNewMatchHitFactors = new Double[] { 4.0, 3.9, 2.0, null, 5.5, 4.0, 4.5, null, 5.2, null };
 
-	static Double[] jerryNewMatchHitFactors = new Double[] { 3.9, 4.5, 5.1, 3.9, 4.4, 2.3, 3.9, null, null, 1.5 };
+	static Double[] jerryNewMatchHitFactors = new Double[] { 3.1, null, null, 3.9, null, 2.3, 3.9, null, null, 1.5 };
 
-	static Double[] maxNewMatchHitFactors = new Double[] { 2.3, null, 0.0, 3.9, 4.5, null, null, null, null, null };
+	static Double[] benNewMatchHitFactors = new Double[] { 1.5, 4.1, 2.9, 0.0, 4.8, null, null, null, null, null };
 
-	static Double[] benNewMatchHitFactors = new Double[] { 3.2, 4.1, 2.9, 0.0, 4.8, 5.1, null, null, null, null };
+	static Double[] robNewMatchHitFactors = new Double[] { 2.0, 2.2, 3.6, null, null, null, null, null, null, null };
 
-	static Double[] clintNewMatchHitFactors = new Double[] { 3.2, 4.0, 3.6, null, null, null, null, null, null, null };
+	static Double[] jarnoOldMatchHitFactors = new Double[] { null, null, null, null, 6.0, null, null, 3.6, null, 3.8 };
 
-	static Double[] jarnoOldMatchHitFactors = new Double[] { null, null, null, null, 6.0, null, null, null, null,
+	static Double[] jerryOldMatchHitFactors = new Double[] { null, null, null, 4.2, null, null, null, 2.5, null, null };
+
+	static Double[] jarnoSpringMatchHitFactors = new Double[] { null, null, null, 5.1, null, null, null, null, null,
 			null };
-
-	static Double[] jerryOldMatchHitFactors = new Double[] { null, null, null, 4.2, null, null, null, 3.2, null, null };
-
-	static Double[] maxOldMatchHitFactors = new Double[] { null, 3.1, null, null, null, null, null, null, null, null };
 
 	protected static void cleanup() {
 		try {
@@ -85,6 +84,14 @@ public class TestUtils {
 		return sheets;
 	}
 
+	protected static Match createSpringTestMatch() {
+		Match springTestMatch = new Match();
+		springTestMatch.setName("Spring match");
+		springTestMatch.setWinMssDateString("1.4.2017");
+		springTestMatch.setStages(createTestStages(springTestMatch));
+		return springTestMatch;
+	}
+
 	private static Stage createStage(Match match, ClassifierStage classifier) {
 		Stage stage = new Stage(match, classifier.toString(), classifier);
 		stage.setStageScoreSheets(createStageScoreSheets(stage));
@@ -107,18 +114,21 @@ public class TestUtils {
 				sheets.add(new StageScoreSheet(jerry, jerryNewMatchHitFactors[index], stage, IPSCDivision.PRODUCTION));
 			if (benNewMatchHitFactors[index] != null)
 				sheets.add(new StageScoreSheet(ben, benNewMatchHitFactors[index], stage, IPSCDivision.PRODUCTION));
-			if (maxNewMatchHitFactors[index] != null)
-				sheets.add(new StageScoreSheet(max, maxNewMatchHitFactors[index], stage, IPSCDivision.PRODUCTION));
-			if (clintNewMatchHitFactors[index] != null)
-				sheets.add(new StageScoreSheet(clint, clintNewMatchHitFactors[index], stage, IPSCDivision.PRODUCTION));
+			if (robNewMatchHitFactors[index] != null)
+				sheets.add(new StageScoreSheet(rob, robNewMatchHitFactors[index], stage, IPSCDivision.PRODUCTION));
 
-		} else {
+		}
+		if (stage.getMatch().getName().equals("Old match")) {
 			if (jarnoOldMatchHitFactors[index] != null)
 				sheets.add(new StageScoreSheet(jarno, jarnoOldMatchHitFactors[index], stage, IPSCDivision.PRODUCTION));
 			if (jerryOldMatchHitFactors[index] != null)
 				sheets.add(new StageScoreSheet(jerry, jerryOldMatchHitFactors[index], stage, IPSCDivision.PRODUCTION));
-			if (maxOldMatchHitFactors[index] != null)
-				sheets.add(new StageScoreSheet(max, maxOldMatchHitFactors[index], stage, IPSCDivision.PRODUCTION));
+		} else {
+			if (stage.getMatch().getName().equals("Spring match")) {
+				if (jarnoSpringMatchHitFactors[index] != null)
+					sheets.add(new StageScoreSheet(jarno, jarnoSpringMatchHitFactors[index], stage,
+							IPSCDivision.PRODUCTION));
+			}
 		}
 		return sheets;
 	}
@@ -127,6 +137,7 @@ public class TestUtils {
 		List<Match> matches = new ArrayList<Match>();
 		matches.add(createNewTestMatch());
 		matches.add(createOldTestMatch());
+		matches.add(createSpringTestMatch());
 		return matches;
 	}
 
@@ -147,22 +158,27 @@ public class TestUtils {
 		}
 	}
 
-	// public static Map<ClassifierStage, Double> getAverageOfTopTwoForStage() {
-	// Map<ClassifierStage, Double> averages = new HashMap<ClassifierStage,
-	// Double>();
-	// averages.put(ClassifierStage.CLC01, 6.15);
-	// averages.put(ClassifierStage.CLC02, 6.15);
-	//
-	// return averages;
-	// }
+	public static Map<ClassifierStage, Double> getAverageOfTopTwoForStage() {
+		Map<ClassifierStage, Double> averages = new HashMap<ClassifierStage, Double>();
+		averages.put(ClassifierStage.CLC01, 3.55);
+		averages.put(ClassifierStage.CLC02, 4.0);
+		averages.put(ClassifierStage.CLC03, 3.25);
+		averages.put(ClassifierStage.CLC04, 4.65);
+		averages.put(ClassifierStage.CLC05, 5.75);
+		averages.put(ClassifierStage.CLC06, 3.15);
+		averages.put(ClassifierStage.CLC07, 4.2);
+		averages.put(ClassifierStage.CLC08, 3.05);
+		averages.put(ClassifierStage.CLC10, 2.65);
+		return averages;
+	}
 
-	// protected static List<Object[]> getCompetitorAverageScoreList() {
-	// List<Object[]> averageScoreList = new ArrayList<Object[]>();
-	// averageScoreList.add(new Object[] { jarno, 0.78049 });
-	// averageScoreList.add(new Object[] { max, 0.72045 });
-	// averageScoreList.add(new Object[] { ben, 0.66260 });
-	// return averageScoreList;
-	// }
+	protected static List<Object[]> getCompetitorAverageScoreList() {
+		List<Object[]> averageScoreList = new ArrayList<Object[]>();
+		averageScoreList.add(new Object[] { jarno, 1.253 });
+		averageScoreList.add(new Object[] { jerry, 0.865 });
+		averageScoreList.add(new Object[] { ben, 0.794 });
+		return averageScoreList;
+	}
 
 	protected static void setupDatabase() {
 		deleteDatabase();
@@ -175,4 +191,13 @@ public class TestUtils {
 		HaurRankingDatabaseUtils.closeEntityManagerFactory();
 	}
 
+	// protected static List<StageScoreSheet>
+	// getAllStageScoreSheetsForCompetitor(Match match, String firstName, String
+	// lastName) {
+	// try {
+	// StageScoreSheetService.find(firstName, lastName, division)
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// }
 }

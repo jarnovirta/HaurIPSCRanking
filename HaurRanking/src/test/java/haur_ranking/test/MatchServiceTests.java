@@ -21,7 +21,7 @@ public class MatchServiceTests {
 
 	@Test
 	public void getTotalMatchCountTest() {
-		assertEquals("Database should have two matches which were saved by StageScoreSheetServiceTests.", 2,
+		assertEquals("Database should have three matches which were saved by StageScoreSheetServiceTests.", 3,
 				MatchService.getTotalMatchCount());
 	}
 }

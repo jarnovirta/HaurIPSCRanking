@@ -1,8 +1,16 @@
 package haur_ranking.test;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import haur_ranking.domain.DivisionRanking;
+import haur_ranking.domain.DivisionRankingLine;
+import haur_ranking.domain.IPSCDivision;
+import haur_ranking.domain.Ranking;
+import haur_ranking.service.RankingService;
 
 public class RankingServiceTests {
 	@AfterClass
@@ -20,40 +28,48 @@ public class RankingServiceTests {
 		// try {
 		// Method method =
 		// RankingService.class.getDeclaredMethod("calculateCompetitorTopScoresAverage",
-		// List.class, Map.class);
+		// List.class,
+		// Map.class);
 		// method.setAccessible(true);
 		//
 		// // Test for competitor with required minimum of four score sheets
 		// double jarnoTopScoresAverage = (double)
 		// method.invoke(RankingService.class,
 		// TestUtils.getAllStageScoreSheetsForCompetitor(new
-		// Match("JarnoTestMatch", "1.1.2017"), new Competitor("Jarno",
-		// "Virta")), TestUtils.getAverageOfTopTwoForStage());
-		// assertEquals("Top scores average for test competitor Jarno must be
-		// 0.780", 0.780, jarnoTopScoresAverage, 0.001);
+		// Match("JarnoTestMatch", "1.1.2017"),
+		// new Competitor("Jarno", "Virta")),
+		// TestUtils.getAverageOfTopTwoForStage());
+		// assertEquals("Top scores average for test competitor Jarno should be
+		// 0.780", 0.780, jarnoTopScoresAverage,
+		// 0.001);
 		// // Test for competitor with three score sheets instead of the
-		// required four
+		// // required four
 		// double jerryTopScoresAverage = (double)
 		// method.invoke(RankingService.class,
 		// TestUtils.getAllStageScoreSheetsForCompetitor(new
 		// Match("JerryTestMatch", "2.4.2017"), new Competitor("Jerry",
 		// "Miculek")), TestUtils.getAverageOfTopTwoForStage());
-		// assertEquals("calculateCompetitorRelativeScores method must return -1
+		// assertEquals("calculateCompetitorRelativeScores method must
+		// return -1
 		// for competitor Jerry (not enough score sheets)", -1,
 		// jerryTopScoresAverage, 0.0);
-		// // Test for competitor with more than eight score sheets. Only eight
+		// // Test for competitor with more than eight score sheets. Only
+		// eight
 		// should count.
 		// double benTopScoresAverage = (double)
 		// method.invoke(RankingService.class,
 		// TestUtils.getAllStageScoreSheetsForCompetitor(new
-		// Match("BenTestMatch", "5.5.2017"), new Competitor("Ben", "Stoeger")),
+		// Match("BenTestMatch", "5.5.2017"), new Competitor("Ben",
+		// "Stoeger")),
 		// TestUtils.getAverageOfTopTwoForStage());
 		// assertEquals("Top scores average for competitor Ben must be 0.663
 		// (competitor with more than 8 score sheets, only 8 count).",
 		// 0.663, benTopScoresAverage, 0.001);
+
+		// }catch(
 		//
-		// }
-		// catch (Exception e) {
+		// Exception e)
+		// {
 		// }
 	}
 
@@ -78,20 +94,31 @@ public class RankingServiceTests {
 
 	@Test
 	public void generateRankingTest() {
-		// Ranking ranking = RankingService.getRanking();
-		// DivisionRanking productionRanking = new DivisionRanking();
-		// for (DivisionRanking div : ranking.getDivisionRankings())
-		// if (div.getDivision().equals(IPSCDivision.PRODUCTION))
-		// productionRanking = div;
-		// DivisionRankingLine firstLine =
-		// productionRanking.getRankingLines().get(0);
-		//
-		// assertEquals("Jerry Miculek should be #1 for Production Division
-		// ranking.", "Jerry",
-		// firstLine.getCompetitor().getFirstName());
-		// assertEquals("Jerry Miculek should have bestResultsAverage of 1,14
-		// for Production Division.", 1.14492,
-		// firstLine.getBestResultsAverage(), 1.01);
+		Ranking ranking = RankingService.getRanking();
+		DivisionRanking productionRanking = new DivisionRanking();
+		for (DivisionRanking div : ranking.getDivisionRankings())
+			if (div.getDivision().equals(IPSCDivision.PRODUCTION))
+				productionRanking = div;
+		DivisionRankingLine firstLine = productionRanking.getRankingLines().get(0);
+		DivisionRankingLine secondLine = productionRanking.getRankingLines().get(1);
+		DivisionRankingLine thirdLine = productionRanking.getRankingLines().get(2);
+		assertEquals("Jarno Virta should be #1 for Production Division ranking.", "Jarno",
+				firstLine.getCompetitor().getFirstName());
+		assertEquals("Jarno Virta should have bestResultsAverage of 1.25 for Production Division.", 1.253,
+				firstLine.getBestResultsAverage(), 0.001);
+		assertEquals("Jarno Virta should have result of 100%", 100, firstLine.getResultPercentage());
+		assertEquals("Jerry Miculek should be #2 for Production Division ranking.", "Jerry",
+				secondLine.getCompetitor().getFirstName());
+		assertEquals("Jerry Miculek should have bestResultsAverage of 1.16 for Production Division.", 1.156,
+				secondLine.getBestResultsAverage(), 0.001);
+		assertEquals("Jerry Miculek should have result of 92%", 92, secondLine.getResultPercentage());
+		assertEquals("Ben Stoeger should be #3 for Production Division ranking.", "Ben",
+				thirdLine.getCompetitor().getFirstName());
+		assertEquals("Ben Stoeger should have bestResultsAverage of 0.82 for Production Division.", 0.818,
+				thirdLine.getBestResultsAverage(), 0.001);
+		assertEquals("Ben Stoeger should have result of 65%", 65, thirdLine.getResultPercentage());
+		assertEquals("Rob Leatham should not have a rank (not enough results).", 3,
+				productionRanking.getRankingLines().size());
 	}
 
 	@Test
