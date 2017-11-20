@@ -38,8 +38,8 @@ public class StageScoreSheetService {
 		try {
 			Set<ClassifierStage> classifiersWithTwoOrMoreResults = StageService
 					.getClassifierStagesWithTwoOrMoreResults(division).keySet();
-			return StageScoreSheetRepository.findScoreSheetsForValidClassifiers(firstName, lastName, division,
-					classifiersWithTwoOrMoreResults, entityManager);
+			return StageScoreSheetRepository.find(firstName, lastName, division, classifiersWithTwoOrMoreResults,
+					entityManager);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

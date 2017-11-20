@@ -18,6 +18,7 @@ public class DivisionRankingLine implements Comparable<DivisionRankingLine> {
 	Competitor competitor;
 	int resultPercentage;
 	double bestResultsAverage;
+	double bestHitFactorsAverage;
 	int resultsCount;
 
 	Integer previousRank;
@@ -27,9 +28,12 @@ public class DivisionRankingLine implements Comparable<DivisionRankingLine> {
 	public DivisionRankingLine() {
 	}
 
-	public DivisionRankingLine(Competitor competitor, double bestResultsAverage) {
+	public DivisionRankingLine(Competitor competitor, double bestResultsAverage, double bestHitFactorsAverage,
+			int resultsCount) {
 		this.competitor = competitor;
 		this.bestResultsAverage = bestResultsAverage;
+		this.bestHitFactorsAverage = bestHitFactorsAverage;
+		this.resultsCount = resultsCount;
 	}
 
 	public DivisionRankingLine(Competitor competitor, int resultPercentage, int resultsCount, Integer previousRank,
@@ -50,6 +54,10 @@ public class DivisionRankingLine implements Comparable<DivisionRankingLine> {
 			return 1;
 		return 0;
 
+	}
+
+	public double getBestHitFactorsAverage() {
+		return bestHitFactorsAverage;
 	}
 
 	public double getBestResultsAverage() {
@@ -78,6 +86,10 @@ public class DivisionRankingLine implements Comparable<DivisionRankingLine> {
 
 	public boolean isImprovedResult() {
 		return improvedResult;
+	}
+
+	public void setBestHitFactorsAverage(double bestHitFactorsAverage) {
+		this.bestHitFactorsAverage = bestHitFactorsAverage;
 	}
 
 	public void setBestResultsAverage(double bestResultsAverage) {

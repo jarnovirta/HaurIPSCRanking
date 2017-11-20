@@ -51,12 +51,12 @@ public class PdfGenerator {
 		divisionRankingPara.setAlignment(Element.ALIGN_CENTER);
 		divisionRankingPara.add(new Paragraph(new Chunk(divisionRanking.getDivision().toString())));
 
-		PdfPTable table = new PdfPTable(4);
-		table.setWidthPercentage(70);
+		PdfPTable table = new PdfPTable(5);
+		table.setWidthPercentage(80);
 		table.setHorizontalAlignment(Element.ALIGN_CENTER);
 		try {
 
-			table.setWidths(new float[] { 40, 200, 40, 50 });
+			table.setWidths(new float[] { 40, 200, 40, 50, 80 });
 
 			// Write table header row
 
@@ -76,6 +76,11 @@ public class PdfGenerator {
 			table.addCell(cell);
 
 			cell = new PdfPCell(new Paragraph(new Chunk("HF-ka")));
+			cell.setPadding(5);
+			cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+			table.addCell(cell);
+
+			cell = new PdfPCell(new Paragraph(new Chunk("Tuloksia")));
 			cell.setPadding(5);
 			cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 			table.addCell(cell);
@@ -102,10 +107,17 @@ public class PdfGenerator {
 				cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
 				table.addCell(cell);
 
-				cell = new PdfPCell(new Paragraph(new Chunk("avg")));
+				double averageHf = round(line.getBestHitFactorsAverage(), 2);
+				cell = new PdfPCell(new Paragraph(new Chunk(String.valueOf(averageHf))));
 				cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
 				cell.setPadding(5);
 				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+				table.addCell(cell);
+
+				cell = new PdfPCell(new Paragraph(new Chunk(String.valueOf(line.getResultsCount()))));
+				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+				cell.setPadding(5);
+				cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
 				table.addCell(cell);
 
 				position++;
@@ -161,6 +173,16 @@ public class PdfGenerator {
 		}
 	}
 
+	public static double round(double value, int places) {
+		if (places < 0)
+			throw new IllegalArgumentException();
+
+		long factor = (long) Math.pow(10, places);
+		value = value * factor;
+		long tmp = Math.round(value);
+		return (double) tmp / factor;
+	}
+
 	private static void writeToFile(ByteArrayOutputStream baos, String path) {
 		try (OutputStream outputStream = new FileOutputStream(path + "HaurRanking.pdf")) {
 			baos.writeTo(outputStream);
@@ -168,5 +190,4 @@ public class PdfGenerator {
 			e.printStackTrace();
 		}
 	}
-
 }

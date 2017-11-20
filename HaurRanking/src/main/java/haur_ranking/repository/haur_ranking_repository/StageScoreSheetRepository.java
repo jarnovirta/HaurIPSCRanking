@@ -1,5 +1,6 @@
 package haur_ranking.repository.haur_ranking_repository;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
@@ -85,22 +86,35 @@ public class StageScoreSheetRepository {
 
 	}
 
-	public static List<StageScoreSheet> findAll() {
-		try {
-			EntityManagerFactory emf = Persistence.createEntityManagerFactory("fi.haur_ranking.jpa");
-			EntityManager em = emf.createEntityManager();
-			List<StageScoreSheet> sheets = em.createQuery("SELECT s from StageScoreSheet s", StageScoreSheet.class)
-					.getResultList();
-			emf.close();
-			return sheets;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
+	// public static List<StageScoreSheet>
+	// findScoreSheetsForValidClassifiers(String firstName, String lastName,
+	// IPSCDivision division, Set<ClassifierStage> classifiers, EntityManager
+	// entityManager) {
+	// try {
+	// // KORJATTAVA ORDER BY DATE
+	// String queryString = "SELECT s FROM StageScoreSheet s WHERE
+	// s.competitor.firstName = :firstName "
+	// + "AND s.competitor.lastName = :lastName AND s.stage.classifierStage IN
+	// :classifierStages "
+	// + "AND s.ipscDivision = :division ORDER BY s.stage.match.winMssDateString
+	// DESC";
+	//
+	// final TypedQuery<StageScoreSheet> query =
+	// entityManager.createQuery(queryString, StageScoreSheet.class);
+	// query.setParameter("firstName", firstName);
+	// query.setParameter("lastName", lastName);
+	// query.setParameter("classifierStages", classifiers);
+	// query.setParameter("division", division);
+	// return query.getResultList();
+	//
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// return null;
+	// }
+	// }
+	public static List<StageScoreSheet> find(String firstName, String lastName, IPSCDivision division,
+			Set<ClassifierStage> classifiers, EntityManager entityManager) {
 
-	public static List<StageScoreSheet> findScoreSheetsForValidClassifiers(String firstName, String lastName,
-			IPSCDivision division, Set<ClassifierStage> classifiers, EntityManager entityManager) {
 		try {
 			// KORJATTAVA ORDER BY DATE
 			String queryString = "SELECT s FROM StageScoreSheet s WHERE s.competitor.firstName = :firstName "
@@ -110,10 +124,25 @@ public class StageScoreSheetRepository {
 			final TypedQuery<StageScoreSheet> query = entityManager.createQuery(queryString, StageScoreSheet.class);
 			query.setParameter("firstName", firstName);
 			query.setParameter("lastName", lastName);
-			query.setParameter("classifierStages", classifiers);
+			query.setParameter("classifierStages", EnumSet.copyOf(classifiers));
 			query.setParameter("division", division);
 			return query.getResultList();
 
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+
+	}
+
+	public static List<StageScoreSheet> findAll() {
+		try {
+			EntityManagerFactory emf = Persistence.createEntityManagerFactory("fi.haur_ranking.jpa");
+			EntityManager em = emf.createEntityManager();
+			List<StageScoreSheet> sheets = em.createQuery("SELECT s from StageScoreSheet s", StageScoreSheet.class)
+					.getResultList();
+			emf.close();
+			return sheets;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
