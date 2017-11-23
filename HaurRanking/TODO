@@ -1,18 +1,6 @@
 TODO:
-
-- Päivämäärät Date muotoon ja niiden vertailu Date.
-- lisää toisen nimen alkukirjain kilpailijoille
-- Varmista että DQ kisaajat eivät ole mukana
-- katso service-repository koodinjako
-- tarkista viel� koko tuontilogiikka, eli onko lastmodified p�iv�n perusteella ok vai voiko k�ytt�� jotain muuta p�iv��.
-- korjaa src/java/main rakenne
-// RIITT�ISIK� PELKK� STAGEN NIMI, KISAN NIMI, AIKA FILTTER�INTIIN, ILMAN TULOSKORTTEJA? VOIKO TULOSKORTTIEN FILTTER�INTI� 
-			// NOPETUTTAA?
-- tarkista vielä koko tuontilogiikka, eli onko lastmodified päivän perusteella ok vai voiko käyttää jotain muuta päivää.
-- tietokantahakujen sivutus
-// RIITTÄISIKÖ PELKKÄ STAGEN NIMI, KISAN NIMI, AIKA FILTTERÖINTIIN, ILMAN TULOSKORTTEJA? VOIKO TULOSKORTTIEN FILTTERÖINTIÄ 
-			// NOPETUTTAA?
-- tarkista vielä koko tuontilogiikka, eli onko lastmodified päivän perusteella ok vai voiko käyttää jotain muuta päivää.
-- tietokantahakujen sivutus
-// RIITTÄISIKÖ PELKKÄ STAGEN NIMI, KISAN NIMI, AIKA FILTTERÖINTIIN, ILMAN TULOSKORTTEJA? VOIKO TULOSKORTTIEN FILTTERÖINTIÄ 
-			// NOPETUTTAA?
+- 
+- PÃ¤ivÃ¤mÃ¤Ã¤rÃ¤t Date muotoon ja niiden vertailu Date.
+- lisÃ¤Ã¤ toisen nimen alkukirjain kilpailijoille
+- Varmista ettÃ¤ DQ kisaajat eivÃ¤t ole mukana (testi)
+- Muuta StageScoreSheet - Competitor (Member member, boolean DQ) ja tee tuloslapun tietojen täysi tuonti.
