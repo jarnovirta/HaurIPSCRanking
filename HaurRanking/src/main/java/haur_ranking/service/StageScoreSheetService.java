@@ -1,9 +1,7 @@
 package haur_ranking.service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
@@ -51,75 +49,6 @@ public class StageScoreSheetService {
 	}
 
 	public static void removeExtraStageScoreSheets(List<StageScoreSheet> newlyAddedScoreSheets) {
-		removeSheetsForSameCompetitorAndClassifier(newlyAddedScoreSheets);
-
-		Map<Competitor, List<IPSCDivision>> competitorsWithNewResults = new HashMap<Competitor, List<IPSCDivision>>();
-		// Remove old score sheets for same competitor, division and classifier
-		for (StageScoreSheet sheet : newlyAddedScoreSheets) {
-			if (!competitorsWithNewResults.keySet().contains(sheet.getCompetitor())) {
-				List<IPSCDivision> divisionList = new ArrayList<IPSCDivision>();
-				divisionList.add(sheet.getIpscDivision());
-				competitorsWithNewResults.put(sheet.getCompetitor(), divisionList);
-			} else {
-				if (!competitorsWithNewResults.get(sheet.getCompetitor()).contains(sheet.getIpscDivision())) {
-					competitorsWithNewResults.get(sheet.getCompetitor()).add(sheet.getIpscDivision());
-				}
-			}
-		}
-		removeOldStageScoreSheets(competitorsWithNewResults);
-	}
-
-	public static void removeInBatch(List<Long> idLIst) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
-		entityManager.getTransaction().begin();
-		List<Long> idList = new ArrayList<Long>();
-
-		// Remove reference from stage to score sheet in database
-		for (Long id : idLIst) {
-			StageScoreSheet sheet = StageScoreSheetRepository.find(id, entityManager);
-			Stage stage = StageRepository.find(sheet.getStage().getId(), entityManager);
-			StageScoreSheet sheetToRemoveFromStage = null;
-			for (StageScoreSheet s : stage.getStageScoreSheets()) {
-				if (s.getId().equals(sheet.getId()))
-					sheetToRemoveFromStage = s;
-			}
-			if (sheetToRemoveFromStage != null)
-				stage.getStageScoreSheets().remove(sheetToRemoveFromStage);
-			idList.add(sheet.getId());
-		}
-		idList.add(new Long(1));
-		// Remove score sheet from database
-
-		if (idList.size() > 0)
-			StageScoreSheetRepository.removeInBatch(idList, entityManager);
-		entityManager.getTransaction().commit();
-		entityManager.close();
-	}
-
-	private static void removeOldStageScoreSheets(Map<Competitor, List<IPSCDivision>> competitorsWithNewResults) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
-		// Remove old score sheets for competitor with more than 8 results
-		// in the division.
-		List<Long> removeSheetsIdList = new ArrayList<Long>();
-
-		for (Competitor competitor : competitorsWithNewResults.keySet()) {
-			for (IPSCDivision division : competitorsWithNewResults.get(competitor)) {
-				List<StageScoreSheet> sheets = findCompetitorScoreSheetsForValidClassifiers(competitor.getFirstName(),
-						competitor.getLastName(), division, entityManager);
-				if (sheets.size() > 8) {
-					for (StageScoreSheet removeSheet : sheets.subList(8, sheets.size())) {
-						removeSheetsIdList.add(removeSheet.getId());
-					}
-
-				}
-			}
-		}
-
-		entityManager.close();
-		removeInBatch(removeSheetsIdList);
-	}
-
-	private static void removeSheetsForSameCompetitorAndClassifier(List<StageScoreSheet> newlyAddedScoreSheets) {
 		List<Long> sheetsToBeRemoved = new ArrayList<Long>();
 		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
 
@@ -148,6 +77,59 @@ public class StageScoreSheetService {
 		}
 		entityManager.close();
 		removeInBatch(sheetsToBeRemoved);
+	}
+
+	// private static void removeOldStageScoreSheets(Map<Competitor,
+	// List<IPSCDivision>> competitorsWithNewResults) {
+	// EntityManager entityManager =
+	// HaurRankingDatabaseUtils.createEntityManager();
+	// // Remove old score sheets for competitor with more than 8 results
+	// // in the division.
+	// List<Long> removeSheetsIdList = new ArrayList<Long>();
+	//
+	// for (Competitor competitor : competitorsWithNewResults.keySet()) {
+	// for (IPSCDivision division : competitorsWithNewResults.get(competitor)) {
+	// List<StageScoreSheet> sheets =
+	// findCompetitorScoreSheetsForValidClassifiers(competitor.getFirstName(),
+	// competitor.getLastName(), division, entityManager);
+	// if (sheets.size() > 8) {
+	// for (StageScoreSheet removeSheet : sheets.subList(8, sheets.size())) {
+	// removeSheetsIdList.add(removeSheet.getId());
+	// }
+	//
+	// }
+	// }
+	// }
+	//
+	// entityManager.close();
+	// removeInBatch(removeSheetsIdList);
+	// }
+
+	public static void removeInBatch(List<Long> idLIst) {
+		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
+		entityManager.getTransaction().begin();
+		List<Long> idList = new ArrayList<Long>();
+
+		// Remove reference from stage to score sheet in database
+		for (Long id : idLIst) {
+			StageScoreSheet sheet = StageScoreSheetRepository.find(id, entityManager);
+			Stage stage = StageRepository.find(sheet.getStage().getId(), entityManager);
+			StageScoreSheet sheetToRemoveFromStage = null;
+			for (StageScoreSheet s : stage.getStageScoreSheets()) {
+				if (s.getId().equals(sheet.getId()))
+					sheetToRemoveFromStage = s;
+			}
+			if (sheetToRemoveFromStage != null)
+				stage.getStageScoreSheets().remove(sheetToRemoveFromStage);
+			idList.add(sheet.getId());
+		}
+		idList.add(new Long(1));
+		// Remove score sheet from database
+
+		if (idList.size() > 0)
+			StageScoreSheetRepository.removeInBatch(idList, entityManager);
+		entityManager.getTransaction().commit();
+		entityManager.close();
 	}
 
 	public static void setCompetitorsToStageScoreSheets(List<StageScoreSheet> sheets, EntityManager entityManager) {

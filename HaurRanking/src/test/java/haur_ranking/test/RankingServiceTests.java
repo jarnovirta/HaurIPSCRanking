@@ -109,9 +109,9 @@ public class RankingServiceTests {
 		assertEquals("Jarno Virta should have result of 100%", 100, firstLine.getResultPercentage());
 		assertEquals("Jerry Miculek should be #2 for Production Division ranking.", "Jerry",
 				secondLine.getCompetitor().getFirstName());
-		assertEquals("Jerry Miculek should have bestResultsAverage of 1.16 for Production Division.", 1.156,
+		assertEquals("Jerry Miculek should have bestResultsAverage of 0.87 for Production Division.", 0.87204,
 				secondLine.getBestResultsAverage(), 0.001);
-		assertEquals("Jerry Miculek should have result of 92%", 92, secondLine.getResultPercentage());
+		assertEquals("Jerry Miculek should have result of 70%", 70, secondLine.getResultPercentage());
 		assertEquals("Ben Stoeger should be #3 for Production Division ranking.", "Ben",
 				thirdLine.getCompetitor().getFirstName());
 		assertEquals("Ben Stoeger should have bestResultsAverage of 0.82 for Production Division.", 0.818,

@@ -87,16 +87,27 @@ public class RankingService {
 	private static DivisionRanking getDivisionRanking(IPSCDivision division) {
 		DivisionRanking divisionRanking = new DivisionRanking(division);
 		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
+		// Get valid classifiers with two or more results, and top two hit
+		// scores average for each.
 		Map<ClassifierStage, Double> classifierStageTopResultAverages = StageService
 				.getClassifierStagesWithTwoOrMoreResults(division);
+		System.out.println("STAGE AVERAGES: ");
+		for (ClassifierStage stage : classifierStageTopResultAverages.keySet()) {
+			System.out.println(stage.toString() + " " + classifierStageTopResultAverages.get(stage));
+		}
 		if (classifierStageTopResultAverages.keySet().isEmpty())
 			return divisionRanking;
 		List<DivisionRankingLine> resultList = new ArrayList<DivisionRankingLine>();
 		List<Competitor> competitors = CompetitorService.findAll();
 
 		for (Competitor competitor : competitors) {
+			// Get competitor score sheets and limit number to eight.
 			List<StageScoreSheet> scoreSheets = StageScoreSheetRepository.find(competitor.getFirstName(),
 					competitor.getLastName(), division, classifierStageTopResultAverages.keySet(), entityManager);
+			System.out.println("Got " + scoreSheets.size() + " sheets total for " + competitor.getFirstName());
+			if (scoreSheets.size() > 8)
+				scoreSheets = scoreSheets.subList(0, 8);
+			System.out.println(("Final list size " + scoreSheets.size()));
 
 			DivisionRankingLine line = competitorTopScoresAverage(competitor, scoreSheets,
 					classifierStageTopResultAverages);
