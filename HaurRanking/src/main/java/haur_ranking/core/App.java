@@ -6,8 +6,7 @@ import haur_ranking.service.RankingService;
 public class App {
 
 	public static void main(String[] args) {
-		PdfGenerator.createPdfRankingFile(RankingService.getRanking(), "");
-		System.out.println("Pdf Done");
+
 		// List<Match> matches =
 		// WinMSSMatchRepository.findAll("E:/Programs/WinMss/Data/WinMSS.mdb");
 		// for (Match match : matches) {
@@ -28,5 +27,8 @@ public class App {
 		// gui.prepareGUI();
 		// gui.showHaurRankingGui();
 
+		System.out.println("Generating pdf");
+		PdfGenerator.createPdfRankingFile(RankingService.getRanking(), "");
+		System.out.println("Pdf Done");
 	}
 }

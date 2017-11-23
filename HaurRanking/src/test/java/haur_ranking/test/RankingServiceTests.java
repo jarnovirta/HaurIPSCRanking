@@ -102,6 +102,7 @@ public class RankingServiceTests {
 		DivisionRankingLine firstLine = productionRanking.getRankingLines().get(0);
 		DivisionRankingLine secondLine = productionRanking.getRankingLines().get(1);
 		DivisionRankingLine thirdLine = productionRanking.getRankingLines().get(2);
+		DivisionRankingLine fourthLine = productionRanking.getRankingLines().get(3);
 		assertEquals("Jarno Virta should be #1 for Production Division ranking.", "Jarno",
 				firstLine.getCompetitor().getFirstName());
 		assertEquals("Jarno Virta should have bestResultsAverage of 1.25 for Production Division.", 1.253,
@@ -117,8 +118,8 @@ public class RankingServiceTests {
 		assertEquals("Ben Stoeger should have bestResultsAverage of 0.82 for Production Division.", 0.818,
 				thirdLine.getBestResultsAverage(), 0.001);
 		assertEquals("Ben Stoeger should have result of 65%", 65, thirdLine.getResultPercentage());
-		assertEquals("Rob Leatham should not have a rank (not enough results).", 3,
-				productionRanking.getRankingLines().size());
+		assertEquals("Rob Leatham should not have a rank (not enough results).", false,
+				fourthLine.isRankedCompetitor());
 	}
 
 	@Test

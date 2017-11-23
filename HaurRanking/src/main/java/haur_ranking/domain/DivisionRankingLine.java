@@ -19,6 +19,7 @@ public class DivisionRankingLine implements Comparable<DivisionRankingLine> {
 	int resultPercentage;
 	double bestResultsAverage;
 	double bestHitFactorsAverage;
+	boolean rankedCompetitor;
 	int resultsCount;
 
 	Integer previousRank;
@@ -28,11 +29,18 @@ public class DivisionRankingLine implements Comparable<DivisionRankingLine> {
 	public DivisionRankingLine() {
 	}
 
-	public DivisionRankingLine(Competitor competitor, double bestResultsAverage, double bestHitFactorsAverage,
-			int resultsCount) {
+	public DivisionRankingLine(Competitor competitor, boolean rankedCompetitor, double bestResultsAverage,
+			double bestHitFactorsAverage, int resultsCount) {
 		this.competitor = competitor;
+		this.rankedCompetitor = rankedCompetitor;
 		this.bestResultsAverage = bestResultsAverage;
 		this.bestHitFactorsAverage = bestHitFactorsAverage;
+		this.resultsCount = resultsCount;
+	}
+
+	public DivisionRankingLine(Competitor competitor, boolean rankedCompetitor, int resultsCount) {
+		this.competitor = competitor;
+		this.rankedCompetitor = rankedCompetitor;
 		this.resultsCount = resultsCount;
 	}
 
@@ -51,6 +59,11 @@ public class DivisionRankingLine implements Comparable<DivisionRankingLine> {
 		if (this.bestResultsAverage < compareToAverage)
 			return -1;
 		if (this.bestResultsAverage > compareToAverage)
+			return 1;
+		int compareToResultsCount = compareToLine.getResultsCount();
+		if (this.resultsCount < compareToResultsCount)
+			return -1;
+		if (this.resultsCount > compareToResultsCount)
 			return 1;
 		return 0;
 
@@ -88,6 +101,10 @@ public class DivisionRankingLine implements Comparable<DivisionRankingLine> {
 		return improvedResult;
 	}
 
+	public boolean isRankedCompetitor() {
+		return rankedCompetitor;
+	}
+
 	public void setBestHitFactorsAverage(double bestHitFactorsAverage) {
 		this.bestHitFactorsAverage = bestHitFactorsAverage;
 	}
@@ -110,6 +127,10 @@ public class DivisionRankingLine implements Comparable<DivisionRankingLine> {
 
 	public void setPreviousRank(Integer previousRank) {
 		this.previousRank = previousRank;
+	}
+
+	public void setRankedCompetitor(boolean rankedCompetitor) {
+		this.rankedCompetitor = rankedCompetitor;
 	}
 
 	public void setResultPercentage(int resultPercentage) {

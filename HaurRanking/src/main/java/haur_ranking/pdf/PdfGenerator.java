@@ -27,13 +27,15 @@ public class PdfGenerator {
 
 	public static void createPdfRankingFile(Ranking ranking, String path) {
 		try {
-			Document doc = new Document(PageSize.A4, 50, 50, 90, 90);
+			Document doc = new Document(PageSize.A4, 50, 50, 90, 120);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			PdfWriter pdfWriter = PdfWriter.getInstance(doc, baos);
+			Footer footer = new Footer();
+			pdfWriter.setPageEvent(footer);
 			doc.open();
 			doc.add(getTitleParagraph());
-
 			for (DivisionRanking divisionRanking : ranking.getDivisionRankings()) {
+				footer.setShowFooterOnPage(true);
 				doc.add(getDivisionRankingParagraph(divisionRanking));
 			}
 
@@ -56,7 +58,7 @@ public class PdfGenerator {
 		table.setHorizontalAlignment(Element.ALIGN_CENTER);
 		try {
 
-			table.setWidths(new float[] { 40, 200, 40, 50, 80 });
+			table.setWidths(new float[] { 40, 180, 60, 60, 60 });
 
 			// Write table header row
 
@@ -80,14 +82,17 @@ public class PdfGenerator {
 			cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 			table.addCell(cell);
 
-			cell = new PdfPCell(new Paragraph(new Chunk("Tuloksia")));
+			cell = new PdfPCell(new Paragraph(new Chunk("Tuloksia*")));
 			cell.setPadding(5);
 			cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 			table.addCell(cell);
 
 			int position = 1;
 			for (DivisionRankingLine line : divisionRanking.getRankingLines()) {
-				cell = new PdfPCell(new Paragraph(new Chunk(position + ".")));
+				String positionString = "--";
+				if (line.isRankedCompetitor())
+					positionString = position + ".";
+				cell = new PdfPCell(new Paragraph(new Chunk(positionString)));
 				cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
 				cell.setPadding(5);
 				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
@@ -101,14 +106,20 @@ public class PdfGenerator {
 				cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
 				table.addCell(cell);
 
-				cell = new PdfPCell(new Paragraph(new Chunk(line.getResultPercentage() + "%")));
+				String percentageString = "--";
+				if (line.isRankedCompetitor())
+					percentageString = line.getResultPercentage() + " %";
+				cell = new PdfPCell(new Paragraph(new Chunk(percentageString)));
 				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 				cell.setPadding(5);
 				cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
 				table.addCell(cell);
 
 				double averageHf = round(line.getBestHitFactorsAverage(), 2);
-				cell = new PdfPCell(new Paragraph(new Chunk(String.valueOf(averageHf))));
+				String averageHfString = "--";
+				if (line.isRankedCompetitor())
+					averageHfString = String.valueOf(averageHf);
+				cell = new PdfPCell(new Paragraph(new Chunk(averageHfString)));
 				cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
 				cell.setPadding(5);
 				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
@@ -125,10 +136,7 @@ public class PdfGenerator {
 
 			boolean oddRow = true;
 			for (PdfPRow row : table.getRows()) {
-				boolean lastRow = false;
-				if (table.getRows().indexOf(row) == table.getRows().size() - 1) {
-					lastRow = true;
-				}
+				boolean lastRow = table.getRows().indexOf(row) == table.getRows().size() - 1;
 				for (PdfPCell tableCell : row.getCells()) {
 					tableCell.setBackgroundColor(oddRow ? BaseColor.LIGHT_GRAY : BaseColor.WHITE);
 					if (lastRow) {
@@ -138,7 +146,9 @@ public class PdfGenerator {
 				oddRow = !oddRow;
 			}
 
-		} catch (Exception e) {
+		} catch (
+
+		Exception e) {
 			e.printStackTrace();
 		}
 		divisionRankingPara.add(table);
