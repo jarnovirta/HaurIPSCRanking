@@ -4,3 +4,5 @@ TODO:
 - lisÃ¤Ã¤ toisen nimen alkukirjain kilpailijoille
 - Varmista ettÃ¤ DQ kisaajat eivÃ¤t ole mukana (testi)
 - Muuta StageScoreSheet - Competitor (Member member, boolean DQ) ja tee tuloslapun tietojen täysi tuonti.
+
+- korjaa hf keskiarvo kahdeksasta suorituksesta
