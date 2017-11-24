@@ -43,17 +43,17 @@ public class RankingServiceTests {
 				firstLine.getCompetitor().getFirstName());
 		assertEquals("Jarno Virta should have bestResultsAverage of 1.25 for Production Division.", 1.253,
 				firstLine.getBestResultsAverage(), 0.001);
-		assertEquals("Jarno Virta should have result of 100%", 100, firstLine.getResultPercentage());
+		assertEquals("Jarno Virta should have result of 100%", 100.0, firstLine.getResultPercentage(), 0.1);
 		assertEquals("Jerry Miculek should be #2 for Production Division ranking.", "Jerry",
 				secondLine.getCompetitor().getFirstName());
 		assertEquals("Jerry Miculek should have bestResultsAverage of 0.87 for Production Division.", 0.87204,
 				secondLine.getBestResultsAverage(), 0.001);
-		assertEquals("Jerry Miculek should have result of 70%", 70, secondLine.getResultPercentage());
+		assertEquals("Jerry Miculek should have result of 70%", 69.6, secondLine.getResultPercentage(), 0.1);
 		assertEquals("Ben Stoeger should be #3 for Production Division ranking.", "Ben",
 				thirdLine.getCompetitor().getFirstName());
 		assertEquals("Ben Stoeger should have bestResultsAverage of 0.82 for Production Division.", 0.818,
 				thirdLine.getBestResultsAverage(), 0.001);
-		assertEquals("Ben Stoeger should have result of 65%", 65, thirdLine.getResultPercentage());
+		assertEquals("Ben Stoeger should have result of 65%", 65.3, thirdLine.getResultPercentage(), 0.1);
 		assertEquals("Rob Leatham should not have a rank (not enough results).", false,
 				fourthLine.isRankedCompetitor());
 		assertEquals("Standard division should have two results.", 2, standardRanking.getRankingLines().size());

@@ -15,16 +15,16 @@ public class DivisionRankingLine implements Comparable<DivisionRankingLine> {
 	private Long id;
 
 	@ManyToOne
-	Competitor competitor;
-	double resultPercentage;
-	double bestResultsAverage;
-	double bestHitFactorsAverage;
-	boolean rankedCompetitor;
-	int resultsCount;
+	private Competitor competitor;
+	private double resultPercentage;
+	private double bestResultsAverage;
+	private double bestHitFactorsAverage;
+	private boolean rankedCompetitor;
+	private int resultsCount;
 
-	Integer previousRank;
+	private Integer previousRank;
 
-	boolean improvedResult = false;
+	private boolean improvedResult = false;
 
 	public DivisionRankingLine() {
 	}

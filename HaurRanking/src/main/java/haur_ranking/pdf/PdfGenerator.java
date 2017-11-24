@@ -3,6 +3,8 @@ package haur_ranking.pdf;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.imageio.ImageIO;
 
@@ -10,6 +12,7 @@ import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
@@ -25,12 +28,22 @@ import haur_ranking.domain.Ranking;
 
 public class PdfGenerator {
 
-	public static void createPdfRankingFile(Ranking ranking, String path) {
+	private static Font h1Font = new Font(Font.FontFamily.TIMES_ROMAN, 20, Font.BOLD);
+	private static Font h2Font = new Font(Font.FontFamily.TIMES_ROMAN, 14, Font.BOLD);
+	private static Font tableHeaderFont = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD);
+	private static Font defaultFont = new Font(Font.FontFamily.TIMES_ROMAN, 12);
+	private static Ranking ranking;
+	private static Document doc;
+	private static boolean firstPage = true;
+
+	public static void createPdfRankingFile(Ranking rankingData, String path) {
+		ranking = rankingData;
 		try {
-			Document doc = new Document(PageSize.A4, 50, 50, 90, 120);
+			doc = new Document(PageSize.A4, 50, 50, 90, 120);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			PdfWriter pdfWriter = PdfWriter.getInstance(doc, baos);
-			Footer footer = new Footer();
+			Footer footer = new Footer(ranking.getDateString(), ranking.getTotalResultsCount(),
+					ranking.getCompetitorsWithRank(), ranking.getValidClassifiersCount());
 			pdfWriter.setPageEvent(footer);
 			doc.open();
 			doc.add(getTitleParagraph());
@@ -38,12 +51,11 @@ public class PdfGenerator {
 				footer.setShowFooterOnPage(true);
 				doc.add(getDivisionRankingParagraph(divisionRanking));
 			}
-
 			doc.close();
 			writeToFile(baos, path);
 
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		}
 	}
 
@@ -55,41 +67,49 @@ public class PdfGenerator {
 	}
 
 	private static Paragraph getDivisionRankingParagraph(DivisionRanking divisionRanking) {
+
 		Paragraph divisionRankingPara = new Paragraph();
 		divisionRankingPara.setSpacingBefore(40);
 		divisionRankingPara.setAlignment(Element.ALIGN_CENTER);
-		divisionRankingPara.add(new Paragraph(new Chunk(divisionRanking.getDivision().toString())));
+		divisionRankingPara
+				.add(new Paragraph(new Chunk(divisionRanking.getDivision().toString().toUpperCase() + " ", h2Font)));
 
 		PdfPTable table = new PdfPTable(5);
 		table.setWidthPercentage(80);
 		table.setHorizontalAlignment(Element.ALIGN_CENTER);
 		try {
 
-			table.setWidths(new float[] { 40, 170, 70, 70, 70 });
+			table.setWidths(new float[] { 40, 170, 70, 70, 80 });
 
 			// Write table header row
 
-			PdfPCell cell = new PdfPCell(new Paragraph(new Chunk("Sija")));
+			PdfPCell cell = new PdfPCell(new Paragraph(new Chunk("Sija", tableHeaderFont)));
 			cell.setPadding(5);
 			cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 			table.addCell(cell);
 
-			cell = new PdfPCell(new Paragraph(new Chunk("Nimi")));
+			cell = new PdfPCell(new Paragraph(new Chunk("Nimi", tableHeaderFont)));
 			cell.setPadding(5);
 			cell.setHorizontalAlignment(Element.ALIGN_LEFT);
 			table.addCell(cell);
 
-			cell = new PdfPCell(new Paragraph(new Chunk("%")));
+			cell = new PdfPCell(new Paragraph(new Chunk("%", tableHeaderFont)));
 			cell.setPadding(5);
 			cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 			table.addCell(cell);
 
-			cell = new PdfPCell(new Paragraph(new Chunk("HF-ka")));
+			cell = new PdfPCell(new Paragraph(new Chunk("HF-ka", tableHeaderFont)));
 			cell.setPadding(5);
 			cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 			table.addCell(cell);
 
-			cell = new PdfPCell(new Paragraph(new Chunk("Tuloksia*")));
+			String resultsColumnHeader = "Tuloksia*";
+
+			if (firstPage == true) {
+				resultsColumnHeader += "*";
+				firstPage = false;
+			}
+			cell = new PdfPCell(new Paragraph(new Chunk(resultsColumnHeader, tableHeaderFont)));
 			cell.setPadding(5);
 			cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 			table.addCell(cell);
@@ -99,15 +119,15 @@ public class PdfGenerator {
 				String positionString = "--";
 				if (line.isRankedCompetitor())
 					positionString = position + ".";
-				cell = new PdfPCell(new Paragraph(new Chunk(positionString)));
+				cell = new PdfPCell(new Paragraph(new Chunk(positionString, defaultFont)));
 				cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
 				cell.setPadding(5);
 				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 
 				table.addCell(cell);
 
-				cell = new PdfPCell(new Paragraph(
-						new Chunk(line.getCompetitor().getFirstName() + " " + line.getCompetitor().getLastName())));
+				cell = new PdfPCell(new Paragraph(new Chunk(
+						line.getCompetitor().getFirstName() + " " + line.getCompetitor().getLastName(), defaultFont)));
 				cell.setHorizontalAlignment(Element.ALIGN_LEFT);
 				cell.setPadding(5);
 				cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
@@ -116,7 +136,7 @@ public class PdfGenerator {
 				String percentageString = "--";
 				if (line.isRankedCompetitor())
 					percentageString = formatTwoDecimalNumberToString(round(line.getResultPercentage(), 2)) + " %";
-				cell = new PdfPCell(new Paragraph(new Chunk(percentageString)));
+				cell = new PdfPCell(new Paragraph(new Chunk(percentageString, defaultFont)));
 				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 				cell.setPadding(5);
 				cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
@@ -125,13 +145,13 @@ public class PdfGenerator {
 				String averageHfString = "--";
 				if (line.isRankedCompetitor())
 					averageHfString = formatTwoDecimalNumberToString(round(line.getBestHitFactorsAverage(), 2));
-				cell = new PdfPCell(new Paragraph(new Chunk(averageHfString)));
+				cell = new PdfPCell(new Paragraph(new Chunk(averageHfString, defaultFont)));
 				cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
 				cell.setPadding(5);
 				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 				table.addCell(cell);
 
-				cell = new PdfPCell(new Paragraph(new Chunk(String.valueOf(line.getResultsCount()))));
+				cell = new PdfPCell(new Paragraph(new Chunk(String.valueOf(line.getResultsCount()), defaultFont)));
 				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 				cell.setPadding(5);
 				cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
@@ -165,7 +185,6 @@ public class PdfGenerator {
 	private static Paragraph getTitleParagraph() {
 		try {
 			Paragraph para = new Paragraph();
-			para.setIndentationLeft(15);
 			para.setSpacingAfter(20);
 
 			PdfPTable table = new PdfPTable(new float[] { 20, 80 });
@@ -176,7 +195,7 @@ public class PdfGenerator {
 			cell.addElement(pdfImage);
 			table.addCell(cell);
 			cell = new PdfPCell();
-			cell.addElement(new Chunk("HAUR Ranking"));
+			cell.addElement(new Chunk("HAUR Ranking - " + getRankingPdfDateString() + "*", h1Font));
 			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			cell.setPaddingLeft(15);
 			cell.setBorder(Rectangle.NO_BORDER);
@@ -200,10 +219,18 @@ public class PdfGenerator {
 	}
 
 	private static void writeToFile(ByteArrayOutputStream baos, String path) {
-		try (OutputStream outputStream = new FileOutputStream(path + "HaurRanking.pdf")) {
+		try {
+			OutputStream outputStream = new FileOutputStream(
+					path + "HaurRanking_" + ranking.getDateString().replace('.', '_') + ".pdf");
 			baos.writeTo(outputStream);
+			outputStream.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private static String getRankingPdfDateString() {
+		SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
+		return DATE_FORMAT.format(new Date());
 	}
 }

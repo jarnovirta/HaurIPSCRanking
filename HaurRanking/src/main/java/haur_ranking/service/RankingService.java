@@ -87,6 +87,11 @@ public class RankingService {
 
 		if (classifierStageTopResultAverages.keySet().isEmpty())
 			return divisionRanking;
+		for (ClassifierStage classifier : classifierStageTopResultAverages.keySet()) {
+			if (!divisionRanking.getValidClassifiers().contains(classifier)) {
+				divisionRanking.getValidClassifiers().add(classifier);
+			}
+		}
 		List<DivisionRankingLine> resultList = new ArrayList<DivisionRankingLine>();
 		List<Competitor> competitors = CompetitorService.findAll();
 
@@ -111,23 +116,8 @@ public class RankingService {
 		for (IPSCDivision division : IPSCDivision.values()) {
 			ranking.getDivisionRankings().add(getDivisionRanking(division));
 		}
+		ranking.setTotalCompetitorsAndResultsCounts();
 		persist(ranking);
-
-		System.out.println("\n*** HAUR VARJORANKING ***");
-		System.out.println(ranking.getDate());
-
-		for (DivisionRanking div : ranking.getDivisionRankings()) {
-			System.out.println(div.getDivision().toString() + ":");
-			if (div.getRankingLines() == null)
-				continue;
-			int pos = 1;
-			for (DivisionRankingLine line : div.getRankingLines()) {
-				System.out.println(
-						pos++ + ". " + line.getCompetitor().getFirstName() + " " + line.getCompetitor().getLastName()
-								+ ": " + line.getResultPercentage() + "% " + line.getBestResultsAverage());
-			}
-		}
-
 		return ranking;
 	}
 

@@ -1,9 +1,9 @@
 package haur_ranking.domain;
 
 public class DatabaseStatistics {
-	int matchCount;
-	int stageCount;
-	int competitorCount;
+	private int matchCount;
+	private int stageCount;
+	private int competitorCount;
 
 	public int getCompetitorCount() {
 		return competitorCount;
