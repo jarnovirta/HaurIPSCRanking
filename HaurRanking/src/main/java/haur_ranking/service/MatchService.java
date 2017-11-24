@@ -36,7 +36,7 @@ public class MatchService {
 	}
 
 	public static int getTotalMatchCount() {
-		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
 		int count = MatchRepository.getTotalMatchCount(entityManager);
 		entityManager.close();
 		return count;
@@ -45,7 +45,7 @@ public class MatchService {
 	public static void importWinMssDatabase(String winMssDbLocation) {
 
 		System.out.println("\n*** STARTING IMPORT");
-		entityManager = HaurRankingDatabaseUtils.createEntityManager();
+		entityManager = HaurRankingDatabaseUtils.getEntityManager();
 		entityManager.getTransaction().begin();
 		List<Match> matchesWithNewResults = new ArrayList<Match>();
 		List<IPSCDivision> divisionsWithNewResults = new ArrayList<IPSCDivision>();
@@ -100,7 +100,7 @@ public class MatchService {
 	}
 
 	public static void save(List<Match> matches) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
 		entityManager.getTransaction().begin();
 		List<StageScoreSheet> newStageScoreSheets = new ArrayList<StageScoreSheet>();
 

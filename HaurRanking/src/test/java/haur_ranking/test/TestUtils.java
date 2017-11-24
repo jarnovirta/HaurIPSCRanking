@@ -32,20 +32,27 @@ public class TestUtils {
 	static Competitor jerry = new Competitor("Jerry", "Miculek");
 	static Competitor ben = new Competitor("Ben", "Stoeger");
 	static Competitor rob = new Competitor("Rob", "Leatham");
+	static Competitor clint = new Competitor("Clint", "Eastwood");
+	static Competitor charles = new Competitor("Charles", "Bronson");
 
-	static Double[] jarnoNewMatchHitFactors = new Double[] { 4.0, 3.9, 2.0, null, 5.5, 4.0, 4.5, null, 5.2, null };
+	static Double[] jarnoNewMatchHitFactors = new Double[] { 4.0, 3.9, 2.0, null, 5.5, 4.0, 4.5, null, null, null };
 
 	static Double[] jerryNewMatchHitFactors = new Double[] { 3.1, null, null, 3.9, null, 2.3, 3.9, null, null, 1.5 };
 
 	static Double[] benNewMatchHitFactors = new Double[] { 1.5, 4.1, 2.9, 0.0, 4.8, null, null, null, null, null };
 
-	static Double[] robNewMatchHitFactors = new Double[] { 2.0, 2.2, 3.6, null, null, null, null, null, null, null };
+	static Double[] robNewMatchHitFactors = new Double[] { 2.0, 2.2, 3.6, null, null, null, null, null, 5.2, null };
 
 	static Double[] jarnoOldMatchHitFactors = new Double[] { null, null, null, null, 6.0, null, null, 3.6, null, 3.8 };
 
 	static Double[] jerryOldMatchHitFactors = new Double[] { null, null, null, 4.2, null, null, null, 2.5, null, null };
 
 	static Double[] jarnoSpringMatchHitFactors = new Double[] { null, null, null, 5.1, null, null, null, null, null,
+			null };
+
+	static Double[] clintSpringMatchHitFactors = new Double[] { 3.5, 4.5, 2.5, 5.5, null, null, null, null, 4.5, null };
+
+	static Double[] charlesSpringMatchHitFactors = new Double[] { 2.2, 5.8, 6.0, 5.7, null, null, null, null, null,
 			null };
 
 	protected static void cleanup() {
@@ -116,7 +123,6 @@ public class TestUtils {
 				sheets.add(new StageScoreSheet(ben, benNewMatchHitFactors[index], stage, IPSCDivision.PRODUCTION));
 			if (robNewMatchHitFactors[index] != null)
 				sheets.add(new StageScoreSheet(rob, robNewMatchHitFactors[index], stage, IPSCDivision.PRODUCTION));
-
 		}
 		if (stage.getMatch().getName().equals("Old match")) {
 			if (jarnoOldMatchHitFactors[index] != null)
@@ -128,6 +134,14 @@ public class TestUtils {
 				if (jarnoSpringMatchHitFactors[index] != null)
 					sheets.add(new StageScoreSheet(jarno, jarnoSpringMatchHitFactors[index], stage,
 							IPSCDivision.PRODUCTION));
+				if (clintSpringMatchHitFactors[index] != null)
+					sheets.add(new StageScoreSheet(clint, clintSpringMatchHitFactors[index], stage,
+							IPSCDivision.STANDARD));
+				if (charlesSpringMatchHitFactors[index] != null) {
+					sheets.add(new StageScoreSheet(charles, charlesSpringMatchHitFactors[index], stage,
+							IPSCDivision.STANDARD));
+				}
+
 			}
 		}
 		return sheets;
@@ -182,7 +196,7 @@ public class TestUtils {
 
 	protected static void setupDatabase() {
 		deleteDatabase();
-		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
 		entityManager.getTransaction().begin();
 		MatchService.save(TestUtils.createTestMatches());
 

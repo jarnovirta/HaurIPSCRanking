@@ -24,81 +24,17 @@ public class RankingServiceTests {
 	}
 
 	@Test
-	public void calculateCompetitorRelativeScoresTest() {
-		// try {
-		// Method method =
-		// RankingService.class.getDeclaredMethod("calculateCompetitorTopScoresAverage",
-		// List.class,
-		// Map.class);
-		// method.setAccessible(true);
-		//
-		// // Test for competitor with required minimum of four score sheets
-		// double jarnoTopScoresAverage = (double)
-		// method.invoke(RankingService.class,
-		// TestUtils.getAllStageScoreSheetsForCompetitor(new
-		// Match("JarnoTestMatch", "1.1.2017"),
-		// new Competitor("Jarno", "Virta")),
-		// TestUtils.getAverageOfTopTwoForStage());
-		// assertEquals("Top scores average for test competitor Jarno should be
-		// 0.780", 0.780, jarnoTopScoresAverage,
-		// 0.001);
-		// // Test for competitor with three score sheets instead of the
-		// // required four
-		// double jerryTopScoresAverage = (double)
-		// method.invoke(RankingService.class,
-		// TestUtils.getAllStageScoreSheetsForCompetitor(new
-		// Match("JerryTestMatch", "2.4.2017"), new Competitor("Jerry",
-		// "Miculek")), TestUtils.getAverageOfTopTwoForStage());
-		// assertEquals("calculateCompetitorRelativeScores method must
-		// return -1
-		// for competitor Jerry (not enough score sheets)", -1,
-		// jerryTopScoresAverage, 0.0);
-		// // Test for competitor with more than eight score sheets. Only
-		// eight
-		// should count.
-		// double benTopScoresAverage = (double)
-		// method.invoke(RankingService.class,
-		// TestUtils.getAllStageScoreSheetsForCompetitor(new
-		// Match("BenTestMatch", "5.5.2017"), new Competitor("Ben",
-		// "Stoeger")),
-		// TestUtils.getAverageOfTopTwoForStage());
-		// assertEquals("Top scores average for competitor Ben must be 0.663
-		// (competitor with more than 8 score sheets, only 8 count).",
-		// 0.663, benTopScoresAverage, 0.001);
-
-		// }catch(
-		//
-		// Exception e)
-		// {
-		// }
-	}
-
-	@Test
-	public void convertAverageScoresToPercentageTest() {
-
-		// List<Object[]> averageScoresList =
-		// TestUtils.getCompetitorAverageScoreList();
-		// try {
-		// Method method =
-		// RankingService.class.getDeclaredMethod("convertAverageScoresToPercentage",
-		// List.class);
-		// method.setAccessible(true);
-		// method.invoke(RankingService.class, averageScoresList);
-		// assertEquals(100, (int) averageScoresList.get(0)[1]);
-		// assertEquals(92, (int) averageScoresList.get(1)[1]);
-		// assertEquals(85, (int) averageScoresList.get(2)[1]);
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// }
-	}
-
-	@Test
 	public void generateRankingTest() {
 		Ranking ranking = RankingService.getRanking();
 		DivisionRanking productionRanking = new DivisionRanking();
-		for (DivisionRanking div : ranking.getDivisionRankings())
+		DivisionRanking standardRanking = new DivisionRanking();
+		for (DivisionRanking div : ranking.getDivisionRankings()) {
 			if (div.getDivision().equals(IPSCDivision.PRODUCTION))
 				productionRanking = div;
+			if (div.getDivision().equals(IPSCDivision.STANDARD))
+				standardRanking = div;
+
+		}
 		DivisionRankingLine firstLine = productionRanking.getRankingLines().get(0);
 		DivisionRankingLine secondLine = productionRanking.getRankingLines().get(1);
 		DivisionRankingLine thirdLine = productionRanking.getRankingLines().get(2);
@@ -120,30 +56,7 @@ public class RankingServiceTests {
 		assertEquals("Ben Stoeger should have result of 65%", 65, thirdLine.getResultPercentage());
 		assertEquals("Rob Leatham should not have a rank (not enough results).", false,
 				fourthLine.isRankedCompetitor());
+		assertEquals("Standard division should have two results.", 2, standardRanking.getRankingLines().size());
 	}
 
-	@Test
-	public void sortResultListTest() {
-		// List<Object[]> unorderedResultList =
-		// TestUtils.getCompetitorAverageScoreList();
-		// Object[] objToMove = unorderedResultList.get(0);
-		// unorderedResultList.add(objToMove);
-		// unorderedResultList.remove(0);
-		//
-		// try {
-		// Method method =
-		// RankingService.class.getDeclaredMethod("sortResultList", List.class);
-		// method.setAccessible(true);
-		// method.invoke(RankingService.class, unorderedResultList);
-		// assertEquals("Jarno", ((Competitor)
-		// unorderedResultList.get(0)[0]).getFirstName());
-		// assertEquals("Max", ((Competitor)
-		// unorderedResultList.get(1)[0]).getFirstName());
-		// assertEquals("Ben", ((Competitor)
-		// unorderedResultList.get(2)[0]).getFirstName());
-		//
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// }
-	}
 }

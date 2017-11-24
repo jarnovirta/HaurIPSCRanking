@@ -19,7 +19,7 @@ import haur_ranking.repository.haur_ranking_repository.StageScoreSheetRepository
 public class StageScoreSheetService {
 
 	public static List<StageScoreSheet> find(String firstName, String lastName, IPSCDivision division) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
 		List<StageScoreSheet> sheets = StageScoreSheetRepository.find(firstName, lastName, division, entityManager);
 		entityManager.close();
 		return sheets;
@@ -31,17 +31,22 @@ public class StageScoreSheetService {
 
 	// Returns a list of score sheets for classifiers which are valid for
 	// ranking, ie. have minimum two results.
+
 	public static List<StageScoreSheet> findCompetitorScoreSheetsForValidClassifiers(String firstName, String lastName,
-			IPSCDivision division, EntityManager entityManager) {
+			IPSCDivision division) {
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		List<StageScoreSheet> sheets = null;
 		try {
 			Set<ClassifierStage> classifiersWithTwoOrMoreResults = StageService
 					.getClassifierStagesWithTwoOrMoreResults(division).keySet();
-			return StageScoreSheetRepository.find(firstName, lastName, division, classifiersWithTwoOrMoreResults,
+			sheets = StageScoreSheetRepository.find(firstName, lastName, division, classifiersWithTwoOrMoreResults,
 					entityManager);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return null;
+
 		}
+		entityManager.close();
+		return sheets;
 	}
 
 	public static int getTotalStageScoreSheetCount() {
@@ -50,7 +55,7 @@ public class StageScoreSheetService {
 
 	public static void removeExtraStageScoreSheets(List<StageScoreSheet> newlyAddedScoreSheets) {
 		List<Long> sheetsToBeRemoved = new ArrayList<Long>();
-		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
 
 		// Remove old score sheets for same competitor, division and classifier
 		for (StageScoreSheet sheet : newlyAddedScoreSheets) {
@@ -106,7 +111,7 @@ public class StageScoreSheetService {
 	// }
 
 	public static void removeInBatch(List<Long> idLIst) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
 		entityManager.getTransaction().begin();
 		List<Long> idList = new ArrayList<Long>();
 

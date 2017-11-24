@@ -16,7 +16,7 @@ public class DivisionRankingLine implements Comparable<DivisionRankingLine> {
 
 	@ManyToOne
 	Competitor competitor;
-	int resultPercentage;
+	double resultPercentage;
 	double bestResultsAverage;
 	double bestHitFactorsAverage;
 	boolean rankedCompetitor;
@@ -89,7 +89,7 @@ public class DivisionRankingLine implements Comparable<DivisionRankingLine> {
 		return previousRank;
 	}
 
-	public int getResultPercentage() {
+	public double getResultPercentage() {
 		return resultPercentage;
 	}
 
@@ -133,7 +133,7 @@ public class DivisionRankingLine implements Comparable<DivisionRankingLine> {
 		this.rankedCompetitor = rankedCompetitor;
 	}
 
-	public void setResultPercentage(int resultPercentage) {
+	public void setResultPercentage(double resultPercentage) {
 		this.resultPercentage = resultPercentage;
 	}
 

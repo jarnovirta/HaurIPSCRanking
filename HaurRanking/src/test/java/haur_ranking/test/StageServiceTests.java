@@ -30,7 +30,7 @@ public class StageServiceTests {
 	// database.
 	@Test
 	public void findTest() {
-		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
 		List<Match> testMatches = TestUtils.createTestMatches();
 		for (Match match : testMatches) {
 			for (Stage stage : match.getStages()) {

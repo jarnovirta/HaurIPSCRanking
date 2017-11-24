@@ -72,14 +72,14 @@ public class RankingService {
 		if (resultList != null && resultList.size() > 0 && resultList.get(0).getBestResultsAverage() > 0) {
 			double topScore = resultList.get(0).getBestResultsAverage();
 			for (DivisionRankingLine line : resultList) {
-				line.setResultPercentage(round(line.getBestResultsAverage() / topScore * 100));
+				line.setResultPercentage(line.getBestResultsAverage() / topScore * 100);
 			}
 		}
 	}
 
 	private static DivisionRanking getDivisionRanking(IPSCDivision division) {
 		DivisionRanking divisionRanking = new DivisionRanking(division);
-		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
 		// Get valid classifiers with two or more results, and top two hit
 		// scores average for each.
 		Map<ClassifierStage, Double> classifierStageTopResultAverages = StageService
@@ -132,22 +132,11 @@ public class RankingService {
 	}
 
 	public static void persist(Ranking ranking) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
 		entityManager.getTransaction().begin();
 		RankingRepository.save(ranking, entityManager);
 		entityManager.getTransaction().commit();
 		entityManager.close();
-	}
-
-	private static int round(double d) {
-		double dAbs = Math.abs(d);
-		int i = (int) dAbs;
-		double result = dAbs - i;
-		if (result < 0.5) {
-			return d < 0 ? -i : i;
-		} else {
-			return d < 0 ? -(i + 1) : i + 1;
-		}
 	}
 
 }

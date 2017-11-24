@@ -16,7 +16,7 @@ public class StageService {
 	}
 
 	public static Map<ClassifierStage, Double> getClassifierStagesWithTwoOrMoreResults(IPSCDivision division) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
 		Map<ClassifierStage, Double> classifierStages = StageRepository
 				.getClassifierStagesWithTwoOrMoreResults(division, entityManager);
 		entityManager.close();

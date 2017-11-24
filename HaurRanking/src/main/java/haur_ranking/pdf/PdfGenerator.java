@@ -47,6 +47,13 @@ public class PdfGenerator {
 		}
 	}
 
+	public static String formatTwoDecimalNumberToString(double number) {
+		String returnString = String.valueOf(number);
+		if (returnString.lastIndexOf('.') == returnString.length() - 2)
+			returnString += "0";
+		return returnString;
+	}
+
 	private static Paragraph getDivisionRankingParagraph(DivisionRanking divisionRanking) {
 		Paragraph divisionRankingPara = new Paragraph();
 		divisionRankingPara.setSpacingBefore(40);
@@ -58,7 +65,7 @@ public class PdfGenerator {
 		table.setHorizontalAlignment(Element.ALIGN_CENTER);
 		try {
 
-			table.setWidths(new float[] { 40, 180, 60, 60, 60 });
+			table.setWidths(new float[] { 40, 170, 70, 70, 70 });
 
 			// Write table header row
 
@@ -108,17 +115,16 @@ public class PdfGenerator {
 
 				String percentageString = "--";
 				if (line.isRankedCompetitor())
-					percentageString = line.getResultPercentage() + " %";
+					percentageString = formatTwoDecimalNumberToString(round(line.getResultPercentage(), 2)) + " %";
 				cell = new PdfPCell(new Paragraph(new Chunk(percentageString)));
 				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 				cell.setPadding(5);
 				cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
 				table.addCell(cell);
 
-				double averageHf = round(line.getBestHitFactorsAverage(), 2);
 				String averageHfString = "--";
 				if (line.isRankedCompetitor())
-					averageHfString = String.valueOf(averageHf);
+					averageHfString = formatTwoDecimalNumberToString(round(line.getBestHitFactorsAverage(), 2));
 				cell = new PdfPCell(new Paragraph(new Chunk(averageHfString)));
 				cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
 				cell.setPadding(5);
