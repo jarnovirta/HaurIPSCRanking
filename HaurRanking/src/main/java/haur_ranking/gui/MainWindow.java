@@ -95,7 +95,7 @@ public class MainWindow {
 	public void prepareGUI() {
 
 		initializeFontSize();
-		mainFrame = new JFrame("HAUR varjoranking");
+		mainFrame = new JFrame("HAUR Ranking");
 		mainFrame.setSize(800, 600);
 		mainFrame.setLayout(new GridLayout(3, 1));
 		List<Image> icons = new ArrayList<Image>();
