@@ -28,7 +28,7 @@ public class DivisionRanking {
 	private IPSCDivision division;
 
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	private List<DivisionRankingLine> rankingLines = new ArrayList<DivisionRankingLine>();
+	private List<DivisionRankingRow> rankingRows = new ArrayList<DivisionRankingRow>();
 
 	@Transient
 	private Set<ClassifierStage> validClassifiers = new HashSet<ClassifierStage>();
@@ -48,8 +48,8 @@ public class DivisionRanking {
 		return id;
 	}
 
-	public List<DivisionRankingLine> getRankingLines() {
-		return rankingLines;
+	public List<DivisionRankingRow> getDivisionRankingRows() {
+		return rankingRows;
 	}
 
 	public void setDivision(IPSCDivision division) {
@@ -60,8 +60,8 @@ public class DivisionRanking {
 		this.id = id;
 	}
 
-	public void setRankingLines(List<DivisionRankingLine> rankingLines) {
-		this.rankingLines = rankingLines;
+	public void setDivisionRankingRows(List<DivisionRankingRow> rankingLines) {
+		this.rankingRows = rankingLines;
 	}
 
 	public Set<ClassifierStage> getValidClassifiers() {

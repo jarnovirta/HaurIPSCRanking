@@ -9,7 +9,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "DivisionRankingLine")
-public class DivisionRankingLine implements Comparable<DivisionRankingLine> {
+public class DivisionRankingRow implements Comparable<DivisionRankingRow> {
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE)
 	private Long id;
@@ -18,7 +18,7 @@ public class DivisionRankingLine implements Comparable<DivisionRankingLine> {
 	private Competitor competitor;
 	private double resultPercentage;
 	private double bestResultsAverage;
-	private double bestHitFactorsAverage;
+	private double hitFactorAverage;
 	private boolean rankedCompetitor;
 	private int resultsCount;
 
@@ -26,25 +26,25 @@ public class DivisionRankingLine implements Comparable<DivisionRankingLine> {
 
 	private boolean improvedResult = false;
 
-	public DivisionRankingLine() {
+	public DivisionRankingRow() {
 	}
 
-	public DivisionRankingLine(Competitor competitor, boolean rankedCompetitor, double bestResultsAverage,
+	public DivisionRankingRow(Competitor competitor, boolean rankedCompetitor, double bestResultsAverage,
 			double bestHitFactorsAverage, int resultsCount) {
 		this.competitor = competitor;
 		this.rankedCompetitor = rankedCompetitor;
 		this.bestResultsAverage = bestResultsAverage;
-		this.bestHitFactorsAverage = bestHitFactorsAverage;
+		this.hitFactorAverage = bestHitFactorsAverage;
 		this.resultsCount = resultsCount;
 	}
 
-	public DivisionRankingLine(Competitor competitor, boolean rankedCompetitor, int resultsCount) {
+	public DivisionRankingRow(Competitor competitor, boolean rankedCompetitor, int resultsCount) {
 		this.competitor = competitor;
 		this.rankedCompetitor = rankedCompetitor;
 		this.resultsCount = resultsCount;
 	}
 
-	public DivisionRankingLine(Competitor competitor, int resultPercentage, int resultsCount, Integer previousRank,
+	public DivisionRankingRow(Competitor competitor, int resultPercentage, int resultsCount, Integer previousRank,
 			boolean improvedResult) {
 		this.competitor = competitor;
 		this.resultsCount = resultsCount;
@@ -53,7 +53,7 @@ public class DivisionRankingLine implements Comparable<DivisionRankingLine> {
 	}
 
 	@Override
-	public int compareTo(DivisionRankingLine compareToLine) {
+	public int compareTo(DivisionRankingRow compareToLine) {
 		double compareToAverage = compareToLine.getBestResultsAverage();
 		/* For Ascending order */
 		if (this.bestResultsAverage < compareToAverage)
@@ -69,8 +69,8 @@ public class DivisionRankingLine implements Comparable<DivisionRankingLine> {
 
 	}
 
-	public double getBestHitFactorsAverage() {
-		return bestHitFactorsAverage;
+	public double getHitFactorAverage() {
+		return hitFactorAverage;
 	}
 
 	public double getBestResultsAverage() {
@@ -105,8 +105,8 @@ public class DivisionRankingLine implements Comparable<DivisionRankingLine> {
 		return rankedCompetitor;
 	}
 
-	public void setBestHitFactorsAverage(double bestHitFactorsAverage) {
-		this.bestHitFactorsAverage = bestHitFactorsAverage;
+	public void setHitFactorAverage(double bestHitFactorsAverage) {
+		this.hitFactorAverage = bestHitFactorsAverage;
 	}
 
 	public void setBestResultsAverage(double bestResultsAverage) {

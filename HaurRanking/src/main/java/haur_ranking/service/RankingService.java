@@ -10,7 +10,7 @@ import javax.persistence.EntityManager;
 import haur_ranking.domain.ClassifierStage;
 import haur_ranking.domain.Competitor;
 import haur_ranking.domain.DivisionRanking;
-import haur_ranking.domain.DivisionRankingLine;
+import haur_ranking.domain.DivisionRankingRow;
 import haur_ranking.domain.IPSCDivision;
 import haur_ranking.domain.Ranking;
 import haur_ranking.domain.StageScoreSheet;
@@ -19,12 +19,12 @@ import haur_ranking.repository.haur_ranking_repository.RankingRepository;
 import haur_ranking.repository.haur_ranking_repository.StageScoreSheetRepository;
 
 public class RankingService {
-	private static DivisionRankingLine competitorTopScoresAverage(Competitor competitor,
+	private static DivisionRankingRow competitorTopScoresAverage(Competitor competitor,
 			List<StageScoreSheet> competitorLatestScoreSheets,
 			Map<ClassifierStage, Double> classifierStageTopResultAverages) {
 
 		if (competitorLatestScoreSheets.size() < 4)
-			return new DivisionRankingLine(competitor, false, competitorLatestScoreSheets.size());
+			return new DivisionRankingRow(competitor, false, competitorLatestScoreSheets.size());
 		int resultCount = competitorLatestScoreSheets.size();
 		if (competitorLatestScoreSheets.size() > 8)
 			competitorLatestScoreSheets = competitorLatestScoreSheets.subList(0, 8);
@@ -60,7 +60,7 @@ public class RankingService {
 		}
 
 		competitorTopScoresAverage = scoreSum / 4;
-		DivisionRankingLine line = new DivisionRankingLine(competitor, true, competitorTopScoresAverage,
+		DivisionRankingRow line = new DivisionRankingRow(competitor, true, competitorTopScoresAverage,
 				competitorHitFactorsAverage, resultCount);
 
 		return line;
@@ -68,10 +68,10 @@ public class RankingService {
 	}
 
 	// Expects resultList to be ordered, top score first.
-	private static void convertAverageScoresToPercentage(List<DivisionRankingLine> resultList) {
+	private static void convertAverageScoresToPercentage(List<DivisionRankingRow> resultList) {
 		if (resultList != null && resultList.size() > 0 && resultList.get(0).getBestResultsAverage() > 0) {
 			double topScore = resultList.get(0).getBestResultsAverage();
-			for (DivisionRankingLine line : resultList) {
+			for (DivisionRankingRow line : resultList) {
 				line.setResultPercentage(line.getBestResultsAverage() / topScore * 100);
 			}
 		}
@@ -92,7 +92,7 @@ public class RankingService {
 				divisionRanking.getValidClassifiers().add(classifier);
 			}
 		}
-		List<DivisionRankingLine> resultList = new ArrayList<DivisionRankingLine>();
+		List<DivisionRankingRow> resultList = new ArrayList<DivisionRankingRow>();
 		List<Competitor> competitors = CompetitorService.findAll();
 
 		for (Competitor competitor : competitors) {
@@ -106,7 +106,7 @@ public class RankingService {
 		Collections.sort(resultList);
 		Collections.reverse(resultList);
 		convertAverageScoresToPercentage(resultList);
-		divisionRanking.setRankingLines(resultList);
+		divisionRanking.setDivisionRankingRows(resultList);
 		entityManager.close();
 		return divisionRanking;
 	}

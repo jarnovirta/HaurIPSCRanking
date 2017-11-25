@@ -1,8 +1,6 @@
 package haur_ranking.core;
 
 import haur_ranking.gui.MainWindow;
-import haur_ranking.pdf.PdfGenerator;
-import haur_ranking.service.RankingService;
 
 public class App {
 
@@ -28,8 +26,8 @@ public class App {
 		gui.prepareGUI();
 		gui.showHaurRankingGui();
 
-		System.out.println("Generating pdf");
-		PdfGenerator.createPdfRankingFile(RankingService.getRanking(), "");
-		System.out.println("Pdf Done");
+		// System.out.println("Generating pdf");
+		// PdfGenerator.createPdfRankingFile(RankingService.getRanking(), "");
+		// System.out.println("Pdf Done");
 	}
 }

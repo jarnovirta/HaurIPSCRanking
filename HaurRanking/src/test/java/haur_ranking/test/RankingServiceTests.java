@@ -7,7 +7,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import haur_ranking.domain.DivisionRanking;
-import haur_ranking.domain.DivisionRankingLine;
+import haur_ranking.domain.DivisionRankingRow;
 import haur_ranking.domain.IPSCDivision;
 import haur_ranking.domain.Ranking;
 import haur_ranking.service.RankingService;
@@ -35,10 +35,10 @@ public class RankingServiceTests {
 				standardRanking = div;
 
 		}
-		DivisionRankingLine firstLine = productionRanking.getRankingLines().get(0);
-		DivisionRankingLine secondLine = productionRanking.getRankingLines().get(1);
-		DivisionRankingLine thirdLine = productionRanking.getRankingLines().get(2);
-		DivisionRankingLine fourthLine = productionRanking.getRankingLines().get(3);
+		DivisionRankingRow firstLine = productionRanking.getDivisionRankingRows().get(0);
+		DivisionRankingRow secondLine = productionRanking.getDivisionRankingRows().get(1);
+		DivisionRankingRow thirdLine = productionRanking.getDivisionRankingRows().get(2);
+		DivisionRankingRow fourthLine = productionRanking.getDivisionRankingRows().get(3);
 		assertEquals("Jarno Virta should be #1 for Production Division ranking.", "Jarno",
 				firstLine.getCompetitor().getFirstName());
 		assertEquals("Jarno Virta should have bestResultsAverage of 1.25 for Production Division.", 1.253,
@@ -56,7 +56,7 @@ public class RankingServiceTests {
 		assertEquals("Ben Stoeger should have result of 65%", 65.3, thirdLine.getResultPercentage(), 0.1);
 		assertEquals("Rob Leatham should not have a rank (not enough results).", false,
 				fourthLine.isRankedCompetitor());
-		assertEquals("Standard division should have two results.", 2, standardRanking.getRankingLines().size());
+		assertEquals("Standard division should have two results.", 2, standardRanking.getDivisionRankingRows().size());
 	}
 
 }

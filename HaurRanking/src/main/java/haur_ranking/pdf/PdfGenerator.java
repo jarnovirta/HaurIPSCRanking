@@ -23,8 +23,9 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
 import haur_ranking.domain.DivisionRanking;
-import haur_ranking.domain.DivisionRankingLine;
+import haur_ranking.domain.DivisionRankingRow;
 import haur_ranking.domain.Ranking;
+import haur_ranking.utils.DataFormatUtils;
 
 public class PdfGenerator {
 
@@ -57,13 +58,6 @@ public class PdfGenerator {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	public static String formatTwoDecimalNumberToString(double number) {
-		String returnString = String.valueOf(number);
-		if (returnString.lastIndexOf('.') == returnString.length() - 2)
-			returnString += "0";
-		return returnString;
 	}
 
 	private static Paragraph getDivisionRankingParagraph(DivisionRanking divisionRanking) {
@@ -115,7 +109,7 @@ public class PdfGenerator {
 			table.addCell(cell);
 
 			int position = 1;
-			for (DivisionRankingLine line : divisionRanking.getRankingLines()) {
+			for (DivisionRankingRow line : divisionRanking.getDivisionRankingRows()) {
 				String positionString = "--";
 				if (line.isRankedCompetitor())
 					positionString = position + ".";
@@ -135,7 +129,8 @@ public class PdfGenerator {
 
 				String percentageString = "--";
 				if (line.isRankedCompetitor())
-					percentageString = formatTwoDecimalNumberToString(round(line.getResultPercentage(), 2)) + " %";
+					percentageString = DataFormatUtils.formatTwoDecimalNumberToString(
+							DataFormatUtils.round(line.getResultPercentage(), 2)) + " %";
 				cell = new PdfPCell(new Paragraph(new Chunk(percentageString, defaultFont)));
 				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 				cell.setPadding(5);
@@ -144,7 +139,8 @@ public class PdfGenerator {
 
 				String averageHfString = "--";
 				if (line.isRankedCompetitor())
-					averageHfString = formatTwoDecimalNumberToString(round(line.getBestHitFactorsAverage(), 2));
+					averageHfString = DataFormatUtils
+							.formatTwoDecimalNumberToString(DataFormatUtils.round(line.getHitFactorAverage(), 2));
 				cell = new PdfPCell(new Paragraph(new Chunk(averageHfString, defaultFont)));
 				cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
 				cell.setPadding(5);
@@ -206,16 +202,6 @@ public class PdfGenerator {
 			e.printStackTrace();
 			return null;
 		}
-	}
-
-	public static double round(double value, int places) {
-		if (places < 0)
-			throw new IllegalArgumentException();
-
-		long factor = (long) Math.pow(10, places);
-		value = value * factor;
-		long tmp = Math.round(value);
-		return (double) tmp / factor;
 	}
 
 	private static void writeToFile(ByteArrayOutputStream baos, String path) {

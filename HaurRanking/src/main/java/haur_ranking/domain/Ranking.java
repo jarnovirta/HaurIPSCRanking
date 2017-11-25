@@ -50,7 +50,7 @@ public class Ranking {
 				if (!classifiers.contains(classifier))
 					classifiers.add(classifier);
 			}
-			for (DivisionRankingLine line : divisionRanking.getRankingLines()) {
+			for (DivisionRankingRow line : divisionRanking.getDivisionRankingRows()) {
 				totalResultsCount += line.getResultsCount();
 				if (line.isRankedCompetitor() && !competitors.contains(line.getCompetitor()))
 					competitors.add(line.getCompetitor());

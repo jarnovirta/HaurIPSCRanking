@@ -1,8 +1,8 @@
 package haur_ranking.gui;
 
-import java.awt.FlowLayout;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,40 +14,27 @@ import java.util.Enumeration;
 import java.util.List;
 
 import javax.imageio.ImageIO;
-import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.plaf.FontUIResource;
 
-import haur_ranking.domain.DatabaseStatistics;
+import haur_ranking.domain.Ranking;
 import haur_ranking.gui.filters.WinMSSFileFilter;
 import haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
 import haur_ranking.repository.winmss_repository.WinMssDatabaseUtil;
-import haur_ranking.service.DatabaseStatisticsService;
 import haur_ranking.service.MatchService;
 import haur_ranking.service.RankingService;
 
 public class MainWindow {
-	private class ButtonClickListener implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			String command = e.getActionCommand();
-			if (command.equals("importCompetitions")) {
-				importCompetitionsCommandHandler();
-			}
-			if (command.equals("generateRanking")) {
-				RankingService.getRanking();
-			}
-		}
-	}
 
 	private JFrame mainFrame;
 	private JLabel headerLabel;
-	private JPanel databaseStatisticsPanel;
+
 	private JLabel databaseMatchCountPanel;
 
 	private JLabel databaseStageAndCompetitorCountPanel;
@@ -55,6 +42,8 @@ public class MainWindow {
 	private JPanel controlPanel;
 
 	private String lastMSSDbFileLocation = null;
+
+	private Ranking ranking;
 
 	private void importCompetitionsCommandHandler() {
 		JFileChooser fileChooser;
@@ -73,8 +62,8 @@ public class MainWindow {
 		}
 	}
 
-	private void initializeFontSize() {
-		float multiplier = 1.8f;
+	private void initializeFonts() {
+		float multiplier = 1.9f;
 		UIDefaults defaults = UIManager.getDefaults();
 		Enumeration<Object> e = defaults.keys();
 		while (e.hasMoreElements()) {
@@ -90,14 +79,19 @@ public class MainWindow {
 				}
 			}
 		}
+		FontUIResource font = new FontUIResource("Times New", Font.PLAIN, 26);
+		UIManager.put("Table.font", font);
 	}
 
 	public void prepareGUI() {
 
-		initializeFontSize();
+		initializeFonts();
+
 		mainFrame = new JFrame("HAUR Ranking");
-		mainFrame.setSize(800, 600);
-		mainFrame.setLayout(new GridLayout(3, 1));
+		mainFrame.setLocationRelativeTo(null);
+		mainFrame.setMinimumSize(new Dimension(1300, 700));
+		mainFrame.setResizable(false);
+		mainFrame.setLayout(new BorderLayout());
 		List<Image> icons = new ArrayList<Image>();
 		try {
 			icons.add(ImageIO.read(ClassLoader.getSystemResource("images/small_haur_logo.png")));
@@ -107,19 +101,13 @@ public class MainWindow {
 		}
 		mainFrame.setIconImages(icons);
 
-		headerLabel = new JLabel("", JLabel.CENTER);
+		JTabbedPane tabbedMainPane = new JTabbedPane();
+		tabbedMainPane.addTab("Ranking", new RankingPanel(mainFrame, RankingService.getRanking()));
+		tabbedMainPane.add("Tietokanta", new DatabasePanel(mainFrame));
 
-		databaseStatisticsPanel = new JPanel(new GridLayout(2, 1));
-		databaseStatisticsPanel.setSize(350, 20);
-
-		databaseMatchCountPanel = new JLabel("", JLabel.LEFT);
-		databaseMatchCountPanel.setSize(300, 10);
-		databaseStageAndCompetitorCountPanel = new JLabel("", JLabel.LEFT);
-		databaseStageAndCompetitorCountPanel.setSize(300, 10);
-
-		databaseStatisticsPanel.add(databaseMatchCountPanel);
-		databaseStatisticsPanel.add(databaseStageAndCompetitorCountPanel);
-
+		mainFrame.add(tabbedMainPane);
+		mainFrame.getContentPane().add(tabbedMainPane, BorderLayout.CENTER);
+		mainFrame.pack();
 		mainFrame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent windowEvent) {
@@ -128,32 +116,51 @@ public class MainWindow {
 				System.exit(0);
 			}
 		});
-		controlPanel = new JPanel();
-		controlPanel.setLayout(new FlowLayout());
-
-		mainFrame.add(headerLabel);
-		mainFrame.add(controlPanel);
-		mainFrame.add(databaseStatisticsPanel);
 
 	}
 
 	public void showHaurRankingGui() {
 		updateDatabaseStaticsPanel();
-		JButton importCompetitions = new JButton("Tuo kilpailuja");
-		importCompetitions.setActionCommand("importCompetitions");
-		importCompetitions.addActionListener(new ButtonClickListener());
-		controlPanel.add(importCompetitions);
-		importCompetitions = new JButton("Luo ranking");
-		importCompetitions.setActionCommand("generateRanking");
-		importCompetitions.addActionListener(new ButtonClickListener());
-		controlPanel.add(importCompetitions);
+		// JButton importCompetitions = new JButton("Tuo kilpailuja");
+		// importCompetitions.setActionCommand("importCompetitions");
+		// importCompetitions.addActionListener(new ButtonClickListener());
+		// controlPanel.add(importCompetitions);
+		// importCompetitions = new JButton("Luo ranking");
+		// importCompetitions.setActionCommand("generateRanking");
+		// importCompetitions.addActionListener(new ButtonClickListener());
+		// controlPanel.add(importCompetitions);
 		mainFrame.setVisible(true);
 	}
 
 	private void updateDatabaseStaticsPanel() {
-		DatabaseStatistics databaseStatistics = DatabaseStatisticsService.getDatabaseStatistics();
-		databaseMatchCountPanel.setText("Kilpailuja : " + databaseStatistics.getMatchCount());
-		databaseStageAndCompetitorCountPanel.setText("Asematuloksia : " + databaseStatistics.getStageCount() + " ("
-				+ databaseStatistics.getCompetitorCount() + " kilpailijaa)");
+		// DatabaseStatistics databaseStatistics =
+		// DatabaseStatisticsService.getDatabaseStatistics();
+		// databaseMatchCountPanel.setText("Kilpailuja : " +
+		// databaseStatistics.getMatchCount());
+		// databaseStageAndCompetitorCountPanel.setText("Asematuloksia : " +
+		// databaseStatistics.getStageCount() + " ("
+		// + databaseStatistics.getCompetitorCount() + " kilpailijaa)");
 	}
+
+	public Ranking getRanking() {
+		return ranking;
+	}
+
+	public void setRanking(Ranking ranking) {
+		this.ranking = ranking;
+	}
+
+	private class ButtonClickListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			String command = e.getActionCommand();
+			if (command.equals("importCompetitions")) {
+				importCompetitionsCommandHandler();
+			}
+			if (command.equals("generateRanking")) {
+				RankingService.getRanking();
+			}
+		}
+	}
+
 }
