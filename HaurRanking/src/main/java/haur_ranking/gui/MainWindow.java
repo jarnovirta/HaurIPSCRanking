@@ -43,7 +43,7 @@ public class MainWindow {
 
 	private String lastMSSDbFileLocation = null;
 
-	private Ranking ranking;
+	private static Ranking ranking;
 
 	private void importCompetitionsCommandHandler() {
 		JFileChooser fileChooser;
@@ -56,7 +56,6 @@ public class MainWindow {
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			String absoluteFilePath = fileChooser.getSelectedFile().getAbsolutePath();
 			lastMSSDbFileLocation = Paths.get(absoluteFilePath).getParent().toString();
-			System.out.println("Loading database from " + absoluteFilePath);
 			MatchService.importWinMssDatabase(absoluteFilePath);
 			updateDatabaseStaticsPanel();
 		}
@@ -84,7 +83,6 @@ public class MainWindow {
 	}
 
 	public void prepareGUI() {
-
 		initializeFonts();
 
 		mainFrame = new JFrame("HAUR Ranking");
@@ -130,6 +128,7 @@ public class MainWindow {
 		// importCompetitions.addActionListener(new ButtonClickListener());
 		// controlPanel.add(importCompetitions);
 		mainFrame.setVisible(true);
+		ranking = RankingService.getRanking();
 	}
 
 	private void updateDatabaseStaticsPanel() {
@@ -142,12 +141,12 @@ public class MainWindow {
 		// + databaseStatistics.getCompetitorCount() + " kilpailijaa)");
 	}
 
-	public Ranking getRanking() {
+	public static Ranking getRanking() {
 		return ranking;
 	}
 
-	public void setRanking(Ranking ranking) {
-		this.ranking = ranking;
+	public static void setRanking(Ranking newRanking) {
+		ranking = newRanking;
 	}
 
 	private class ButtonClickListener implements ActionListener {

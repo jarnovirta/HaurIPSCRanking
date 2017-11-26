@@ -206,8 +206,7 @@ public class PdfGenerator {
 
 	private static void writeToFile(ByteArrayOutputStream baos, String path) {
 		try {
-			OutputStream outputStream = new FileOutputStream(
-					path + "HaurRanking_" + ranking.getDateString().replace('.', '_') + ".pdf");
+			OutputStream outputStream = new FileOutputStream(path);
 			baos.writeTo(outputStream);
 			outputStream.close();
 		} catch (Exception e) {

@@ -18,7 +18,7 @@ public class WinMSSFileFilter extends FileFilter {
 
 	@Override
 	public String getDescription() {
-		return "WinMSS Database";
+		return "WinMSS Database (WinMSS.mdb)";
 	}
 
 }

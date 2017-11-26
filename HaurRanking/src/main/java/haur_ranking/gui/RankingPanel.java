@@ -3,9 +3,12 @@ package haur_ranking.gui;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +16,7 @@ import java.util.Map;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -28,8 +32,9 @@ import haur_ranking.domain.DivisionRanking;
 import haur_ranking.domain.DivisionRankingRow;
 import haur_ranking.domain.IPSCDivision;
 import haur_ranking.domain.Ranking;
+import haur_ranking.gui.filters.FileFilterUtils;
+import haur_ranking.gui.filters.PdfFileFilter;
 import haur_ranking.pdf.PdfGenerator;
-import haur_ranking.service.RankingService;
 import haur_ranking.utils.DataFormatUtils;
 
 public class RankingPanel extends JPanel {
@@ -40,6 +45,7 @@ public class RankingPanel extends JPanel {
 	private Map<IPSCDivision, JTable> divisionRankingTables;
 	private List<JPanel> rankingTablePanes;
 	private JFrame mainFrame;
+	private String lastRankingPdfFileLocation;
 
 	private enum rankingTableStatus {
 		TABLE_EMPTY, TABLE_NOT_EMPTY
@@ -202,13 +208,41 @@ public class RankingPanel extends JPanel {
 		divisionTableModel.fireTableDataChanged();
 	}
 
+	private void generatePdfCommandHandler() {
+		JFileChooser fileChooser;
+		if (lastRankingPdfFileLocation != null)
+			fileChooser = new JFileChooser(lastRankingPdfFileLocation);
+		else
+			fileChooser = new JFileChooser();
+		fileChooser.setFileFilter(new PdfFileFilter());
+		fileChooser.setPreferredSize(new Dimension(800, 600));
+		fileChooser.setSelectedFile(
+				new File("HaurRanking_" + MainWindow.getRanking().getDateString().replace('.', '_') + ".pdf"));
+		int returnVal = fileChooser.showOpenDialog(mainFrame);
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			String absoluteFilePath = fileChooser.getSelectedFile().getAbsolutePath();
+			String fileExtension = FileFilterUtils.getExtension(new File(absoluteFilePath));
+			if (fileExtension == null)
+				absoluteFilePath += ".pdf";
+
+			lastRankingPdfFileLocation = Paths.get(absoluteFilePath).getParent().toString();
+			PdfGenerator.createPdfRankingFile(MainWindow.getRanking(), absoluteFilePath);
+			// RankingPanel.updateRankingTablesData(RankingService.getRanking());
+
+			// updateDatabaseStaticsPanel();
+		} else {
+			if (returnVal != JFileChooser.CANCEL_OPTION)
+				generatePdfCommandHandler();
+		}
+
+	}
+
 	private class ButtonClickListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			String command = e.getActionCommand();
 			if (command.equals("generatePdf")) {
-				PdfGenerator.createPdfRankingFile(RankingService.getRanking(), "");
-
+				generatePdfCommandHandler();
 			}
 		}
 	}
