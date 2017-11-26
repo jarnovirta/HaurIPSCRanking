@@ -113,7 +113,6 @@ public class MatchService {
 		setImportProgressStatus(ImportStatus.GENERATING_RANKING);
 		RankingService.generateRanking();
 		setImportProgressStatus(ImportStatus.DONE);
-		importProgressEventListeners.clear();
 	}
 
 	public static void save(List<Match> matches) {
