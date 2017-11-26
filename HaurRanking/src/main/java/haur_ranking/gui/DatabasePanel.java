@@ -12,8 +12,11 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import haur_ranking.gui.filters.WinMSSFileFilter;
+import haur_ranking.service.ImportWinMSSResultsTask;
+import haur_ranking.service.MatchService;
+import haur_ranking.service.MatchService.ImportStatus;
 
-public class DatabasePanel extends JPanel {
+public class DatabasePanel extends JPanel implements ImportProgressEventListener {
 	/**
 	 *
 	 */
@@ -23,16 +26,24 @@ public class DatabasePanel extends JPanel {
 	private JFrame progressBarFrame;
 
 	public DatabasePanel() {
-		progressBarFrame = new JFrame("Tulosten tuonti");
-		progressBarFrame.setLocationRelativeTo(this);
-		progressBarFrame.setPreferredSize(new Dimension(550, 150));
-		progressBarFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		JPanel databasePanel = new JPanel();
 		databasePanel.setLayout(new BoxLayout(databasePanel, BoxLayout.PAGE_AXIS));
 		importResultsButton = new JButton("Tuo kilpailuja");
 		importResultsButton.setActionCommand("importCompetitions");
 		importResultsButton.addActionListener(new ButtonClickListener());
 		this.add(importResultsButton);
+
+		progressBarFrame = new JFrame("Tulosten tuonti");
+		progressBarFrame.setLocationRelativeTo(this);
+		progressBarFrame.setPreferredSize(new Dimension(550, 150));
+		progressBarFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		ImportProgressBarPanel progressBarPanel = new ImportProgressBarPanel(progressBarFrame, importResultsButton);
+		progressBarPanel.setOpaque(true);
+		progressBarFrame.setContentPane(progressBarPanel);
+		progressBarFrame.pack();
+
+		MatchService.addImportProgressEventListener(this);
+
 	}
 
 	private class ButtonClickListener implements ActionListener {
@@ -58,13 +69,23 @@ public class DatabasePanel extends JPanel {
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			String absoluteFilePath = fileChooser.getSelectedFile().getAbsolutePath();
 			lastMSSDbFileLocation = Paths.get(absoluteFilePath).getParent().toString();
-			ImportResultsPanel importWinMSSDataTask = new ImportResultsPanel(progressBarFrame, absoluteFilePath,
-					importResultsButton);
-			importWinMSSDataTask.setOpaque(true);
-			progressBarFrame.setContentPane((importWinMSSDataTask));
-			progressBarFrame.pack();
+
+			importResultsButton.setEnabled(false);
+			// Import results in a separate thread.
+			ImportWinMSSResultsTask importResultsTask = new ImportWinMSSResultsTask(
+					MatchService.findNewResultsInWinMSSDatabase(absoluteFilePath));
+			Thread importTaskThread = new Thread(importResultsTask);
+			importTaskThread.start();
 			progressBarFrame.setVisible(true);
 		}
 	}
 
+	@Override
+	public void setProgress(ImportProgressEvent event) {
+		if (event.getImportStatus() == ImportStatus.DONE) {
+			importResultsButton.setEnabled(true);
+			progressBarFrame.setVisible(false);
+			RankingDataService.updateRankingData();
+		}
+	}
 }

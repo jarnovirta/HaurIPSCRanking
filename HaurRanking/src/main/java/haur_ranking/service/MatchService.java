@@ -11,6 +11,8 @@ import haur_ranking.domain.IPSCDivision;
 import haur_ranking.domain.Match;
 import haur_ranking.domain.Stage;
 import haur_ranking.domain.StageScoreSheet;
+import haur_ranking.gui.ImportProgressEvent;
+import haur_ranking.gui.ImportProgressEventListener;
 import haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
 import haur_ranking.repository.haur_ranking_repository.MatchRepository;
 import haur_ranking.repository.winmss_repository.WinMSSMatchRepository;
@@ -29,6 +31,7 @@ public class MatchService {
 	private static int progressCounterTotalSteps;
 	private static double progressCounterCompletedSteps;
 	private static int progressPercentage = 0;
+	private static List<ImportProgressEventListener> importProgressEventListeners = new ArrayList<ImportProgressEventListener>();
 
 	public static Match find(Match match, EntityManager entityManager) {
 		return MatchRepository.find(match, entityManager);
@@ -98,7 +101,7 @@ public class MatchService {
 							divisionsWithNewResults.add(sheet.getIpscDivision());
 					}
 				}
-				addProgress(stage.getStageScoreSheets().size());
+				addImportProgress(stage.getStageScoreSheets().size());
 			}
 			if (stagesWithNewResults.size() > 0)
 				matchesWithNewResults.add(match);
@@ -107,9 +110,10 @@ public class MatchService {
 		entityManager.close();
 		if (matchesWithNewResults.size() > 0)
 			save(matchesWithNewResults);
-		importStatus = ImportStatus.GENERATING_RANKING;
+		setImportProgressStatus(ImportStatus.GENERATING_RANKING);
 		RankingService.generateRanking();
-		importStatus = ImportStatus.DONE;
+		setImportProgressStatus(ImportStatus.DONE);
+		importProgressEventListeners.clear();
 	}
 
 	public static void save(List<Match> matches) {
@@ -135,7 +139,7 @@ public class MatchService {
 						}
 					}
 					stageScoreSheetCount += stage.getStageScoreSheets().size();
-					addProgress(stage.getStageScoreSheets().size() / 2.0);
+					addImportProgress(stage.getStageScoreSheets().size() / 2.0);
 				}
 			}
 			Match existingMatch = find(newMatch, entityManager);
@@ -149,7 +153,7 @@ public class MatchService {
 
 			}
 			entityManager.flush();
-			addProgress(stageScoreSheetCount / 2.0);
+			addImportProgress(stageScoreSheetCount / 2.0);
 
 		}
 		entityManager.getTransaction().commit();
@@ -159,7 +163,7 @@ public class MatchService {
 	}
 
 	private static void initializeProgressCounterVariables(List<Match> matches) {
-		importStatus = ImportStatus.IMPORTING;
+		setImportProgressStatus(ImportStatus.IMPORTING);
 		progressCounterCompletedSteps = 0;
 		progressCounterTotalSteps = 0;
 		for (Match match : matches) {
@@ -170,28 +174,28 @@ public class MatchService {
 		progressCounterTotalSteps = progressCounterTotalSteps * 2;
 	}
 
-	private static void addProgress(double progressStepsCount) {
+	private static void addImportProgress(double progressStepsCount) {
+		if (progressCounterTotalSteps == 0)
+			return;
 		progressCounterCompletedSteps += progressStepsCount;
-		if (progressCounterTotalSteps > 0) {
-			progressPercentage = Math
-					.toIntExact(Math.round(progressCounterCompletedSteps / progressCounterTotalSteps * 100));
+		progressPercentage = Math
+				.toIntExact(Math.round(progressCounterCompletedSteps / progressCounterTotalSteps * 100));
+		emitImportProgressEvent();
+
+	}
+
+	private static void setImportProgressStatus(ImportStatus newStatus) {
+		importStatus = newStatus;
+		emitImportProgressEvent();
+	}
+
+	private static void emitImportProgressEvent() {
+		for (ImportProgressEventListener listener : importProgressEventListeners) {
+			listener.setProgress(new ImportProgressEvent(importStatus, progressPercentage));
 		}
 	}
 
-	public static ImportStatus getImportStatus() {
-		return importStatus;
+	public static void addImportProgressEventListener(ImportProgressEventListener listener) {
+		importProgressEventListeners.add(listener);
 	}
-
-	public static void setImportStatus(ImportStatus status) {
-		importStatus = status;
-	}
-
-	public static int getProgressPercentage() {
-		return progressPercentage;
-	}
-
-	public static void setProgressPercentage(int progressPercentage) {
-		MatchService.progressPercentage = progressPercentage;
-	}
-
 }
