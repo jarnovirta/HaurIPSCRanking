@@ -31,7 +31,7 @@ import haur_ranking.domain.DivisionRanking;
 import haur_ranking.domain.DivisionRankingRow;
 import haur_ranking.domain.IPSCDivision;
 import haur_ranking.domain.Ranking;
-import haur_ranking.gui.EventListeners.RankingDataUpdatedEventListener;
+import haur_ranking.gui.Event.RankingDataUpdatedEventListener;
 import haur_ranking.gui.filters.FileFilterUtils;
 import haur_ranking.gui.filters.PdfFileFilter;
 import haur_ranking.pdf.PdfGenerator;

@@ -7,6 +7,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 
+import haur_ranking.Event.ImportProgressEvent;
+import haur_ranking.Event.ImportProgressEventListener;
 import haur_ranking.service.MatchService;
 
 public class ImportProgressBarPanel extends JPanel implements ImportProgressEventListener {

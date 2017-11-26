@@ -1,4 +1,4 @@
-package haur_ranking.gui;
+package haur_ranking.Event;
 
 import haur_ranking.service.MatchService.ImportStatus;
 

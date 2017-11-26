@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import haur_ranking.domain.Ranking;
-import haur_ranking.gui.EventListeners.RankingDataUpdatedEventListener;
+import haur_ranking.gui.Event.RankingDataUpdatedEventListener;
 import haur_ranking.service.RankingService;
 
 public class RankingDataService {

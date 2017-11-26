@@ -11,6 +11,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import haur_ranking.Event.ImportProgressEvent;
+import haur_ranking.Event.ImportProgressEventListener;
 import haur_ranking.gui.filters.WinMSSFileFilter;
 import haur_ranking.service.ImportWinMSSResultsTask;
 import haur_ranking.service.MatchService;
