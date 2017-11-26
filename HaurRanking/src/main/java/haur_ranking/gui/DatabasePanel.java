@@ -1,5 +1,6 @@
 package haur_ranking.gui;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.nio.file.Paths;
@@ -52,11 +53,11 @@ public class DatabasePanel extends JPanel {
 		else
 			fileChooser = new JFileChooser();
 		fileChooser.setFileFilter(new WinMSSFileFilter());
+		fileChooser.setPreferredSize(new Dimension(800, 600));
 		int returnVal = fileChooser.showOpenDialog(mainFrame);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			String absoluteFilePath = fileChooser.getSelectedFile().getAbsolutePath();
 			lastMSSDbFileLocation = Paths.get(absoluteFilePath).getParent().toString();
-			System.out.println("Loading database from " + absoluteFilePath);
 			MatchService.importWinMssDatabase(absoluteFilePath);
 			// RankingPanel.updateRankingTablesData(RankingService.getRanking());
 
