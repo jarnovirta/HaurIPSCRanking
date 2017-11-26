@@ -13,6 +13,27 @@ import haur_ranking.domain.Stage;
 import haur_ranking.domain.StageScoreSheet;
 
 public class WinMSSStageScoreSheetRepository {
+
+	public static int getScoreSheetCountForStage(Match match, Stage stage) {
+		int count = -1;
+		Connection connection = WinMssDatabaseUtil.getConnection();
+		Statement statement = null;
+		ResultSet resultSet = null;
+		try {
+			statement = connection.createStatement();
+			resultSet = statement.executeQuery("SELECT COUNT(MatchId) AS count FROM tblMatchStageScore WHERE MatchId="
+					+ match.getWinMssMatchId() + " AND StageId = " + stage.getWinMssId());
+			while (resultSet.next()) {
+				count = resultSet.getInt("count");
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			WinMssDatabaseUtil.closeStatementResultSet(statement, resultSet);
+		}
+		return count;
+	}
+
 	public static List<StageScoreSheet> find(Match match, Stage stage) {
 
 		List<StageScoreSheet> resultScoreSheets = new ArrayList<StageScoreSheet>();

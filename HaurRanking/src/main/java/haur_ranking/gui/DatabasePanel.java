@@ -12,7 +12,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import haur_ranking.gui.filters.WinMSSFileFilter;
-import haur_ranking.service.MatchService;
 
 public class DatabasePanel extends JPanel {
 	/**
@@ -21,15 +20,21 @@ public class DatabasePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private String lastMSSDbFileLocation = null;
 	private JFrame mainFrame = null;
+	private JButton importResultsButton;
+	private JFrame progressBarFrame;
 
 	public DatabasePanel() {
 	}
 
 	public DatabasePanel(JFrame main) {
 		mainFrame = main;
+		progressBarFrame = new JFrame("Tulostietojen tuonti");
+		progressBarFrame.setLocationRelativeTo(this);
+		progressBarFrame.setPreferredSize(new Dimension(550, 150));
+		progressBarFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		JPanel databasePanel = new JPanel();
 		databasePanel.setLayout(new BoxLayout(databasePanel, BoxLayout.PAGE_AXIS));
-		JButton importResultsButton = new JButton("Tuo kilpailuja");
+		importResultsButton = new JButton("Tuo kilpailuja");
 		importResultsButton.setActionCommand("importCompetitions");
 		importResultsButton.addActionListener(new ButtonClickListener());
 		this.add(importResultsButton);
@@ -58,10 +63,13 @@ public class DatabasePanel extends JPanel {
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			String absoluteFilePath = fileChooser.getSelectedFile().getAbsolutePath();
 			lastMSSDbFileLocation = Paths.get(absoluteFilePath).getParent().toString();
-			MatchService.importWinMssDatabase(absoluteFilePath);
-			// RankingPanel.updateRankingTablesData(RankingService.getRanking());
-
-			// updateDatabaseStaticsPanel();
+			ImportWinMSSDataPanel importWinMSSDataTask = new ImportWinMSSDataPanel(progressBarFrame, absoluteFilePath,
+					importResultsButton);
+			importWinMSSDataTask.setOpaque(true);
+			progressBarFrame.setContentPane((importWinMSSDataTask));
+			progressBarFrame.pack();
+			progressBarFrame.setVisible(true);
 		}
 	}
+
 }

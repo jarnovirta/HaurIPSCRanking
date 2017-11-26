@@ -4,17 +4,13 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
 import javax.imageio.ImageIO;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -24,10 +20,8 @@ import javax.swing.UIManager;
 import javax.swing.plaf.FontUIResource;
 
 import haur_ranking.domain.Ranking;
-import haur_ranking.gui.filters.WinMSSFileFilter;
 import haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
 import haur_ranking.repository.winmss_repository.WinMssDatabaseUtil;
-import haur_ranking.service.MatchService;
 import haur_ranking.service.RankingService;
 
 public class MainWindow {
@@ -44,22 +38,6 @@ public class MainWindow {
 	private String lastMSSDbFileLocation = null;
 
 	private static Ranking ranking;
-
-	private void importCompetitionsCommandHandler() {
-		JFileChooser fileChooser;
-		if (lastMSSDbFileLocation != null)
-			fileChooser = new JFileChooser(lastMSSDbFileLocation);
-		else
-			fileChooser = new JFileChooser();
-		fileChooser.setFileFilter(new WinMSSFileFilter());
-		int returnVal = fileChooser.showOpenDialog(mainFrame);
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			String absoluteFilePath = fileChooser.getSelectedFile().getAbsolutePath();
-			lastMSSDbFileLocation = Paths.get(absoluteFilePath).getParent().toString();
-			MatchService.importWinMssDatabase(absoluteFilePath);
-			updateDatabaseStaticsPanel();
-		}
-	}
 
 	private void initializeFonts() {
 		float multiplier = 1.9f;
@@ -128,7 +106,7 @@ public class MainWindow {
 		// importCompetitions.addActionListener(new ButtonClickListener());
 		// controlPanel.add(importCompetitions);
 		mainFrame.setVisible(true);
-		ranking = RankingService.getRanking();
+		RankingDataService.updateRankingData();
 	}
 
 	private void updateDatabaseStaticsPanel() {
@@ -139,27 +117,6 @@ public class MainWindow {
 		// databaseStageAndCompetitorCountPanel.setText("Asematuloksia : " +
 		// databaseStatistics.getStageCount() + " ("
 		// + databaseStatistics.getCompetitorCount() + " kilpailijaa)");
-	}
-
-	public static Ranking getRanking() {
-		return ranking;
-	}
-
-	public static void setRanking(Ranking newRanking) {
-		ranking = newRanking;
-	}
-
-	private class ButtonClickListener implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			String command = e.getActionCommand();
-			if (command.equals("importCompetitions")) {
-				importCompetitionsCommandHandler();
-			}
-			if (command.equals("generateRanking")) {
-				RankingService.getRanking();
-			}
-		}
 	}
 
 }

@@ -20,6 +20,16 @@ import haur_ranking.repository.winmss_repository.WinMSSStageScoreSheetRepository
 public class MatchService {
 	private static EntityManager entityManager;
 
+	// Variables queried by GUI for progress bar
+	public enum ImportStatus {
+		READY, IMPORTING, DONE
+	};
+
+	private static ImportStatus importStatus = ImportStatus.READY;
+	private static int progressCounterTotalSteps;
+	private static double progressCounterCompletedSteps;
+	private static int progressPercentage = 0;
+
 	public static Match find(Match match, EntityManager entityManager) {
 		return MatchRepository.find(match, entityManager);
 	}
@@ -42,37 +52,44 @@ public class MatchService {
 		return count;
 	}
 
-	public static void importWinMssDatabase(String winMssDbLocation) {
-
-		System.out.println("\n*** STARTING IMPORT");
+	// Find stages with new results, from which user selects stage results to
+	// be imported
+	public static List<Match> findNewResultsInWinMSSDatabase(String winMssDbLocation) {
 		entityManager = HaurRankingDatabaseUtils.getEntityManager();
-		entityManager.getTransaction().begin();
 		List<Match> matchesWithNewResults = new ArrayList<Match>();
-		List<IPSCDivision> divisionsWithNewResults = new ArrayList<IPSCDivision>();
-
-		// Find all matches from WinMSS database
 		List<Match> winMssMatches = WinMSSMatchRepository.findAll(winMssDbLocation);
-
-		// Filter matches to only include matches and stages with results which
-		// are not yet in ranking database.
 		for (Match match : winMssMatches) {
 			List<Stage> stagesWithNewResults = new ArrayList<Stage>();
-
-			// Find all stages in WinMSS database and check whether stage
-			// results are already in ranking database
 			match.setStages(WinMSSStageRepository.findStagesForMatch(match));
-
 			for (Stage stage : match.getStages()) {
 				stage.setMatch(match);
 				if (ClassifierStage.contains(stage.getName()))
 					stage.setClassifierStage(ClassifierStage.parseString(stage.getName()));
-				///// TESTING -- ONLY CLASSIFIER STAGES
-				if (stage.getClassifierStage() == null)
-					continue;
-				/////
-				if (StageService.find(stage, entityManager) != null)
-					continue;
+				if (StageService.find(stage, entityManager) == null)
+					stagesWithNewResults.add(stage);
+			}
+			if (stagesWithNewResults.size() > 0) {
+				match.setStages(stagesWithNewResults);
+				matchesWithNewResults.add(match);
+			}
+		}
+		return matchesWithNewResults;
+	}
 
+	// Fetch stage score sheets for stages selected by user and save to Ranking
+	// Database
+	public static void importSelectedResultsFromWinMSSDatabase(List<Match> matches) {
+		// Initialize progress counter variables to be queried by GUI for
+		// progress bar
+		initializeProgressCounterVariables(matches);
+		entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		entityManager.getTransaction().begin();
+		List<IPSCDivision> divisionsWithNewResults = new ArrayList<IPSCDivision>();
+		List<Match> matchesWithNewResults = new ArrayList<Match>();
+
+		for (Match match : matches) {
+			List<Stage> stagesWithNewResults = new ArrayList<Stage>();
+			for (Stage stage : match.getStages()) {
 				findNewWinMssStageScoreSheets(stage);
 				if (stage.getStageScoreSheets() != null && stage.getStageScoreSheets().size() > 0) {
 					stagesWithNewResults.add(stage);
@@ -81,22 +98,16 @@ public class MatchService {
 							divisionsWithNewResults.add(sheet.getIpscDivision());
 					}
 				}
+				addProgress(stage.getStageScoreSheets().size());
 			}
 			if (stagesWithNewResults.size() > 0)
 				matchesWithNewResults.add(match);
 		}
 		entityManager.getTransaction().commit();
 		entityManager.close();
-		System.out.println("FOUND NEW RESULTS FOR " + matchesWithNewResults.size() + " MATCHES AND "
-				+ divisionsWithNewResults.size() + " DIVISIONS");
-
-		if (matchesWithNewResults.size() > 0) {
-			System.out.println("\nSaving new results...");
+		if (matchesWithNewResults.size() > 0)
 			save(matchesWithNewResults);
-			System.out.println("\nGenerating ranking...");
-			RankingService.getRanking();
-		}
-		System.out.println("\n*** DONE!");
+		importStatus = ImportStatus.DONE;
 	}
 
 	public static void save(List<Match> matches) {
@@ -110,10 +121,10 @@ public class MatchService {
 		// existing stages (all score sheets for a stage
 		// are always treated together).
 		for (Match newMatch : matches) {
+			int stageScoreSheetCount = 0;
 			for (Stage stage : newMatch.getStages()) {
 				if (stage.getStageScoreSheets() != null) {
 					newStageScoreSheets.addAll(stage.getStageScoreSheets());
-
 					for (StageScoreSheet sheet : stage.getStageScoreSheets()) {
 						Competitor existingCompetitor = CompetitorService.find(sheet.getCompetitor().getFirstName(),
 								sheet.getCompetitor().getLastName(), entityManager);
@@ -121,6 +132,8 @@ public class MatchService {
 							sheet.setCompetitor(existingCompetitor);
 						}
 					}
+					stageScoreSheetCount += stage.getStageScoreSheets().size();
+					addProgress(stage.getStageScoreSheets().size() / 2.0);
 				}
 			}
 			Match existingMatch = find(newMatch, entityManager);
@@ -134,10 +147,47 @@ public class MatchService {
 
 			}
 			entityManager.flush();
+			addProgress(stageScoreSheetCount / 2.0);
+
 		}
 		entityManager.getTransaction().commit();
 		entityManager.close();
 		StageScoreSheetService.removeExtraStageScoreSheets(newStageScoreSheets);
 
 	}
+
+	private static void initializeProgressCounterVariables(List<Match> matches) {
+		importStatus = ImportStatus.IMPORTING;
+		progressCounterCompletedSteps = 0;
+		progressCounterTotalSteps = 0;
+		for (Match match : matches) {
+			for (Stage stage : match.getStages()) {
+				progressCounterTotalSteps += WinMSSStageScoreSheetRepository.getScoreSheetCountForStage(match, stage);
+			}
+		}
+		progressCounterTotalSteps = progressCounterTotalSteps * 2;
+	}
+
+	private static void addProgress(double progressStepsCount) {
+		progressCounterCompletedSteps += progressStepsCount;
+		progressPercentage = Math
+				.toIntExact(Math.round(progressCounterCompletedSteps / progressCounterTotalSteps * 100));
+	}
+
+	public static ImportStatus getImportStatus() {
+		return importStatus;
+	}
+
+	public static void setImportStatus(ImportStatus status) {
+		importStatus = status;
+	}
+
+	public static int getProgressPercentage() {
+		return progressPercentage;
+	}
+
+	public static void setProgressPercentage(int progressPercentage) {
+		MatchService.progressPercentage = progressPercentage;
+	}
+
 }
