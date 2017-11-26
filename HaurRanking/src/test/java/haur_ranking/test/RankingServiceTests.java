@@ -25,7 +25,7 @@ public class RankingServiceTests {
 
 	@Test
 	public void generateRankingTest() {
-		Ranking ranking = RankingService.getRanking();
+		Ranking ranking = RankingService.generateRanking();
 		DivisionRanking productionRanking = new DivisionRanking();
 		DivisionRanking standardRanking = new DivisionRanking();
 		for (DivisionRanking div : ranking.getDivisionRankings()) {

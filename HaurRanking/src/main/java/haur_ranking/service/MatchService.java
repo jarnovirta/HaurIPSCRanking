@@ -22,7 +22,7 @@ public class MatchService {
 
 	// Variables queried by GUI for progress bar
 	public enum ImportStatus {
-		READY, IMPORTING, DONE
+		READY, IMPORTING, GENERATING_RANKING, DONE
 	};
 
 	private static ImportStatus importStatus = ImportStatus.READY;
@@ -107,6 +107,8 @@ public class MatchService {
 		entityManager.close();
 		if (matchesWithNewResults.size() > 0)
 			save(matchesWithNewResults);
+		importStatus = ImportStatus.GENERATING_RANKING;
+		RankingService.generateRanking();
 		importStatus = ImportStatus.DONE;
 	}
 
@@ -170,8 +172,10 @@ public class MatchService {
 
 	private static void addProgress(double progressStepsCount) {
 		progressCounterCompletedSteps += progressStepsCount;
-		progressPercentage = Math
-				.toIntExact(Math.round(progressCounterCompletedSteps / progressCounterTotalSteps * 100));
+		if (progressCounterTotalSteps > 0) {
+			progressPercentage = Math
+					.toIntExact(Math.round(progressCounterCompletedSteps / progressCounterTotalSteps * 100));
+		}
 	}
 
 	public static ImportStatus getImportStatus() {

@@ -12,10 +12,11 @@ public class RankingDataService {
 	private static List<RankingDataUpdatedEventListener> rankingUpdateListeners = new ArrayList<RankingDataUpdatedEventListener>();
 
 	public static void updateRankingData() {
-		ranking = RankingService.getRanking();
+		ranking = RankingService.findCurrentRanking();
 		for (RankingDataUpdatedEventListener listener : rankingUpdateListeners) {
 			listener.rankingDataUpdate(ranking);
 		}
+
 	}
 
 	public static Ranking getRanking() {

@@ -13,7 +13,7 @@ import javax.swing.SwingWorker;
 import haur_ranking.service.ImportWinMSSResultsTask;
 import haur_ranking.service.MatchService;
 
-public class ImportWinMSSDataPanel extends JPanel implements PropertyChangeListener {
+public class ImportResultsPanel extends JPanel implements PropertyChangeListener {
 	/**
 	 *
 	 */
@@ -24,7 +24,7 @@ public class ImportWinMSSDataPanel extends JPanel implements PropertyChangeListe
 
 	private JFrame progressBarFrame;
 
-	public ImportWinMSSDataPanel(JFrame frame, String winMSSFilePath, JButton importButton) {
+	public ImportResultsPanel(JFrame frame, String winMSSFilePath, JButton importButton) {
 		super(new BorderLayout());
 		this.progressBarFrame = frame;
 		this.importButton = importButton;
@@ -55,14 +55,14 @@ public class ImportWinMSSDataPanel extends JPanel implements PropertyChangeListe
 		private JFrame progressBarFrame;
 
 		public ImportProgressQueryingTask(JFrame progressBarFrame) {
-
 			this.progressBarFrame = progressBarFrame;
 		}
 
 		@Override
 		public Void doInBackground() {
 			while ((MatchService.getImportStatus() == MatchService.ImportStatus.READY)
-					|| MatchService.getImportStatus() == MatchService.ImportStatus.IMPORTING) {
+					|| MatchService.getImportStatus() == MatchService.ImportStatus.IMPORTING
+					|| MatchService.getImportStatus() == MatchService.ImportStatus.GENERATING_RANKING) {
 				try {
 					setProgress(MatchService.getProgressPercentage());
 					Thread.sleep(50);

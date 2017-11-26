@@ -17,7 +17,6 @@ import java.util.Map;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -45,15 +44,13 @@ public class RankingPanel extends JPanel implements RankingDataUpdatedEventListe
 	private static final long serialVersionUID = 1L;
 	private Map<IPSCDivision, JTable> divisionRankingTables;
 	private List<JPanel> rankingTablePanes;
-	private JFrame mainFrame;
 	private String lastRankingPdfFileLocation;
 
 	private enum rankingTableStatus {
 		TABLE_EMPTY, TABLE_NOT_EMPTY
 	};
 
-	public RankingPanel(JFrame mainFrame, Ranking ranking) {
-		this.mainFrame = mainFrame;
+	public RankingPanel() {
 		this.setLayout(new BorderLayout());
 		divisionRankingTables = new HashMap<IPSCDivision, JTable>();
 		rankingTablePanes = new ArrayList<JPanel>();
@@ -77,7 +74,6 @@ public class RankingPanel extends JPanel implements RankingDataUpdatedEventListe
 
 			tabbedRankingTablesPane.add(division.toString(), rankingTableCardsPanel);
 		}
-		updateRankingTablesData(ranking);
 		rankingTabViewPanel.add(tabbedRankingTablesPane);
 
 		JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -157,6 +153,8 @@ public class RankingPanel extends JPanel implements RankingDataUpdatedEventListe
 	}
 
 	public void updateRankingTablesData(Ranking ranking) {
+		if (ranking == null)
+			ranking = new Ranking();
 		for (DivisionRanking divisionRanking : ranking.getDivisionRankings()) {
 			JTable divisionTable = divisionRankingTables.get(divisionRanking.getDivision());
 			DefaultTableModel divisionTableModel = (DefaultTableModel) divisionTable.getModel();
@@ -220,7 +218,9 @@ public class RankingPanel extends JPanel implements RankingDataUpdatedEventListe
 		fileChooser.setPreferredSize(new Dimension(800, 600));
 		fileChooser.setSelectedFile(
 				new File("HaurRanking_" + RankingDataService.getRanking().getDateString().replace('.', '_') + ".pdf"));
-		int returnVal = fileChooser.showOpenDialog(mainFrame);
+		fileChooser.setApproveButtonText("Save");
+
+		int returnVal = fileChooser.showOpenDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			String absoluteFilePath = fileChooser.getSelectedFile().getAbsolutePath();
 			String fileExtension = FileFilterUtils.getExtension(new File(absoluteFilePath));
@@ -229,9 +229,6 @@ public class RankingPanel extends JPanel implements RankingDataUpdatedEventListe
 
 			lastRankingPdfFileLocation = Paths.get(absoluteFilePath).getParent().toString();
 			PdfGenerator.createPdfRankingFile(RankingDataService.getRanking(), absoluteFilePath);
-			// RankingPanel.updateRankingTablesData(RankingService.getRanking());
-
-			// updateDatabaseStaticsPanel();
 		} else {
 			if (returnVal != JFileChooser.CANCEL_OPTION)
 				generatePdfCommandHandler();

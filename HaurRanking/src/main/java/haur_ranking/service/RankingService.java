@@ -111,14 +111,31 @@ public class RankingService {
 		return divisionRanking;
 	}
 
-	public static Ranking getRanking() {
+	public static Ranking generateRanking() {
 		Ranking ranking = new Ranking();
 		for (IPSCDivision division : IPSCDivision.values()) {
 			ranking.getDivisionRankings().add(getDivisionRanking(division));
 		}
 		ranking.setTotalCompetitorsAndResultsCounts();
+
+		delete();
 		persist(ranking);
 		return ranking;
+	}
+
+	public static Ranking findCurrentRanking() {
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		Ranking ranking = RankingRepository.findCurrentRanking(entityManager);
+		entityManager.close();
+		return ranking;
+	}
+
+	public static void delete() {
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		entityManager.getTransaction().begin();
+		RankingRepository.delete(entityManager);
+		entityManager.getTransaction().commit();
+		entityManager.close();
 	}
 
 	public static void persist(Ranking ranking) {

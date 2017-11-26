@@ -12,32 +12,17 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.plaf.FontUIResource;
 
-import haur_ranking.domain.Ranking;
 import haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
 import haur_ranking.repository.winmss_repository.WinMssDatabaseUtil;
-import haur_ranking.service.RankingService;
 
 public class MainWindow {
 
 	private JFrame mainFrame;
-	private JLabel headerLabel;
-
-	private JLabel databaseMatchCountPanel;
-
-	private JLabel databaseStageAndCompetitorCountPanel;
-
-	private JPanel controlPanel;
-
-	private String lastMSSDbFileLocation = null;
-
-	private static Ranking ranking;
 
 	private void initializeFonts() {
 		float multiplier = 1.9f;
@@ -62,7 +47,6 @@ public class MainWindow {
 
 	public void prepareGUI() {
 		initializeFonts();
-
 		mainFrame = new JFrame("HAUR Ranking");
 		mainFrame.setLocationRelativeTo(null);
 		mainFrame.setMinimumSize(new Dimension(1300, 700));
@@ -78,8 +62,8 @@ public class MainWindow {
 		mainFrame.setIconImages(icons);
 
 		JTabbedPane tabbedMainPane = new JTabbedPane();
-		tabbedMainPane.addTab("Ranking", new RankingPanel(mainFrame, RankingService.getRanking()));
-		tabbedMainPane.add("Tietokanta", new DatabasePanel(mainFrame));
+		tabbedMainPane.addTab("Ranking", new RankingPanel());
+		tabbedMainPane.add("Tietokanta", new DatabasePanel());
 
 		mainFrame.add(tabbedMainPane);
 		mainFrame.getContentPane().add(tabbedMainPane, BorderLayout.CENTER);
@@ -96,27 +80,7 @@ public class MainWindow {
 	}
 
 	public void showHaurRankingGui() {
-		updateDatabaseStaticsPanel();
-		// JButton importCompetitions = new JButton("Tuo kilpailuja");
-		// importCompetitions.setActionCommand("importCompetitions");
-		// importCompetitions.addActionListener(new ButtonClickListener());
-		// controlPanel.add(importCompetitions);
-		// importCompetitions = new JButton("Luo ranking");
-		// importCompetitions.setActionCommand("generateRanking");
-		// importCompetitions.addActionListener(new ButtonClickListener());
-		// controlPanel.add(importCompetitions);
-		mainFrame.setVisible(true);
 		RankingDataService.updateRankingData();
+		mainFrame.setVisible(true);
 	}
-
-	private void updateDatabaseStaticsPanel() {
-		// DatabaseStatistics databaseStatistics =
-		// DatabaseStatisticsService.getDatabaseStatistics();
-		// databaseMatchCountPanel.setText("Kilpailuja : " +
-		// databaseStatistics.getMatchCount());
-		// databaseStageAndCompetitorCountPanel.setText("Asematuloksia : " +
-		// databaseStatistics.getStageCount() + " ("
-		// + databaseStatistics.getCompetitorCount() + " kilpailijaa)");
-	}
-
 }

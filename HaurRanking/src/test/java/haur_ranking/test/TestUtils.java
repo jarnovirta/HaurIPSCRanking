@@ -204,14 +204,4 @@ public class TestUtils {
 		entityManager.close();
 		HaurRankingDatabaseUtils.closeEntityManagerFactory();
 	}
-
-	// protected static List<StageScoreSheet>
-	// getAllStageScoreSheetsForCompetitor(Match match, String firstName, String
-	// lastName) {
-	// try {
-	// StageScoreSheetService.find(firstName, lastName, division)
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	// }
 }

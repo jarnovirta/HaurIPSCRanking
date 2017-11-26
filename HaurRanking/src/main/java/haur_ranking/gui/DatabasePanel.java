@@ -19,16 +19,11 @@ public class DatabasePanel extends JPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 	private String lastMSSDbFileLocation = null;
-	private JFrame mainFrame = null;
 	private JButton importResultsButton;
 	private JFrame progressBarFrame;
 
 	public DatabasePanel() {
-	}
-
-	public DatabasePanel(JFrame main) {
-		mainFrame = main;
-		progressBarFrame = new JFrame("Tulostietojen tuonti");
+		progressBarFrame = new JFrame("Tulosten tuonti");
 		progressBarFrame.setLocationRelativeTo(this);
 		progressBarFrame.setPreferredSize(new Dimension(550, 150));
 		progressBarFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -59,11 +54,11 @@ public class DatabasePanel extends JPanel {
 			fileChooser = new JFileChooser();
 		fileChooser.setFileFilter(new WinMSSFileFilter());
 		fileChooser.setPreferredSize(new Dimension(800, 600));
-		int returnVal = fileChooser.showOpenDialog(mainFrame);
+		int returnVal = fileChooser.showOpenDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			String absoluteFilePath = fileChooser.getSelectedFile().getAbsolutePath();
 			lastMSSDbFileLocation = Paths.get(absoluteFilePath).getParent().toString();
-			ImportWinMSSDataPanel importWinMSSDataTask = new ImportWinMSSDataPanel(progressBarFrame, absoluteFilePath,
+			ImportResultsPanel importWinMSSDataTask = new ImportResultsPanel(progressBarFrame, absoluteFilePath,
 					importResultsButton);
 			importWinMSSDataTask.setOpaque(true);
 			progressBarFrame.setContentPane((importWinMSSDataTask));
