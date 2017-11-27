@@ -28,7 +28,14 @@ public class DatabasePanelRightPane extends JPanel implements NewGUIDataEventLis
 	}
 
 	private JTable getDatabaseMatchInfoTable() {
-		JTable table = new JTable(0, 4);
+		JTable table = new JTable(0, 4) {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			};
+		};
 		table.getTableHeader().setReorderingAllowed(false);
 		table.getTableHeader().setResizingAllowed(true);
 		table.setRowHeight(35);
