@@ -7,3 +7,5 @@ TODO:
 - korjaa hf keskiarvo kahdeksasta suorituksesta
 - exception handling
 - laske ranking vain muuttuneiden divisioonien osalta. Nyt vissiin lasketaan kaikki?
+
+- tietokantalistaus : EI Match list vaan suoraan tekstirivit tietokannasta.
