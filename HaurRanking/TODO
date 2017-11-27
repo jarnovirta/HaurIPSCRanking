@@ -9,3 +9,5 @@ TODO:
 - laske ranking vain muuttuneiden divisioonien osalta. Nyt vissiin lasketaan kaikki?
 
 - tietokantalistaus : EI Match list vaan suoraan tekstirivit tietokannasta.
+
+- kaikki tablet EI editable, ei focus ym.
