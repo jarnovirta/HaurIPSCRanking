@@ -1,8 +1,7 @@
 package haur_ranking.gui;
 
-import java.awt.BorderLayout;
+import java.awt.Dimension;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -11,23 +10,29 @@ import haur_ranking.Event.ImportProgressEvent;
 import haur_ranking.Event.ImportProgressEventListener;
 import haur_ranking.service.MatchService;
 
-public class ImportProgressBarPanel extends JPanel implements ImportProgressEventListener {
+public class ImportProgressBarFrame extends JFrame implements ImportProgressEventListener {
 	/**
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	private JProgressBar progressBar;
+	JProgressBar progressBar;
 
-	public ImportProgressBarPanel(JFrame frame, JButton importButton) {
-		super(new BorderLayout());
+	public ImportProgressBarFrame() {
+		super("Tulosten tuonti");
+		setPreferredSize(new Dimension(550, 150));
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+		JPanel progressBarPanel = new JPanel();
 		progressBar = new JProgressBar(0, 100);
 		progressBar.setValue(0);
 		progressBar.setStringPainted(true);
 
-		JPanel panel = new JPanel();
-		panel.add(progressBar);
-		this.add(panel, BorderLayout.PAGE_START);
+		progressBarPanel.add(progressBar);
+		progressBarPanel.setOpaque(true);
+		setContentPane(progressBarPanel);
+		pack();
 		MatchService.addImportProgressEventListener(this);
+
 	}
 
 	@Override

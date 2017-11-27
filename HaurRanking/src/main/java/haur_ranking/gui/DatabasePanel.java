@@ -35,15 +35,8 @@ public class DatabasePanel extends JPanel implements ImportProgressEventListener
 		importResultsButton.addActionListener(new ButtonClickListener());
 		this.add(importResultsButton);
 
-		progressBarFrame = new JFrame("Tulosten tuonti");
+		progressBarFrame = new ImportProgressBarFrame();
 		progressBarFrame.setLocationRelativeTo(this);
-		progressBarFrame.setPreferredSize(new Dimension(550, 150));
-		progressBarFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		ImportProgressBarPanel progressBarPanel = new ImportProgressBarPanel(progressBarFrame, importResultsButton);
-		progressBarPanel.setOpaque(true);
-		progressBarFrame.setContentPane(progressBarPanel);
-		progressBarFrame.pack();
-
 		MatchService.addImportProgressEventListener(this);
 
 	}
