@@ -8,7 +8,7 @@ public class DatabaseStatisticsService {
 		DatabaseStatistics stats = new DatabaseStatistics();
 		stats.setMatchCount(MatchService.getTotalMatchCount());
 		stats.setCompetitorCount(CompetitorService.getTotalCompetitorCount());
-		stats.setStageCount(StageScoreSheetService.getTotalStageScoreSheetCount());
+		stats.setStageScoreSheetCount(StageScoreSheetService.getTotalStageScoreSheetCount());
 		return stats;
 	}
 }

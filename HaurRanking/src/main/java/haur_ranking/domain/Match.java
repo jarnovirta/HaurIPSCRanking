@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,7 +26,7 @@ public class Match {
 	private String winMssDateString;
 	private Long winMssMatchId;
 	private String name;
-	@OneToMany(mappedBy = "match", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "match", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<Stage> stages;
 
 	public Match() {

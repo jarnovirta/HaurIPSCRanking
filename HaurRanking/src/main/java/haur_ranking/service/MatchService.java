@@ -37,6 +37,14 @@ public class MatchService {
 		return MatchRepository.find(match, entityManager);
 	}
 
+	public static List<Match> findAll() {
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		List<Match> matches = null;
+		matches = MatchRepository.findAll(entityManager);
+		entityManager.close();
+		return matches;
+	}
+
 	private static void findNewWinMssStageScoreSheets(Stage stage) {
 		stage.setStageScoreSheets(WinMSSStageScoreSheetRepository.find(stage.getMatch(), stage));
 		for (StageScoreSheet sheet : stage.getStageScoreSheets())

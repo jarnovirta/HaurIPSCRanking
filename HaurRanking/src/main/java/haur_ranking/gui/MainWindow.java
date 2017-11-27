@@ -49,7 +49,7 @@ public class MainWindow {
 		initializeFonts();
 		mainFrame = new JFrame("HAUR Ranking");
 		mainFrame.setLocationRelativeTo(null);
-		mainFrame.setMinimumSize(new Dimension(1300, 700));
+		mainFrame.setMinimumSize(new Dimension(1600, 900));
 		mainFrame.setResizable(false);
 		mainFrame.setLayout(new BorderLayout());
 		List<Image> icons = new ArrayList<Image>();
@@ -80,7 +80,7 @@ public class MainWindow {
 	}
 
 	public void showHaurRankingGui() {
-		RankingDataService.updateRankingData();
+		GUIDataService.updateRankingData();
 		mainFrame.setVisible(true);
 	}
 }

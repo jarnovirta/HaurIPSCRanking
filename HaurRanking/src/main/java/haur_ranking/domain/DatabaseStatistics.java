@@ -2,7 +2,7 @@ package haur_ranking.domain;
 
 public class DatabaseStatistics {
 	private int matchCount;
-	private int stageCount;
+	private int stageScoreSheetCount;
 	private int competitorCount;
 
 	public int getCompetitorCount() {
@@ -13,10 +13,6 @@ public class DatabaseStatistics {
 		return matchCount;
 	}
 
-	public int getStageCount() {
-		return stageCount;
-	}
-
 	public void setCompetitorCount(int competitorCount) {
 		this.competitorCount = competitorCount;
 	}
@@ -25,8 +21,12 @@ public class DatabaseStatistics {
 		this.matchCount = matchCount;
 	}
 
-	public void setStageCount(int stageCount) {
-		this.stageCount = stageCount;
+	public int getStageScoreSheetCount() {
+		return stageScoreSheetCount;
+	}
+
+	public void setStageScoreSheetCount(int stageScoreSheetCount) {
+		this.stageScoreSheetCount = stageScoreSheetCount;
 	}
 
 }

@@ -27,17 +27,18 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
+import haur_ranking.Event.NewGUIDataEvent;
+import haur_ranking.Event.NewGUIDataEventListener;
 import haur_ranking.domain.DivisionRanking;
 import haur_ranking.domain.DivisionRankingRow;
 import haur_ranking.domain.IPSCDivision;
 import haur_ranking.domain.Ranking;
-import haur_ranking.gui.Event.RankingDataUpdatedEventListener;
 import haur_ranking.gui.filters.FileFilterUtils;
 import haur_ranking.gui.filters.PdfFileFilter;
 import haur_ranking.pdf.PdfGenerator;
 import haur_ranking.utils.DataFormatUtils;
 
-public class RankingPanel extends JPanel implements RankingDataUpdatedEventListener {
+public class RankingPanel extends JPanel implements NewGUIDataEventListener {
 	/**
 	 *
 	 */
@@ -84,7 +85,7 @@ public class RankingPanel extends JPanel implements RankingDataUpdatedEventListe
 		buttonsPanel.add(pdfButton);
 		rankingTabViewPanel.add(buttonsPanel);
 		this.add(rankingTabViewPanel);
-		RankingDataService.addRankingDataUpdatedEventListener(this);
+		GUIDataService.addRankingDataUpdatedEventListener(this);
 	}
 
 	private JTable getDivisionRankingTable() {
@@ -217,7 +218,7 @@ public class RankingPanel extends JPanel implements RankingDataUpdatedEventListe
 		fileChooser.setFileFilter(new PdfFileFilter());
 		fileChooser.setPreferredSize(new Dimension(800, 600));
 		fileChooser.setSelectedFile(
-				new File("HaurRanking_" + RankingDataService.getRanking().getDateString().replace('.', '_') + ".pdf"));
+				new File("HaurRanking_" + GUIDataService.getRanking().getDateString().replace('.', '_') + ".pdf"));
 		fileChooser.setApproveButtonText("Save");
 
 		int returnVal = fileChooser.showOpenDialog(this);
@@ -228,7 +229,7 @@ public class RankingPanel extends JPanel implements RankingDataUpdatedEventListe
 				absoluteFilePath += ".pdf";
 
 			lastRankingPdfFileLocation = Paths.get(absoluteFilePath).getParent().toString();
-			PdfGenerator.createPdfRankingFile(RankingDataService.getRanking(), absoluteFilePath);
+			PdfGenerator.createPdfRankingFile(GUIDataService.getRanking(), absoluteFilePath);
 		} else {
 			if (returnVal != JFileChooser.CANCEL_OPTION)
 				generatePdfCommandHandler();
@@ -237,8 +238,8 @@ public class RankingPanel extends JPanel implements RankingDataUpdatedEventListe
 	}
 
 	@Override
-	public void rankingDataUpdate(Ranking ranking) {
-		updateRankingTablesData(ranking);
+	public void updateGUIData(NewGUIDataEvent event) {
+		updateRankingTablesData(event.getRanking());
 	}
 
 	private class ButtonClickListener implements ActionListener {

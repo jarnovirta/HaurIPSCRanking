@@ -6,6 +6,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,7 +28,7 @@ public class Stage {
 	@ManyToOne(cascade = CascadeType.MERGE)
 	private Match match;
 
-	@OneToMany(mappedBy = "stage", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "stage", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<StageScoreSheet> stageScoreSheets;
 
 	@Enumerated(EnumType.STRING)

@@ -26,6 +26,17 @@ public class MatchRepository {
 		}
 	}
 
+	public static List<Match> findAll(EntityManager entityManager) {
+		try {
+			String queryString = "SELECT m FROM Match m ORDER BY m.winMssDateString DESC";
+			TypedQuery<Match> query = entityManager.createQuery(queryString, Match.class);
+			return query.getResultList();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	public static int getTotalMatchCount(EntityManager entityManager) {
 		int matchCount;
 		try {
