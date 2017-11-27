@@ -39,7 +39,7 @@ public class DatabasePanelLeftPane extends JPanel implements ImportProgressEvent
 		importResultsButton.addActionListener(new ButtonClickListener());
 		this.add(importResultsButton);
 
-		add(Box.createRigidArea(new Dimension(0, 600)));
+		add(Box.createRigidArea(new Dimension(0, MainWindow.HEIGHT - 200)));
 		progressBarFrame = new ImportProgressBarFrame();
 		progressBarFrame.setLocationRelativeTo(this);
 		MatchService.addImportProgressEventListener(this);

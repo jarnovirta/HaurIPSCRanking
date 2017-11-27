@@ -17,8 +17,9 @@ public class GUIDataService {
 	private static List<NewGUIDataEventListener> dataUpdateListeners = new ArrayList<NewGUIDataEventListener>();
 
 	public static void updateRankingData() {
-		NewGUIDataEvent event = new NewGUIDataEvent(RankingService.findCurrentRanking(),
-				DatabaseStatisticsService.getDatabaseStatistics(), MatchService.findAll());
+		ranking = RankingService.findCurrentRanking();
+		NewGUIDataEvent event = new NewGUIDataEvent(ranking, DatabaseStatisticsService.getDatabaseStatistics(),
+				MatchService.findAll());
 		for (NewGUIDataEventListener listener : dataUpdateListeners) {
 			listener.updateGUIData(event);
 		}

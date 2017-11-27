@@ -44,7 +44,7 @@ public class DatabaseStatisticsPanel extends JPanel implements NewGUIDataEventLi
 		cellRenderer.setOpaque(false);
 
 		TableColumn leftColumn = statisticsTable.getColumnModel().getColumn(0);
-		leftColumn.setPreferredWidth(250);
+		leftColumn.setPreferredWidth(160);
 		TableColumn rightColumn = statisticsTable.getColumnModel().getColumn(1);
 		rightColumn.setPreferredWidth(130);
 		return statisticsTable;

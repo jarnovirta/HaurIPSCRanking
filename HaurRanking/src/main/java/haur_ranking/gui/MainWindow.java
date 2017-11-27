@@ -23,6 +23,8 @@ import haur_ranking.repository.winmss_repository.WinMssDatabaseUtil;
 public class MainWindow {
 
 	private JFrame mainFrame;
+	protected static final int WIDTH = 1600;
+	protected static final int HEIGHT = 900;
 
 	private void initializeFonts() {
 		float multiplier = 1.9f;
@@ -49,7 +51,7 @@ public class MainWindow {
 		initializeFonts();
 		mainFrame = new JFrame("HAUR Ranking");
 		mainFrame.setLocationRelativeTo(null);
-		mainFrame.setMinimumSize(new Dimension(1600, 900));
+		mainFrame.setMinimumSize(new Dimension(WIDTH, HEIGHT));
 		mainFrame.setResizable(false);
 		mainFrame.setLayout(new BorderLayout());
 		List<Image> icons = new ArrayList<Image>();

@@ -29,6 +29,8 @@ public class DatabasePanelRightPane extends JPanel implements NewGUIDataEventLis
 
 	private JTable getDatabaseMatchInfoTable() {
 		JTable table = new JTable(0, 4);
+		table.getTableHeader().setReorderingAllowed(false);
+		table.getTableHeader().setResizingAllowed(true);
 		table.setRowHeight(35);
 
 		TableColumn matchCountColumn = table.getColumnModel().getColumn(0);
@@ -40,13 +42,13 @@ public class DatabasePanelRightPane extends JPanel implements NewGUIDataEventLis
 		matchCountColumn.setPreferredWidth(50);
 
 		matchNameColumn.setHeaderValue("Kilpailu");
-		matchNameColumn.setPreferredWidth(50);
+		matchNameColumn.setPreferredWidth(400);
 
 		matchDateColumn.setHeaderValue("Pvm");
-		matchDateColumn.setPreferredWidth(50);
+		matchDateColumn.setPreferredWidth(100);
 
 		classifiersColumn.setHeaderValue("Luokitteluohj.");
-		classifiersColumn.setPreferredWidth(50);
+		classifiersColumn.setPreferredWidth(100);
 
 		GUIDataService.addRankingDataUpdatedEventListener(this);
 		return table;

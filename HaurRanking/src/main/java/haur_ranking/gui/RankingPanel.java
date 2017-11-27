@@ -99,6 +99,8 @@ public class RankingPanel extends JPanel implements NewGUIDataEventListener {
 
 		};
 		rankingTable.setRowHeight(35);
+		rankingTable.getTableHeader().setReorderingAllowed(false);
+		rankingTable.getTableHeader().setResizingAllowed(true);
 
 		TableColumn positionColumn = rankingTable.getColumnModel().getColumn(0);
 		TableColumn competitorNameColumn = rankingTable.getColumnModel().getColumn(1);
@@ -138,9 +140,6 @@ public class RankingPanel extends JPanel implements NewGUIDataEventListener {
 		resultCountColumn.setCellRenderer(centerRenderer);
 		resultCountColumn.setHeaderValue("Tuloksia");
 		resultCountColumn.setPreferredWidth(50);
-
-		rankingTable.getTableHeader().setReorderingAllowed(false);
-		rankingTable.getTableHeader().setResizingAllowed(false);
 
 		return rankingTable;
 	}
@@ -187,7 +186,7 @@ public class RankingPanel extends JPanel implements NewGUIDataEventListener {
 			rowData[1] = line.getCompetitor().getFirstName() + " " + line.getCompetitor().getLastName();
 			rowData[4] = String.valueOf(line.getResultsCount());
 			if (line.isRankedCompetitor()) {
-				rowData[0] = String.valueOf(i++) + ". ";
+				rowData[0] = String.valueOf(i) + ". ";
 				rowData[2] = String
 						.valueOf(DataFormatUtils
 								.formatTwoDecimalNumberToString(DataFormatUtils.round(line.getResultPercentage(), 2)))
@@ -201,9 +200,10 @@ public class RankingPanel extends JPanel implements NewGUIDataEventListener {
 				rowData[3] = "--";
 			}
 			divisionTableModel.addRow(rowData);
+			i++;
 		}
 		if (rows.size() > 0) {
-			for (int y = 0; y < (12 - i); y++)
+			for (int y = 0; y < (17 - i); y++)
 				divisionTableModel.addRow(new Object[] { "", "", "", "", "" });
 		}
 		divisionTableModel.fireTableDataChanged();
