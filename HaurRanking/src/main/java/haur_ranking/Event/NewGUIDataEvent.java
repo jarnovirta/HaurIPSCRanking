@@ -3,18 +3,18 @@ package haur_ranking.Event;
 import java.util.List;
 
 import haur_ranking.domain.DatabaseStatistics;
-import haur_ranking.domain.Match;
 import haur_ranking.domain.Ranking;
 
 public class NewGUIDataEvent {
 	private Ranking ranking;
 	private DatabaseStatistics databaseStatistics;
-	private List<Match> databaseMatchList;
+	private List<String[]> importedMatchesTableData;
 
-	public NewGUIDataEvent(Ranking ranking, DatabaseStatistics databaseStatistics, List<Match> databaseMatchList) {
+	public NewGUIDataEvent(Ranking ranking, DatabaseStatistics databaseStatistics,
+			List<String[]> importedMatchesTableData) {
 		this.ranking = ranking;
 		this.databaseStatistics = databaseStatistics;
-		this.databaseMatchList = databaseMatchList;
+		this.importedMatchesTableData = importedMatchesTableData;
 	}
 
 	public Ranking getRanking() {
@@ -33,12 +33,12 @@ public class NewGUIDataEvent {
 		this.databaseStatistics = databaseStatistics;
 	}
 
-	public List<Match> getDatabaseMatchList() {
-		return databaseMatchList;
+	public List<String[]> getImportedMatchesTableData() {
+		return importedMatchesTableData;
 	}
 
-	public void setDatabaseMatchList(List<Match> databaseMatchList) {
-		this.databaseMatchList = databaseMatchList;
+	public void setImportedMatchesTableData(List<String[]> importedMatchesTableData) {
+		this.importedMatchesTableData = importedMatchesTableData;
 	}
 
 }

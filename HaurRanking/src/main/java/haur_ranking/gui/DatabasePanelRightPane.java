@@ -11,7 +11,6 @@ import javax.swing.table.TableColumn;
 
 import haur_ranking.Event.NewGUIDataEvent;
 import haur_ranking.Event.NewGUIDataEventListener;
-import haur_ranking.domain.Match;
 
 public class DatabasePanelRightPane extends JPanel implements NewGUIDataEventListener {
 	/**
@@ -61,39 +60,51 @@ public class DatabasePanelRightPane extends JPanel implements NewGUIDataEventLis
 		return table;
 	}
 
-	private void updateDatabaseMatchInfoTable(List<Match> databaseMatchList) {
-		if (databaseMatchList == null) {
+	private void updateDatabaseMatchInfoTable(List<String[]> databaseMatchTableData) {
+		if (databaseMatchTableData == null) {
 			return;
 		}
+		// DefaultTableModel tableModel = (DefaultTableModel)
+		// databaseMatchInfoTable.getModel();
+		// tableModel.setRowCount(0);
+		// int matchCounter = 1;
+		// for (Match match : databaseMatchList) {
+		// Object[] rowData = new Object[4];
+		// rowData[0] = (matchCounter++) + ".";
+		// rowData[1] = match.getName();
+		// rowData[2] = match.getWinMssDateString();
+		// if (match.getStages() == null || match.getStages().size() == 0)
+		// continue;
+		// rowData[3] = match.getStages().get(0).getName();
+		// tableModel.addRow(rowData);
+		// if (match.getStages().size() == 1)
+		// continue;
+		//
+		// for (int i = 1; i < match.getStages().size(); i++) {
+		// rowData = new Object[4];
+		// rowData[0] = "";
+		// rowData[1] = "";
+		// rowData[2] = "";
+		// rowData[3] = match.getStages().get(i).getName();
+		// tableModel.addRow(rowData);
+		// }
+		// }
+		// tableModel.fireTableDataChanged();
 		DefaultTableModel tableModel = (DefaultTableModel) databaseMatchInfoTable.getModel();
 		tableModel.setRowCount(0);
-		int matchCounter = 1;
-		for (Match match : databaseMatchList) {
-			Object[] rowData = new Object[4];
-			rowData[0] = (matchCounter++) + ".";
-			rowData[1] = match.getName();
-			rowData[2] = match.getWinMssDateString();
-			if (match.getStages() == null || match.getStages().size() == 0)
-				continue;
-			rowData[3] = match.getStages().get(0).getName();
-			tableModel.addRow(rowData);
-			if (match.getStages().size() == 1)
-				continue;
-
-			for (int i = 1; i < match.getStages().size(); i++) {
-				rowData = new Object[4];
-				rowData[0] = "";
-				rowData[1] = "";
-				rowData[2] = "";
-				rowData[3] = match.getStages().get(i).getName();
-				tableModel.addRow(rowData);
-			}
+		int rowCounter = 0;
+		for (String[] row : databaseMatchTableData) {
+			tableModel.addRow(row);
+			rowCounter++;
 		}
-		tableModel.fireTableDataChanged();
+		if (rowCounter > 0) {
+			for (int i = 0; i < (17 - rowCounter); i++)
+				tableModel.addRow(new String[] { "", "", "", "" });
+		}
 	}
 
 	@Override
 	public void updateGUIData(NewGUIDataEvent event) {
-		updateDatabaseMatchInfoTable(event.getDatabaseMatchList());
+		updateDatabaseMatchInfoTable(event.getImportedMatchesTableData());
 	}
 }

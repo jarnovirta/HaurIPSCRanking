@@ -169,6 +169,37 @@ public class MatchService {
 
 	}
 
+	public static List<String[]> getGUIImportedMatchesTableData() {
+		List<String[]> tableRows = new ArrayList<String[]>();
+		List<Match> matches = findAll();
+		int matchCounter = 1;
+		int rowCounter = 0;
+		for (Match match : matches) {
+			String[] rowData = new String[4];
+			rowData[0] = (matchCounter++) + ".";
+			rowData[1] = match.getName();
+			rowData[2] = match.getWinMssDateString();
+			if (match.getStages() == null || match.getStages().size() == 0)
+				continue;
+			rowData[3] = match.getStages().get(0).getName();
+			tableRows.add(rowData);
+			rowCounter++;
+			if (match.getStages().size() == 1)
+				continue;
+			for (int i = 1; i < match.getStages().size(); i++) {
+				rowData = new String[4];
+				rowData[0] = "";
+				rowData[1] = "";
+				rowData[2] = "";
+				rowData[3] = match.getStages().get(i).getName();
+				tableRows.add(rowData);
+				rowCounter++;
+			}
+		}
+
+		return tableRows;
+	}
+
 	private static void initializeProgressCounterVariables(List<Match> matches) {
 		setImportProgressStatus(ImportStatus.IMPORTING);
 		progressCounterCompletedSteps = 0;

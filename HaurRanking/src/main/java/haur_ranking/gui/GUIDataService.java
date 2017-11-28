@@ -19,7 +19,7 @@ public class GUIDataService {
 	public static void updateRankingData() {
 		ranking = RankingService.findCurrentRanking();
 		NewGUIDataEvent event = new NewGUIDataEvent(ranking, DatabaseStatisticsService.getDatabaseStatistics(),
-				MatchService.findAll());
+				MatchService.getGUIImportedMatchesTableData());
 		for (NewGUIDataEventListener listener : dataUpdateListeners) {
 			listener.updateGUIData(event);
 		}
