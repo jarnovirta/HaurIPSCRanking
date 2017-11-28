@@ -22,5 +22,4 @@ public class StageService {
 		entityManager.close();
 		return classifierStages;
 	}
-
 }

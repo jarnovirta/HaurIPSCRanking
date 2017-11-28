@@ -1,4 +1,4 @@
-package haur_ranking.gui;
+package haur_ranking.gui.databasepanel;
 
 import java.awt.BorderLayout;
 import java.util.List;
@@ -9,10 +9,11 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
-import haur_ranking.Event.NewGUIDataEvent;
-import haur_ranking.Event.NewGUIDataEventListener;
+import haur_ranking.Event.GUIDataEvent;
+import haur_ranking.Event.GUIDataEventListener;
+import haur_ranking.gui.GUIDataService;
 
-public class DatabasePanelRightPane extends JPanel implements NewGUIDataEventListener {
+public class DatabasePanelRightPane extends JPanel implements GUIDataEventListener {
 	/**
 	 *
 	 */
@@ -64,32 +65,7 @@ public class DatabasePanelRightPane extends JPanel implements NewGUIDataEventLis
 		if (databaseMatchTableData == null) {
 			return;
 		}
-		// DefaultTableModel tableModel = (DefaultTableModel)
-		// databaseMatchInfoTable.getModel();
-		// tableModel.setRowCount(0);
-		// int matchCounter = 1;
-		// for (Match match : databaseMatchList) {
-		// Object[] rowData = new Object[4];
-		// rowData[0] = (matchCounter++) + ".";
-		// rowData[1] = match.getName();
-		// rowData[2] = match.getWinMssDateString();
-		// if (match.getStages() == null || match.getStages().size() == 0)
-		// continue;
-		// rowData[3] = match.getStages().get(0).getName();
-		// tableModel.addRow(rowData);
-		// if (match.getStages().size() == 1)
-		// continue;
-		//
-		// for (int i = 1; i < match.getStages().size(); i++) {
-		// rowData = new Object[4];
-		// rowData[0] = "";
-		// rowData[1] = "";
-		// rowData[2] = "";
-		// rowData[3] = match.getStages().get(i).getName();
-		// tableModel.addRow(rowData);
-		// }
-		// }
-		// tableModel.fireTableDataChanged();
+
 		DefaultTableModel tableModel = (DefaultTableModel) databaseMatchInfoTable.getModel();
 		tableModel.setRowCount(0);
 		int rowCounter = 0;
@@ -104,7 +80,7 @@ public class DatabasePanelRightPane extends JPanel implements NewGUIDataEventLis
 	}
 
 	@Override
-	public void updateGUIData(NewGUIDataEvent event) {
+	public void processData(GUIDataEvent event) {
 		updateDatabaseMatchInfoTable(event.getImportedMatchesTableData());
 	}
 }

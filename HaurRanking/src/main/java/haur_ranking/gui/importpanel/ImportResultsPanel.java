@@ -1,4 +1,4 @@
-package haur_ranking.gui;
+package haur_ranking.gui.importpanel;
 
 import java.awt.Component;
 import java.awt.GridBagConstraints;
@@ -6,21 +6,24 @@ import java.awt.GridBagLayout;
 
 import javax.swing.JPanel;
 
-public class DatabasePanel extends JPanel {
+import haur_ranking.gui.MainWindow;
+
+public class ImportResultsPanel extends JPanel {
+
 	/**
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	GridBagLayout gridBagLayout;
 	GridBagConstraints gridBagConstraints;
-	DatabasePanelLeftPane leftPane;
-	DatabasePanelRightPane rightPane;
+	ImportResultsLeftPane leftPane;
+	ImportResultsRightPane rightPane;
 
-	public DatabasePanel() {
+	public ImportResultsPanel() {
 
 		gridBagLayout = new GridBagLayout();
 
-		gridBagLayout.columnWidths = new int[] { MainWindow.WIDTH / 4, MainWindow.WIDTH / 4 * 3 };
+		gridBagLayout.columnWidths = new int[] { MainWindow.WIDTH / 3, MainWindow.WIDTH / 3 * 2 };
 		gridBagLayout.rowHeights = new int[] { MainWindow.HEIGHT };
 		gridBagLayout.columnWeights = new double[] { 1, 1 };
 		gridBagLayout.rowWeights = new double[] { 1 };
@@ -32,13 +35,12 @@ public class DatabasePanel extends JPanel {
 		gridBagConstraints.weightx = 1.0;
 		gridBagConstraints.weighty = 1.0;
 
-		// Add Panels
-		leftPane = new DatabasePanelLeftPane();
+		leftPane = new ImportResultsLeftPane();
 
 		this.addPanels(0, 0, 1, 1, leftPane); // row, col, height, width
 												// component
 
-		rightPane = new DatabasePanelRightPane();
+		rightPane = new ImportResultsRightPane();
 		this.addPanels(0, 1, 1, 2, rightPane);
 	}
 
@@ -50,10 +52,4 @@ public class DatabasePanel extends JPanel {
 		gridBagLayout.setConstraints(component, gridBagConstraints);
 		this.add(component);
 	}
-	//
-	// public DatabasePanel() {
-	// setLayout(new GridLayout(1, 2));
-	// add(new DatabasePanelLeftPane());
-	// add(new DatabasePanelRightPane());
-	// }
 }

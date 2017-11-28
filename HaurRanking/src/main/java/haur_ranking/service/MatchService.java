@@ -5,8 +5,9 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 
-import haur_ranking.Event.ImportProgressEvent;
-import haur_ranking.Event.ImportProgressEventListener;
+import haur_ranking.Event.GUIDataEvent;
+import haur_ranking.Event.GUIDataEvent.GUIDataEventType;
+import haur_ranking.Event.GUIDataEventListener;
 import haur_ranking.domain.ClassifierStage;
 import haur_ranking.domain.Competitor;
 import haur_ranking.domain.IPSCDivision;
@@ -24,14 +25,14 @@ public class MatchService {
 
 	// Variables queried by GUI for progress bar
 	public enum ImportStatus {
-		READY, IMPORTING, GENERATING_RANKING, DONE
+		READY, LOADING_FROM_WINMSS, SAVING_TO_HAUR_RANKING_DB, GENERATING_RANKING, SAVE_TO_HAUR_RANKING_DB_DONE, LOAD_FROM_WINMSS_DONE
 	};
 
 	private static ImportStatus importStatus = ImportStatus.READY;
 	private static int progressCounterTotalSteps;
 	private static double progressCounterCompletedSteps;
 	private static int progressPercentage = 0;
-	private static List<ImportProgressEventListener> importProgressEventListeners = new ArrayList<ImportProgressEventListener>();
+	private static List<GUIDataEventListener> importProgressEventListeners = new ArrayList<GUIDataEventListener>();
 
 	public static Match find(Match match, EntityManager entityManager) {
 		return MatchRepository.find(match, entityManager);
@@ -45,7 +46,7 @@ public class MatchService {
 		return matches;
 	}
 
-	private static void findNewWinMssStageScoreSheets(Stage stage) {
+	private static void findWinMSSStageScoreSheets(Stage stage) {
 		stage.setStageScoreSheets(WinMSSStageScoreSheetRepository.find(stage.getMatch(), stage));
 		for (StageScoreSheet sheet : stage.getStageScoreSheets())
 			sheet.setStage(stage);
@@ -66,30 +67,30 @@ public class MatchService {
 	// Find stages with new results, from which user selects stage results to
 	// be imported
 	public static List<Match> findNewResultsInWinMSSDatabase(String winMssDbLocation) {
+		setImportProgressStatus(ImportStatus.LOADING_FROM_WINMSS);
 		entityManager = HaurRankingDatabaseUtils.getEntityManager();
-		List<Match> matchesWithNewResults = new ArrayList<Match>();
 		List<Match> winMssMatches = WinMSSMatchRepository.findAll(winMssDbLocation);
 		for (Match match : winMssMatches) {
-			List<Stage> stagesWithNewResults = new ArrayList<Stage>();
 			match.setStages(WinMSSStageRepository.findStagesForMatch(match));
 			for (Stage stage : match.getStages()) {
 				stage.setMatch(match);
 				if (ClassifierStage.contains(stage.getName()))
 					stage.setClassifierStage(ClassifierStage.parseString(stage.getName()));
-				if (StageService.find(stage, entityManager) == null)
-					stagesWithNewResults.add(stage);
-			}
-			if (stagesWithNewResults.size() > 0) {
-				match.setStages(stagesWithNewResults);
-				matchesWithNewResults.add(match);
+				if (StageService.find(stage, entityManager) == null) {
+					stage.setNewStage(true);
+				} else {
+					stage.setNewStage(false);
+				}
 			}
 		}
-		return matchesWithNewResults;
+		setImportProgressStatus(ImportStatus.LOAD_FROM_WINMSS_DONE);
+		return winMssMatches;
 	}
 
 	// Fetch stage score sheets for stages selected by user and save to Ranking
 	// Database
-	public static void importSelectedResultsFromWinMSSDatabase(List<Match> matches) {
+	public static void importSelectedResults(List<Match> matches) {
+		setImportProgressStatus(ImportStatus.SAVING_TO_HAUR_RANKING_DB);
 		// Initialize progress counter variables to be queried by GUI for
 		// progress bar
 		initializeProgressCounterVariables(matches);
@@ -101,15 +102,17 @@ public class MatchService {
 		for (Match match : matches) {
 			List<Stage> stagesWithNewResults = new ArrayList<Stage>();
 			for (Stage stage : match.getStages()) {
-				findNewWinMssStageScoreSheets(stage);
-				if (stage.getStageScoreSheets() != null && stage.getStageScoreSheets().size() > 0) {
-					stagesWithNewResults.add(stage);
-					for (StageScoreSheet sheet : stage.getStageScoreSheets()) {
-						if (!divisionsWithNewResults.contains(sheet.getIpscDivision()))
-							divisionsWithNewResults.add(sheet.getIpscDivision());
+				if (stage.isNewStage()) {
+					findWinMSSStageScoreSheets(stage);
+					if (stage.getStageScoreSheets() != null && stage.getStageScoreSheets().size() > 0) {
+						stagesWithNewResults.add(stage);
+						for (StageScoreSheet sheet : stage.getStageScoreSheets()) {
+							if (!divisionsWithNewResults.contains(sheet.getIpscDivision()))
+								divisionsWithNewResults.add(sheet.getIpscDivision());
+						}
 					}
+					addImportProgress(stage.getStageScoreSheets().size());
 				}
-				addImportProgress(stage.getStageScoreSheets().size());
 			}
 			if (stagesWithNewResults.size() > 0)
 				matchesWithNewResults.add(match);
@@ -117,10 +120,11 @@ public class MatchService {
 		entityManager.getTransaction().commit();
 		entityManager.close();
 		if (matchesWithNewResults.size() > 0)
+
 			save(matchesWithNewResults);
 		setImportProgressStatus(ImportStatus.GENERATING_RANKING);
 		RankingService.generateRanking();
-		setImportProgressStatus(ImportStatus.DONE);
+		setImportProgressStatus(ImportStatus.SAVE_TO_HAUR_RANKING_DB_DONE);
 	}
 
 	public static void save(List<Match> matches) {
@@ -198,7 +202,7 @@ public class MatchService {
 	}
 
 	private static void initializeProgressCounterVariables(List<Match> matches) {
-		setImportProgressStatus(ImportStatus.IMPORTING);
+		setImportProgressStatus(ImportStatus.LOADING_FROM_WINMSS);
 		progressCounterCompletedSteps = 0;
 		progressCounterTotalSteps = 0;
 		for (Match match : matches) {
@@ -225,12 +229,15 @@ public class MatchService {
 	}
 
 	private static void emitImportProgressEvent() {
-		for (ImportProgressEventListener listener : importProgressEventListeners) {
-			listener.setProgress(new ImportProgressEvent(importStatus, progressPercentage));
+		GUIDataEvent event = new GUIDataEvent(GUIDataEventType.DATA_IMPORT_PROGRESS);
+		event.setImportStatus(importStatus);
+		event.setProgressPercent(progressPercentage);
+		for (GUIDataEventListener listener : importProgressEventListeners) {
+			listener.processData(event);
 		}
 	}
 
-	public static void addImportProgressEventListener(ImportProgressEventListener listener) {
+	public static void addImportProgressEventListener(GUIDataEventListener listener) {
 		importProgressEventListeners.add(listener);
 	}
 }

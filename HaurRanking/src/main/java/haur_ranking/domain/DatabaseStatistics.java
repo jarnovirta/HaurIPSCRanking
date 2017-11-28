@@ -4,6 +4,15 @@ public class DatabaseStatistics {
 	private int matchCount;
 	private int stageScoreSheetCount;
 	private int competitorCount;
+	private int validClassifiersCount;
+
+	public int getValidClassifiersCount() {
+		return validClassifiersCount;
+	}
+
+	public void setValidClassifiersCount(int validClassifiersCount) {
+		this.validClassifiersCount = validClassifiersCount;
+	}
 
 	public int getCompetitorCount() {
 		return competitorCount;

@@ -11,3 +11,5 @@ TODO:
 - tietokantalistaus : EI Match list vaan suoraan tekstirivit tietokannasta.
 
 - kaikki tablet EI editable, ei focus ym.
+
+- Tallennettaessa tyhjä stage ilman tuloslistoja menee aina uudelleen kantaan.

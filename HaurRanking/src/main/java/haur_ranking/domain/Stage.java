@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "Stage")
@@ -33,6 +34,9 @@ public class Stage {
 
 	@Enumerated(EnumType.STRING)
 	private ClassifierStage classifierStage;
+
+	@Transient
+	boolean newStage;
 
 	public Stage() {
 	}
@@ -98,4 +102,13 @@ public class Stage {
 	public void setWinMssMatchId(Long winMssMatchId) {
 		this.winMssMatchId = winMssMatchId;
 	}
+
+	public boolean isNewStage() {
+		return newStage;
+	}
+
+	public void setNewStage(boolean newStage) {
+		this.newStage = newStage;
+	}
+
 }

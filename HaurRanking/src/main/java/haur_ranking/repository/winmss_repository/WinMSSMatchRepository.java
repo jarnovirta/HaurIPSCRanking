@@ -20,8 +20,8 @@ public class WinMSSMatchRepository {
 		try {
 			connection = WinMssDatabaseUtil.createConnection(fileLocation);
 			statement = connection.createStatement();
-			resultSet = statement
-					.executeQuery("SELECT MatchId, MatchName, MatchDt FROM tblMatch WHERE TypeFirearmId=1");
+			resultSet = statement.executeQuery(
+					"SELECT MatchId, MatchName, MatchDt FROM tblMatch WHERE TypeFirearmId=1 ORDER BY MatchDt DESC");
 			while (resultSet.next()) {
 				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
 				Calendar calendar = new GregorianCalendar(2013, 0, 31);

@@ -1,4 +1,4 @@
-package haur_ranking.gui;
+package haur_ranking.gui.databasepanel;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -11,11 +11,13 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
-import haur_ranking.Event.NewGUIDataEvent;
-import haur_ranking.Event.NewGUIDataEventListener;
+import haur_ranking.Event.GUIDataEvent;
+import haur_ranking.Event.GUIDataEvent.GUIDataEventType;
+import haur_ranking.Event.GUIDataEventListener;
 import haur_ranking.domain.DatabaseStatistics;
+import haur_ranking.gui.GUIDataService;
 
-public class DatabaseStatisticsPanel extends JPanel implements NewGUIDataEventListener {
+public class DatabaseStatisticsPanel extends JPanel implements GUIDataEventListener {
 	/**
 	 *
 	 */
@@ -29,14 +31,23 @@ public class DatabaseStatisticsPanel extends JPanel implements NewGUIDataEventLi
 		statisticsTable = getStatisticsTable();
 		statisticsTable.setAlignmentX(Component.LEFT_ALIGNMENT);
 		add(statisticsTable);
-		setMaximumSize(new Dimension(410, 310));
+		setMaximumSize(new Dimension(550, 310));
 		GUIDataService.addRankingDataUpdatedEventListener(this);
 
 	}
 
 	private JTable getStatisticsTable() {
-		JTable statisticsTable = new JTable(3, 2);
+		JTable statisticsTable = new JTable(5, 2) {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			};
+		};
+
 		statisticsTable.setShowGrid(false);
+		statisticsTable.setDragEnabled(false);
 		statisticsTable.setOpaque(false);
 		statisticsTable.setRowHeight(35);
 		DefaultTableCellRenderer cellRenderer = (DefaultTableCellRenderer) statisticsTable
@@ -44,7 +55,7 @@ public class DatabaseStatisticsPanel extends JPanel implements NewGUIDataEventLi
 		cellRenderer.setOpaque(false);
 
 		TableColumn leftColumn = statisticsTable.getColumnModel().getColumn(0);
-		leftColumn.setPreferredWidth(160);
+		leftColumn.setPreferredWidth(200);
 		TableColumn rightColumn = statisticsTable.getColumnModel().getColumn(1);
 		rightColumn.setPreferredWidth(130);
 		return statisticsTable;
@@ -58,11 +69,16 @@ public class DatabaseStatisticsPanel extends JPanel implements NewGUIDataEventLi
 		statisticsTableModel.setValueAt(statistics.getStageScoreSheetCount(), 1, 1);
 		statisticsTableModel.setValueAt("Kilpailijoita:", 2, 0);
 		statisticsTableModel.setValueAt(statistics.getCompetitorCount(), 2, 1);
+		statisticsTableModel.setValueAt("Luokitteluohjelmia", 3, 0);
+		statisticsTableModel.setValueAt("joissa väh. 2 tulosta:", 4, 0);
 
+		statisticsTableModel.setValueAt(statistics.getValidClassifiersCount(), 4, 1);
 	}
 
 	@Override
-	public void updateGUIData(NewGUIDataEvent event) {
-		setStatisticsTableData(event.getDatabaseStatistics());
+	public void processData(GUIDataEvent event) {
+		if (event.getEventType() == GUIDataEventType.NEW_HAUR_RANKING_DB_DATA) {
+			setStatisticsTableData(event.getDatabaseStatistics());
+		}
 	}
 }

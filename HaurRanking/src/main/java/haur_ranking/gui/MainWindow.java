@@ -17,14 +17,17 @@ import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.plaf.FontUIResource;
 
+import haur_ranking.gui.databasepanel.DatabasePanel;
+import haur_ranking.gui.importpanel.ImportResultsPanel;
+import haur_ranking.gui.rankingpanel.RankingPanel;
 import haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
 import haur_ranking.repository.winmss_repository.WinMssDatabaseUtil;
 
 public class MainWindow {
 
 	private JFrame mainFrame;
-	protected static final int WIDTH = 1400;
-	protected static final int HEIGHT = 800;
+	public static final int WIDTH = 1400;
+	public static final int HEIGHT = 800;
 
 	private void initializeFonts() {
 		float multiplier = 1.9f;
@@ -66,6 +69,7 @@ public class MainWindow {
 		JTabbedPane tabbedMainPane = new JTabbedPane();
 		tabbedMainPane.addTab("Ranking", new RankingPanel());
 		tabbedMainPane.add("Tietokanta", new DatabasePanel());
+		tabbedMainPane.add("Tuo tuloksia", new ImportResultsPanel());
 
 		mainFrame.add(tabbedMainPane);
 		mainFrame.getContentPane().add(tabbedMainPane, BorderLayout.CENTER);
@@ -85,4 +89,5 @@ public class MainWindow {
 		GUIDataService.updateRankingData();
 		mainFrame.setVisible(true);
 	}
+
 }

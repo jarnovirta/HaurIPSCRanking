@@ -1,4 +1,4 @@
-package haur_ranking.gui;
+package haur_ranking.gui.rankingpanel;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -27,18 +27,19 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
-import haur_ranking.Event.NewGUIDataEvent;
-import haur_ranking.Event.NewGUIDataEventListener;
+import haur_ranking.Event.GUIDataEvent;
+import haur_ranking.Event.GUIDataEventListener;
 import haur_ranking.domain.DivisionRanking;
 import haur_ranking.domain.DivisionRankingRow;
 import haur_ranking.domain.IPSCDivision;
 import haur_ranking.domain.Ranking;
+import haur_ranking.gui.GUIDataService;
 import haur_ranking.gui.filters.FileFilterUtils;
 import haur_ranking.gui.filters.PdfFileFilter;
 import haur_ranking.pdf.PdfGenerator;
 import haur_ranking.utils.DataFormatUtils;
 
-public class RankingPanel extends JPanel implements NewGUIDataEventListener {
+public class RankingPanel extends JPanel implements GUIDataEventListener {
 	/**
 	 *
 	 */
@@ -238,7 +239,7 @@ public class RankingPanel extends JPanel implements NewGUIDataEventListener {
 	}
 
 	@Override
-	public void updateGUIData(NewGUIDataEvent event) {
+	public void processData(GUIDataEvent event) {
 		updateRankingTablesData(event.getRanking());
 	}
 

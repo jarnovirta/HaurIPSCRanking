@@ -1,4 +1,4 @@
-package haur_ranking.gui;
+package haur_ranking.gui.importpanel;
 
 import java.awt.Dimension;
 
@@ -6,11 +6,12 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 
-import haur_ranking.Event.ImportProgressEvent;
-import haur_ranking.Event.ImportProgressEventListener;
+import haur_ranking.Event.GUIDataEvent;
+import haur_ranking.Event.GUIDataEvent.GUIDataEventType;
+import haur_ranking.Event.GUIDataEventListener;
 import haur_ranking.service.MatchService;
 
-public class ImportProgressBarFrame extends JFrame implements ImportProgressEventListener {
+public class ImportProgressBarFrame extends JFrame implements GUIDataEventListener {
 	/**
 	 *
 	 */
@@ -36,7 +37,9 @@ public class ImportProgressBarFrame extends JFrame implements ImportProgressEven
 	}
 
 	@Override
-	public void setProgress(ImportProgressEvent event) {
-		progressBar.setValue(event.getProgressPercent());
+	public void processData(GUIDataEvent event) {
+		if (event.getEventType() == GUIDataEventType.DATA_IMPORT_PROGRESS) {
+			progressBar.setValue(event.getProgressPercent());
+		}
 	}
 }
