@@ -25,12 +25,12 @@ public class StageRepository {
 
 	public static Stage find(Stage stage, EntityManager entityManager) {
 		try {
-			String queryString = "SELECT s FROM Stage s WHERE s.name = :stageName AND s.match.name = :matchName and s.match.winMssDateString = :matchDate";
+			String queryString = "SELECT s FROM Stage s WHERE s.name = :stageName AND s.match.name = :matchName and s.match.date = :matchDate";
 
 			TypedQuery<Stage> query = entityManager.createQuery(queryString, Stage.class);
 			query.setParameter("stageName", stage.getName());
 			query.setParameter("matchName", stage.getMatch().getName());
-			query.setParameter("matchDate", stage.getMatch().getWinMssDateString());
+			query.setParameter("matchDate", stage.getMatch().getDate());
 			List<Stage> stages = query.getResultList();
 			if (stages != null && stages.size() > 0)
 				return stages.get(0);

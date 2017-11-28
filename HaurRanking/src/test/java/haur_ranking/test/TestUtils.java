@@ -1,7 +1,12 @@
 package haur_ranking.test;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,7 +73,7 @@ public class TestUtils {
 	protected static Match createNewTestMatch() {
 		Match newTestMatch = new Match();
 		newTestMatch.setName("New match");
-		newTestMatch.setWinMssDateString("18.11.2017");
+		newTestMatch.setDate(getCalendarFromString("18.11.2017"));
 		newTestMatch.setStages(createTestStages(newTestMatch));
 		return newTestMatch;
 	}
@@ -76,7 +81,7 @@ public class TestUtils {
 	protected static Match createOldTestMatch() {
 		Match oldTestMatch = new Match();
 		oldTestMatch.setName("Old match");
-		oldTestMatch.setWinMssDateString("12.11.2017");
+		oldTestMatch.setDate(getCalendarFromString("12.11.2017"));
 		oldTestMatch.setStages(createTestStages(oldTestMatch));
 		return oldTestMatch;
 	}
@@ -94,7 +99,7 @@ public class TestUtils {
 	protected static Match createSpringTestMatch() {
 		Match springTestMatch = new Match();
 		springTestMatch.setName("Spring match");
-		springTestMatch.setWinMssDateString("1.4.2017");
+		springTestMatch.setDate(getCalendarFromString("1.4.2017"));
 		springTestMatch.setStages(createTestStages(springTestMatch));
 		return springTestMatch;
 	}
@@ -203,5 +208,18 @@ public class TestUtils {
 		entityManager.getTransaction().commit();
 		entityManager.close();
 		HaurRankingDatabaseUtils.closeEntityManagerFactory();
+	}
+
+	private static Calendar getCalendarFromString(String dateString) {
+		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		Date date = null;
+		try {
+			date = formatter.parse(dateString);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		return calendar;
 	}
 }

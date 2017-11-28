@@ -1,6 +1,7 @@
 package haur_ranking.domain;
 
-import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -13,6 +14,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "Match")
@@ -21,9 +23,10 @@ public class Match {
 	@GeneratedValue(strategy = GenerationType.TABLE)
 	private Long id;
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date date;
+	private Calendar date;
+	private String dateString; // Format: dd.MM.yyyy
 
-	private String winMssDateString;
+	@Transient
 	private Long winMssMatchId;
 	private String name;
 	@OneToMany(mappedBy = "match", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -32,20 +35,23 @@ public class Match {
 	public Match() {
 	}
 
-	public Match(String matchName, Long winMssMatchId, String winMssDateString) {
+	public Match(String matchName, Long winMssMatchId, Calendar date) {
 		this.name = matchName;
 		this.winMssMatchId = winMssMatchId;
-		this.winMssDateString = winMssDateString;
-
+		this.date = date;
+		setDateString(date);
 	}
 
-	public Match(String matchName, String winMssDateString) {
+	public Match(String matchName) {
 		this.name = matchName;
-		this.winMssDateString = winMssDateString;
 	}
 
-	public Date getDate() {
+	public Calendar getDate() {
 		return date;
+	}
+
+	public void setDate(Calendar date) {
+		this.date = date;
 	}
 
 	public Long getId() {
@@ -60,16 +66,8 @@ public class Match {
 		return stages;
 	}
 
-	public String getWinMssDateString() {
-		return winMssDateString;
-	}
-
 	public Long getWinMssMatchId() {
 		return winMssMatchId;
-	}
-
-	public void setDate(Date date) {
-		this.date = date;
 	}
 
 	public void setId(Long id) {
@@ -84,12 +82,20 @@ public class Match {
 		this.stages = stages;
 	}
 
-	public void setWinMssDateString(String winMssDateString) {
-		this.winMssDateString = winMssDateString;
-	}
-
 	public void setWinMssMatchId(Long winMssMatchId) {
 		this.winMssMatchId = winMssMatchId;
 	}
 
+	private void setDateString(Calendar date) {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+		try {
+			this.dateString = sdf.format(date.getTime());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public String getDateString() {
+		return this.dateString;
+	}
 }

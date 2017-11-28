@@ -177,7 +177,7 @@ public class MatchService {
 			String[] rowData = new String[4];
 			rowData[0] = (matchCounter++) + ".";
 			rowData[1] = match.getName();
-			rowData[2] = match.getWinMssDateString();
+			rowData[2] = match.getDateString();
 			if (match.getStages() == null || match.getStages().size() == 0)
 				continue;
 			rowData[3] = match.getStages().get(0).getName();

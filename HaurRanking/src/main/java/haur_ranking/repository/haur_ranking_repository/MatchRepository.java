@@ -10,10 +10,10 @@ import haur_ranking.domain.Match;
 public class MatchRepository {
 	public static Match find(Match match, EntityManager entityManager) {
 		try {
-			String queryString = "SELECT m FROM Match m WHERE m.name = :name AND m.winMssDateString = :dateString";
+			String queryString = "SELECT m FROM Match m WHERE m.name = :name AND m.date = :matchDate";
 			TypedQuery<Match> query = entityManager.createQuery(queryString, Match.class);
 			query.setParameter("name", match.getName());
-			query.setParameter("dateString", match.getWinMssDateString());
+			query.setParameter("matchDate", match.getDate());
 			List<Match> result = query.getResultList();
 			if (result.size() == 0)
 				return null;
@@ -28,7 +28,7 @@ public class MatchRepository {
 
 	public static List<Match> findAll(EntityManager entityManager) {
 		try {
-			String queryString = "SELECT m FROM Match m ORDER BY m.winMssDateString DESC";
+			String queryString = "SELECT m FROM Match m ORDER BY m.date DESC";
 			TypedQuery<Match> query = entityManager.createQuery(queryString, Match.class);
 			return query.getResultList();
 		} catch (Exception e) {
