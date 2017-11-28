@@ -173,7 +173,6 @@ public class MatchService {
 		List<String[]> tableRows = new ArrayList<String[]>();
 		List<Match> matches = findAll();
 		int matchCounter = 1;
-		int rowCounter = 0;
 		for (Match match : matches) {
 			String[] rowData = new String[4];
 			rowData[0] = (matchCounter++) + ".";
@@ -183,7 +182,6 @@ public class MatchService {
 				continue;
 			rowData[3] = match.getStages().get(0).getName();
 			tableRows.add(rowData);
-			rowCounter++;
 			if (match.getStages().size() == 1)
 				continue;
 			for (int i = 1; i < match.getStages().size(); i++) {
@@ -193,7 +191,6 @@ public class MatchService {
 				rowData[2] = "";
 				rowData[3] = match.getStages().get(i).getName();
 				tableRows.add(rowData);
-				rowCounter++;
 			}
 		}
 
