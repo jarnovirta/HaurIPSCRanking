@@ -41,6 +41,7 @@ public class WinMssDatabaseUtil {
 			String dbConnectionString = "jdbc:ucanaccess://" + newFileLocation
 					+ ";jackcessOpener=haur_ranking.repository.winmss_repository.CryptCodecOpener";
 			connection = DriverManager.getConnection(dbConnectionString, null, null);
+			fileLocation = newFileLocation;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
