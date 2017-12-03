@@ -13,8 +13,8 @@ import javax.swing.table.TableColumn;
 
 import haur_ranking.domain.DatabaseStatistics;
 import haur_ranking.event.GUIDataEvent;
-import haur_ranking.event.GUIDataEventListener;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
+import haur_ranking.event.GUIDataEventListener;
 import haur_ranking.gui.GUIDataService;
 
 public class DatabaseStatisticsPanel extends JPanel implements GUIDataEventListener {
@@ -77,8 +77,9 @@ public class DatabaseStatisticsPanel extends JPanel implements GUIDataEventListe
 
 	@Override
 	public void processData(GUIDataEvent event) {
-		if (event.getEventType() == GUIDataEventType.NEW_HAUR_RANKING_DB_DATA) {
-			setStatisticsTableData(event.getDatabaseStatistics());
+		if (event.getEventType() == GUIDataEventType.GUI_DATA_UPDATE) {
+			if (event.getDatabaseStatistics() != null)
+				setStatisticsTableData(event.getDatabaseStatistics());
 		}
 	}
 }

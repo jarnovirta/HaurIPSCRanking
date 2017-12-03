@@ -13,7 +13,7 @@ public class WinMSSCompetitorRepository {
 		Statement statement = null;
 		ResultSet resultSet = null;
 		try {
-			connection = WinMssDatabaseUtil.getConnection();
+			connection = WinMSSDatabaseUtil.getConnection();
 			statement = connection.createStatement();
 			resultSet = statement
 					.executeQuery("SELECT Firstname, Lastname FROM tblMember WHERE MemberId = " + winMSSMemberId);
@@ -23,7 +23,7 @@ public class WinMSSCompetitorRepository {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			WinMssDatabaseUtil.closeStatementResultSet(statement, resultSet);
+			WinMSSDatabaseUtil.closeStatementResultSet(statement, resultSet);
 		}
 		return competitor;
 
@@ -36,7 +36,7 @@ public class WinMSSCompetitorRepository {
 		boolean isDisqualified = false;
 
 		try {
-			connection = WinMssDatabaseUtil.getConnection();
+			connection = WinMSSDatabaseUtil.getConnection();
 			statement = connection.createStatement();
 			resultSet = statement.executeQuery("SELECT IsDisqualified FROM tblMatchCompetitor WHERE MatchId=" + matchId
 					+ " AND MemberId = " + winMssMemberId);
@@ -48,7 +48,7 @@ public class WinMSSCompetitorRepository {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			WinMssDatabaseUtil.closeStatementResultSet(statement, resultSet);
+			WinMSSDatabaseUtil.closeStatementResultSet(statement, resultSet);
 		}
 		return isDisqualified;
 	}

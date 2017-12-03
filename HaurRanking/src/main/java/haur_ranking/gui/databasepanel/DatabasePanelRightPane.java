@@ -1,11 +1,15 @@
 package haur_ranking.gui.databasepanel;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Color;
 import java.util.List;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
@@ -20,12 +24,28 @@ public class DatabasePanelRightPane extends JPanel implements GUIDataEventListen
 	 */
 	private static final long serialVersionUID = 1L;
 	private JTable databaseMatchInfoTable;
+	private CardLayout cardLayout;
+
+	private enum DatabaseDataTableStatus {
+		NO_DATA, HAS_DATA
+	};
 
 	public DatabasePanelRightPane() {
-		setLayout(new BorderLayout());
+		cardLayout = new CardLayout();
+		setLayout(cardLayout);
 		databaseMatchInfoTable = getDatabaseMatchInfoTable();
 		JScrollPane scrollPane = new JScrollPane(databaseMatchInfoTable);
-		add(scrollPane);
+		add(scrollPane, DatabaseDataTableStatus.HAS_DATA.toString());
+		add(getNoDataPanel(), DatabaseDataTableStatus.NO_DATA.toString());
+		cardLayout.show(this, DatabaseDataTableStatus.NO_DATA.toString());
+	}
+
+	private JPanel getNoDataPanel() {
+		JPanel noResultsPanel = new JPanel(new BorderLayout());
+		noResultsPanel.setBackground(Color.WHITE);
+		JLabel noResultsLabel = new JLabel("Ei tulostietoja", SwingConstants.CENTER);
+		noResultsPanel.add(noResultsLabel);
+		return noResultsPanel;
 	}
 
 	private JTable getDatabaseMatchInfoTable() {
@@ -79,11 +99,12 @@ public class DatabasePanelRightPane extends JPanel implements GUIDataEventListen
 				tableModel.addRow(new String[] { "", "", "", "" });
 		}
 		tableModel.fireTableDataChanged();
+		cardLayout.show(this, DatabaseDataTableStatus.HAS_DATA.toString());
 	}
 
 	@Override
 	public void processData(GUIDataEvent event) {
-		if (event.getEventType() == GUIDataEventType.NEW_HAUR_RANKING_DB_DATA) {
+		if (event.getEventType() == GUIDataEventType.GUI_DATA_UPDATE) {
 			if (event.getImportedMatchesTableData() != null && event.getImportedMatchesTableData().size() > 0) {
 				updateDatabaseMatchInfoTable(event.getImportedMatchesTableData());
 			}

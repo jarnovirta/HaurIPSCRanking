@@ -1,6 +1,8 @@
 package haur_ranking.gui.importpanel;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
@@ -10,15 +12,19 @@ import java.util.Map;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
 import haur_ranking.domain.ClassifierStage;
 import haur_ranking.domain.Match;
 import haur_ranking.domain.Stage;
+import haur_ranking.event.DataImportEvent.DataImportEventType;
+import haur_ranking.event.DataImportEvent.ImportStatus;
 import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
@@ -33,13 +39,39 @@ public class ImportResultsRightPane extends JPanel implements GUIDataEventListen
 	private JTable databaseMatchInfoTable;
 	private Map<String, Boolean> editableCellsMap = new HashMap<String, Boolean>();
 	private Map<Integer, Stage> TableRowToStageMap = new HashMap<Integer, Stage>();
+	private CardLayout cardLayout;
+
+	private enum ImportTableStatus {
+		NO_WINMSS_DB_SELECTED, SHOW_WINMSS_DATA, IMPORT_RESULT
+	};
 
 	public ImportResultsRightPane() {
-		setLayout(new BorderLayout());
+		cardLayout = new CardLayout();
+		setLayout(cardLayout);
+
 		databaseMatchInfoTable = getDatabaseMatchInfoTable();
 		JScrollPane scrollPane = new JScrollPane(databaseMatchInfoTable);
-		add(scrollPane);
+		add(scrollPane, ImportTableStatus.SHOW_WINMSS_DATA.toString());
+		add(getNoTableDataPanel(), ImportTableStatus.NO_WINMSS_DB_SELECTED.toString());
+		add(getImportResultPanel(), ImportTableStatus.IMPORT_RESULT.toString());
+		cardLayout.show(this, ImportTableStatus.NO_WINMSS_DB_SELECTED.toString());
 		GUIDataService.addRankingDataUpdatedEventListener(this);
+	}
+
+	private JPanel getNoTableDataPanel() {
+		JPanel noResultsPanel = new JPanel(new BorderLayout());
+		noResultsPanel.setBackground(Color.WHITE);
+		JLabel noResultsLabel = new JLabel("Avaa WinMSS-tietokanta", SwingConstants.CENTER);
+		noResultsPanel.add(noResultsLabel);
+		return noResultsPanel;
+	}
+
+	private JPanel getImportResultPanel() {
+		JPanel noResultsPanel = new JPanel(new BorderLayout());
+		noResultsPanel.setBackground(Color.WHITE);
+		JLabel noResultsLabel = new JLabel("Tulostiedot tallennettu", SwingConstants.CENTER);
+		noResultsPanel.add(noResultsLabel);
+		return noResultsPanel;
 	}
 
 	private JTable getDatabaseMatchInfoTable() {
@@ -174,6 +206,7 @@ public class ImportResultsRightPane extends JPanel implements GUIDataEventListen
 		}
 		setEditableCells(tableModel, winMSSMatches);
 		tableModel.fireTableDataChanged();
+		cardLayout.show(this, ImportTableStatus.SHOW_WINMSS_DATA.toString());
 	}
 
 	private Object getImportCell(Stage stage) {
@@ -188,12 +221,18 @@ public class ImportResultsRightPane extends JPanel implements GUIDataEventListen
 
 	@Override
 	public void processData(GUIDataEvent event) {
-		if (event.getEventType() == GUIDataEventType.NEW_WINMSS_DB_DATA) {
+		System.out.println("RIGHT PANE GOT EVENT: " + event.getEventType());
+		if (event.getEventType() == GUIDataEventType.WINMSS_DATA_IMPORT_EVENT
+				&& event.getDataImportEvent().getDataImportEventType() == DataImportEventType.IMPORT_STATUS_CHANGE) {
+			if (event.getDataImportEvent().getImportStatus() == ImportStatus.LOAD_FROM_WINMSS_DONE) {
+				updateDatabaseMatchInfoTable(GUIDataService.getImportResultsPanelMatchList());
+			}
+			if (event.getDataImportEvent().getImportStatus() == ImportStatus.SAVE_TO_HAUR_RANKING_DB_DONE) {
+				cardLayout.show(this, ImportTableStatus.IMPORT_RESULT.toString());
+			}
+		}
+		if (event.getEventType() == GUIDataEventType.GUI_DATA_UPDATE) {
 			updateDatabaseMatchInfoTable(GUIDataService.getImportResultsPanelMatchList());
 		}
-		if (event.getEventType() == GUIDataEventType.NEW_HAUR_RANKING_DB_DATA) {
-			updateDatabaseMatchInfoTable(null);
-		}
 	}
-
 }

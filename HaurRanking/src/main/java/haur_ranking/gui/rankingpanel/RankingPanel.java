@@ -48,7 +48,7 @@ public class RankingPanel extends JPanel implements GUIDataEventListener {
 	private List<JPanel> rankingTablePanes;
 	private String lastRankingPdfFileLocation;
 
-	private enum rankingTableStatus {
+	private enum RankingTableStatus {
 		TABLE_EMPTY, TABLE_NOT_EMPTY
 	};
 
@@ -68,8 +68,8 @@ public class RankingPanel extends JPanel implements GUIDataEventListener {
 			JScrollPane rankingTableScrollPane = new JScrollPane(rankingTable);
 
 			JPanel rankingTableCardsPanel = new JPanel(new CardLayout());
-			rankingTableCardsPanel.add(rankingTableScrollPane, rankingTableStatus.TABLE_NOT_EMPTY.toString());
-			rankingTableCardsPanel.add(getNoResultsDataPanel(), rankingTableStatus.TABLE_EMPTY.toString());
+			rankingTableCardsPanel.add(rankingTableScrollPane, RankingTableStatus.TABLE_NOT_EMPTY.toString());
+			rankingTableCardsPanel.add(getNoResultsDataPanel(), RankingTableStatus.TABLE_EMPTY.toString());
 
 			divisionRankingTables.put(division, rankingTable);
 			rankingTablePanes.add(rankingTableCardsPanel);
@@ -169,9 +169,9 @@ public class RankingPanel extends JPanel implements GUIDataEventListener {
 			CardLayout cardLayout = (CardLayout) rankingTablePane.getLayout();
 			JTable divisionTable = divisionRankingTables.get(division);
 			if (divisionTable.getRowCount() == 0) {
-				cardLayout.show(rankingTablePane, rankingTableStatus.TABLE_EMPTY.toString());
+				cardLayout.show(rankingTablePane, RankingTableStatus.TABLE_EMPTY.toString());
 			} else {
-				cardLayout.show(rankingTablePane, rankingTableStatus.TABLE_NOT_EMPTY.toString());
+				cardLayout.show(rankingTablePane, RankingTableStatus.TABLE_NOT_EMPTY.toString());
 			}
 			rankingTablePane.revalidate();
 		}

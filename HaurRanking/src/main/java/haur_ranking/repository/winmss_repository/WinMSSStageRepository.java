@@ -12,7 +12,7 @@ import haur_ranking.domain.Stage;
 public class WinMSSStageRepository {
 	public static List<Stage> findAllHandgunStages() {
 		List<Stage> stages = new ArrayList<Stage>();
-		Connection connection = WinMssDatabaseUtil.getConnection();
+		Connection connection = WinMSSDatabaseUtil.getConnection();
 		Statement statement = null;
 		ResultSet resultSet = null;
 		try {
@@ -29,7 +29,7 @@ public class WinMSSStageRepository {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
-			WinMssDatabaseUtil.closeStatementResultSet(statement, resultSet);
+			WinMSSDatabaseUtil.closeStatementResultSet(statement, resultSet);
 		}
 		return stages;
 	}
@@ -40,7 +40,7 @@ public class WinMSSStageRepository {
 		Statement statement = null;
 		ResultSet resultSet = null;
 		try {
-			connection = WinMssDatabaseUtil.getConnection();
+			connection = WinMSSDatabaseUtil.getConnection();
 			statement = connection.createStatement();
 			resultSet = statement.executeQuery(
 					"SELECT MatchId, StageId, StageName FROM tblMatchStage WHERE MatchId=" + match.getWinMssMatchId());
@@ -55,7 +55,7 @@ public class WinMSSStageRepository {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
-			WinMssDatabaseUtil.closeStatementResultSet(statement, resultSet);
+			WinMSSDatabaseUtil.closeStatementResultSet(statement, resultSet);
 		}
 		return stages;
 	}

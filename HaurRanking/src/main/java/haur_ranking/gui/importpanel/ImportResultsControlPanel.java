@@ -12,13 +12,14 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import haur_ranking.event.DataImportEvent.DataImportEventType;
+import haur_ranking.event.DataImportEvent.ImportStatus;
 import haur_ranking.event.GUIDataEvent;
+import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
 import haur_ranking.gui.GUIDataService;
 import haur_ranking.gui.filters.WinMSSFileFilter;
 import haur_ranking.service.LoadResultDataFromWinMSSTask;
-import haur_ranking.service.MatchService;
-import haur_ranking.service.MatchService.ImportStatus;
 import haur_ranking.service.SaveSelectedResultsToHaurRankingDbTask;
 
 public class ImportResultsControlPanel extends JPanel implements GUIDataEventListener {
@@ -58,7 +59,7 @@ public class ImportResultsControlPanel extends JPanel implements GUIDataEventLis
 		this.add(importResultsButton);
 		progressBarFrame = new ImportProgressBarFrame();
 		progressBarFrame.setLocationRelativeTo(this);
-		MatchService.addImportProgressEventListener(this);
+		GUIDataService.addRankingDataUpdatedEventListener(this);
 
 	}
 
@@ -80,7 +81,6 @@ public class ImportResultsControlPanel extends JPanel implements GUIDataEventLis
 			Thread importTaskThread = new Thread(loadDataTask);
 			importTaskThread.start();
 			progressBarFrame.setVisible(true);
-
 		}
 	}
 
@@ -94,19 +94,20 @@ public class ImportResultsControlPanel extends JPanel implements GUIDataEventLis
 
 	@Override
 	public void processData(GUIDataEvent event) {
-		if (event.getImportStatus() == ImportStatus.SAVE_TO_HAUR_RANKING_DB_DONE) {
-			loadWinMSSDataButton.setEnabled(true);
-			clearImportAsClassifierSelectionsButton.setEnabled(false);
-			importResultsButton.setEnabled(false);
-			progressBarFrame.setVisible(false);
-			GUIDataService.updateRankingData();
-		}
-		if (event.getImportStatus() == ImportStatus.LOAD_FROM_WINMSS_DONE) {
-			loadWinMSSDataButton.setEnabled(true);
-			importResultsButton.setEnabled(true);
-			clearImportAsClassifierSelectionsButton.setEnabled(true);
-			progressBarFrame.setVisible(false);
-			GUIDataService.updateRankingData();
+		if (event.getEventType() == GUIDataEventType.WINMSS_DATA_IMPORT_EVENT
+				&& event.getDataImportEvent().getDataImportEventType() == DataImportEventType.IMPORT_STATUS_CHANGE) {
+			if (event.getDataImportEvent().getImportStatus() == ImportStatus.SAVE_TO_HAUR_RANKING_DB_DONE) {
+				loadWinMSSDataButton.setEnabled(true);
+				clearImportAsClassifierSelectionsButton.setEnabled(false);
+				importResultsButton.setEnabled(false);
+				progressBarFrame.setVisible(false);
+			}
+			if (event.getDataImportEvent().getImportStatus() == ImportStatus.LOAD_FROM_WINMSS_DONE) {
+				loadWinMSSDataButton.setEnabled(true);
+				importResultsButton.setEnabled(true);
+				clearImportAsClassifierSelectionsButton.setEnabled(true);
+				progressBarFrame.setVisible(false);
+			}
 		}
 
 	}

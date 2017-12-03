@@ -11,9 +11,10 @@ import haur_ranking.domain.IPSCDivision;
 import haur_ranking.domain.Match;
 import haur_ranking.domain.Stage;
 import haur_ranking.domain.StageScoreSheet;
-import haur_ranking.event.GUIDataEvent;
-import haur_ranking.event.GUIDataEvent.GUIDataEventType;
-import haur_ranking.event.GUIDataEventListener;
+import haur_ranking.event.DataImportEvent;
+import haur_ranking.event.DataImportEvent.DataImportEventType;
+import haur_ranking.event.DataImportEvent.ImportStatus;
+import haur_ranking.event.DataImportEventListener;
 import haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
 import haur_ranking.repository.haur_ranking_repository.MatchRepository;
 import haur_ranking.repository.winmss_repository.WinMSSMatchRepository;
@@ -23,16 +24,10 @@ import haur_ranking.repository.winmss_repository.WinMSSStageScoreSheetRepository
 public class MatchService {
 	private static EntityManager entityManager;
 
-	// Variables queried by GUI for progress bar
-	public enum ImportStatus {
-		READY, LOADING_FROM_WINMSS, SAVING_TO_HAUR_RANKING_DB, GENERATING_RANKING, SAVE_TO_HAUR_RANKING_DB_DONE, LOAD_FROM_WINMSS_DONE
-	};
-
-	private static ImportStatus importStatus = ImportStatus.READY;
 	private static int progressCounterTotalSteps;
 	private static double progressCounterCompletedSteps;
 	private static int progressPercentage = 0;
-	private static List<GUIDataEventListener> importProgressEventListeners = new ArrayList<GUIDataEventListener>();
+	private static List<DataImportEventListener> importProgressEventListeners = new ArrayList<DataImportEventListener>();
 
 	public static Match find(Match match, EntityManager entityManager) {
 		return MatchRepository.find(match, entityManager);
@@ -69,8 +64,8 @@ public class MatchService {
 	public static List<Match> findNewResultsInWinMSSDatabase(String winMssDbLocation) {
 		setImportProgressStatus(ImportStatus.LOADING_FROM_WINMSS);
 		entityManager = HaurRankingDatabaseUtils.getEntityManager();
-		List<Match> winMssMatches = WinMSSMatchRepository.findAll(winMssDbLocation);
-		for (Match match : winMssMatches) {
+		List<Match> winMSSMatches = WinMSSMatchRepository.findAll(winMssDbLocation);
+		for (Match match : winMSSMatches) {
 			match.setStages(WinMSSStageRepository.findStagesForMatch(match));
 			for (Stage stage : match.getStages()) {
 				stage.setMatch(match);
@@ -85,8 +80,11 @@ public class MatchService {
 				}
 			}
 		}
-		setImportProgressStatus(ImportStatus.LOAD_FROM_WINMSS_DONE);
-		return winMssMatches;
+		DataImportEvent loadFromWinMSSDoneEvent = new DataImportEvent(DataImportEventType.IMPORT_STATUS_CHANGE);
+		loadFromWinMSSDoneEvent.setImportStatus(ImportStatus.LOAD_FROM_WINMSS_DONE);
+		loadFromWinMSSDoneEvent.setWinMSSMatches(winMSSMatches);
+		emitDataImportEvent(loadFromWinMSSDoneEvent);
+		return winMSSMatches;
 	}
 
 	// Fetch stage score sheets for stages selected by user and save to Ranking
@@ -235,20 +233,24 @@ public class MatchService {
 	}
 
 	private static void setImportProgressStatus(ImportStatus newStatus) {
-		importStatus = newStatus;
-		emitImportProgressEvent();
+		DataImportEvent event = new DataImportEvent(DataImportEventType.IMPORT_STATUS_CHANGE);
+		event.setImportStatus(newStatus);
+		emitDataImportEvent(event);
 	}
 
 	private static void emitImportProgressEvent() {
-		GUIDataEvent event = new GUIDataEvent(GUIDataEventType.DATA_IMPORT_PROGRESS);
-		event.setImportStatus(importStatus);
+		DataImportEvent event = new DataImportEvent(DataImportEventType.IMPORT_PROGRESS);
 		event.setProgressPercent(progressPercentage);
-		for (GUIDataEventListener listener : importProgressEventListeners) {
+		emitDataImportEvent(event);
+	}
+
+	private static void emitDataImportEvent(DataImportEvent event) {
+		for (DataImportEventListener listener : importProgressEventListeners) {
 			listener.processData(event);
 		}
 	}
 
-	public static void addImportProgressEventListener(GUIDataEventListener listener) {
+	public static void addImportProgressEventListener(DataImportEventListener listener) {
 		importProgressEventListeners.add(listener);
 	}
 }

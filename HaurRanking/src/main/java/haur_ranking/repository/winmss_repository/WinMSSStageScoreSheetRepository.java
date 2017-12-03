@@ -16,7 +16,7 @@ public class WinMSSStageScoreSheetRepository {
 
 	public static int getScoreSheetCountForStage(Match match, Stage stage) {
 		int count = -1;
-		Connection connection = WinMssDatabaseUtil.getConnection();
+		Connection connection = WinMSSDatabaseUtil.getConnection();
 		Statement statement = null;
 		ResultSet resultSet = null;
 		try {
@@ -29,7 +29,7 @@ public class WinMSSStageScoreSheetRepository {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
-			WinMssDatabaseUtil.closeStatementResultSet(statement, resultSet);
+			WinMSSDatabaseUtil.closeStatementResultSet(statement, resultSet);
 		}
 		return count;
 	}
@@ -37,7 +37,7 @@ public class WinMSSStageScoreSheetRepository {
 	public static List<StageScoreSheet> find(Match match, Stage stage) {
 
 		List<StageScoreSheet> resultScoreSheets = new ArrayList<StageScoreSheet>();
-		Connection connection = WinMssDatabaseUtil.getConnection();
+		Connection connection = WinMSSDatabaseUtil.getConnection();
 		Statement statement = null;
 		ResultSet resultSet = null;
 
@@ -95,7 +95,7 @@ public class WinMSSStageScoreSheetRepository {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
-			WinMssDatabaseUtil.closeStatementResultSet(statement, resultSet);
+			WinMSSDatabaseUtil.closeStatementResultSet(statement, resultSet);
 		}
 		return resultScoreSheets;
 	}

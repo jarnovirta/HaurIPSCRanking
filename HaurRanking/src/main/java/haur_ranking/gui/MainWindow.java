@@ -21,7 +21,7 @@ import haur_ranking.gui.databasepanel.DatabasePanel;
 import haur_ranking.gui.importpanel.ImportResultsPanel;
 import haur_ranking.gui.rankingpanel.RankingPanel;
 import haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
-import haur_ranking.repository.winmss_repository.WinMssDatabaseUtil;
+import haur_ranking.repository.winmss_repository.WinMSSDatabaseUtil;
 
 public class MainWindow {
 
@@ -51,6 +51,7 @@ public class MainWindow {
 	}
 
 	public void prepareGUI() {
+		GUIDataService.init();
 		initializeFonts();
 		mainFrame = new JFrame("HAUR Ranking");
 		mainFrame.setLocationRelativeTo(null);
@@ -77,7 +78,7 @@ public class MainWindow {
 		mainFrame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent windowEvent) {
-				WinMssDatabaseUtil.closeConnection();
+				WinMSSDatabaseUtil.closeConnection();
 				HaurRankingDatabaseUtils.closeEntityManagerFactory();
 				System.exit(0);
 			}

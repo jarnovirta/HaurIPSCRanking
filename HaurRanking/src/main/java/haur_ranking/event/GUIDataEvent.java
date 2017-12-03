@@ -4,19 +4,17 @@ import java.util.List;
 
 import haur_ranking.domain.DatabaseStatistics;
 import haur_ranking.domain.Ranking;
-import haur_ranking.service.MatchService.ImportStatus;
 
 public class GUIDataEvent {
 	public enum GUIDataEventType {
-		NEW_HAUR_RANKING_DB_DATA, NEW_WINMSS_DB_DATA, DATA_IMPORT_PROGRESS
+		GUI_DATA_UPDATE, WINMSS_DATA_IMPORT_EVENT
 	}
 
 	private GUIDataEventType eventType;
+	private DataImportEvent dataImportEvent;
 	private Ranking ranking;
 	private DatabaseStatistics databaseStatistics;
 	private List<String[]> importedMatchesTableData;
-	private int progressPercent;
-	private ImportStatus importStatus;
 
 	public GUIDataEvent() {
 	}
@@ -57,20 +55,12 @@ public class GUIDataEvent {
 		this.importedMatchesTableData = importedMatchesTableData;
 	}
 
-	public int getProgressPercent() {
-		return progressPercent;
+	public DataImportEvent getDataImportEvent() {
+		return dataImportEvent;
 	}
 
-	public void setProgressPercent(int progressPercent) {
-		this.progressPercent = progressPercent;
-	}
-
-	public ImportStatus getImportStatus() {
-		return importStatus;
-	}
-
-	public void setImportStatus(ImportStatus importStatus) {
-		this.importStatus = importStatus;
+	public void setDataImportEvent(DataImportEvent dataImportEvent) {
+		this.dataImportEvent = dataImportEvent;
 	}
 
 }

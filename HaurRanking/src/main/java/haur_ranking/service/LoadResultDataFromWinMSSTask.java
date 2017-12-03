@@ -1,10 +1,5 @@
 package haur_ranking.service;
 
-import java.util.List;
-
-import haur_ranking.domain.Match;
-import haur_ranking.gui.GUIDataService;
-
 public class LoadResultDataFromWinMSSTask implements Runnable {
 	private String winMSSFilePath;
 
@@ -14,7 +9,6 @@ public class LoadResultDataFromWinMSSTask implements Runnable {
 
 	@Override
 	public void run() {
-		List<Match> matches = MatchService.findNewResultsInWinMSSDatabase(winMSSFilePath);
-		GUIDataService.setImportResultsPanelMatchList(matches);
+		MatchService.findNewResultsInWinMSSDatabase(winMSSFilePath);
 	}
 }

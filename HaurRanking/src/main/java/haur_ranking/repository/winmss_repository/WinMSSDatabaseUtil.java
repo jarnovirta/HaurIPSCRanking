@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 
 // Methods for using a Ucanaccess connection to WinMSS database (Microsoft Access database file, .mdb).
-public class WinMssDatabaseUtil {
+public class WinMSSDatabaseUtil {
 
 	private static Connection connection = null;
 	private static String fileLocation = null;

@@ -6,6 +6,9 @@ import java.util.List;
 import haur_ranking.domain.Match;
 import haur_ranking.domain.Ranking;
 import haur_ranking.domain.Stage;
+import haur_ranking.event.DataImportEvent;
+import haur_ranking.event.DataImportEvent.DataImportEventType;
+import haur_ranking.event.DataImportEvent.ImportStatus;
 import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
@@ -19,14 +22,33 @@ public class GUIDataService {
 	private static List<GUIDataEventListener> dataUpdateListeners = new ArrayList<GUIDataEventListener>();
 	private static List<Match> importResultsPanelMatchList;
 
+	public static void init() {
+		MatchService.addImportProgressEventListener(new GUIDataImportEventListener());
+	}
+
+	public static void processData(DataImportEvent event) {
+		if (event.getDataImportEventType() == DataImportEventType.IMPORT_STATUS_CHANGE
+				&& event.getImportStatus() == ImportStatus.LOAD_FROM_WINMSS_DONE) {
+			importResultsPanelMatchList = event.getWinMSSMatches();
+		}
+
+		GUIDataEvent guiEvent = new GUIDataEvent(GUIDataEventType.WINMSS_DATA_IMPORT_EVENT);
+		guiEvent.setDataImportEvent(event);
+		emitEvent(guiEvent);
+		if (event.getDataImportEventType() == DataImportEventType.IMPORT_STATUS_CHANGE
+				&& event.getImportStatus() == ImportStatus.SAVE_TO_HAUR_RANKING_DB_DONE) {
+			importResultsPanelMatchList = null;
+			updateRankingData();
+		}
+	}
+
 	public static void updateRankingData() {
 		ranking = RankingService.findCurrentRanking();
-		GUIDataEvent event = new GUIDataEvent(GUIDataEventType.NEW_HAUR_RANKING_DB_DATA);
+		GUIDataEvent event = new GUIDataEvent(GUIDataEventType.GUI_DATA_UPDATE);
 		event.setRanking(ranking);
 		event.setDatabaseStatistics(DatabaseStatisticsService.getDatabaseStatistics());
 		event.setImportedMatchesTableData(MatchService.getGUIImportedMatchesTableData());
 		emitEvent(event);
-
 	}
 
 	public static Ranking getRanking() {
@@ -41,19 +63,13 @@ public class GUIDataService {
 		return importResultsPanelMatchList;
 	}
 
-	public static void setImportResultsPanelMatchList(List<Match> matches) {
-		importResultsPanelMatchList = matches;
-		emitEvent(new GUIDataEvent(GUIDataEventType.NEW_WINMSS_DB_DATA));
-	}
-
 	public static void clearImportAsClassifierSelections() {
 		for (Match match : importResultsPanelMatchList) {
 			for (Stage stage : match.getStages()) {
 				stage.setSaveAsClassifierStage(null);
 			}
 		}
-		emitEvent(new GUIDataEvent(GUIDataEventType.NEW_WINMSS_DB_DATA));
-
+		emitEvent(new GUIDataEvent(GUIDataEventType.GUI_DATA_UPDATE));
 	}
 
 	private static void emitEvent(GUIDataEvent event) {
@@ -61,5 +77,4 @@ public class GUIDataService {
 			listener.processData(event);
 		}
 	}
-
 }

@@ -18,7 +18,7 @@ public class WinMSSMatchRepository {
 		Statement statement = null;
 		ResultSet resultSet = null;
 		try {
-			connection = WinMssDatabaseUtil.createConnection(fileLocation);
+			connection = WinMSSDatabaseUtil.createConnection(fileLocation);
 			statement = connection.createStatement();
 			resultSet = statement.executeQuery(
 					"SELECT MatchId, MatchName, MatchDt FROM tblMatch WHERE TypeFirearmId=1 ORDER BY MatchDt DESC");
@@ -33,7 +33,7 @@ public class WinMSSMatchRepository {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			WinMssDatabaseUtil.closeStatementResultSet(statement, resultSet);
+			WinMSSDatabaseUtil.closeStatementResultSet(statement, resultSet);
 		}
 		return matchList;
 	}
