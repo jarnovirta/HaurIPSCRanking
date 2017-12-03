@@ -12,8 +12,8 @@ import haur_ranking.domain.Match;
 import haur_ranking.domain.Stage;
 import haur_ranking.domain.StageScoreSheet;
 import haur_ranking.event.GUIDataEvent;
-import haur_ranking.event.GUIDataEventListener;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
+import haur_ranking.event.GUIDataEventListener;
 import haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
 import haur_ranking.repository.haur_ranking_repository.MatchRepository;
 import haur_ranking.repository.winmss_repository.WinMSSMatchRepository;
@@ -74,8 +74,10 @@ public class MatchService {
 			match.setStages(WinMSSStageRepository.findStagesForMatch(match));
 			for (Stage stage : match.getStages()) {
 				stage.setMatch(match);
-				if (ClassifierStage.contains(stage.getName()))
+				if (ClassifierStage.contains(stage.getName())) {
 					stage.setClassifierStage(ClassifierStage.parseString(stage.getName()));
+					stage.setSaveAsClassifierStage(stage.getClassifierStage());
+				}
 				if (StageService.find(stage, entityManager) == null) {
 					stage.setNewStage(true);
 				} else {
@@ -103,25 +105,31 @@ public class MatchService {
 			List<Stage> stagesWithNewResults = new ArrayList<Stage>();
 			for (Stage stage : match.getStages()) {
 				if (stage.isNewStage()) {
-					findWinMSSStageScoreSheets(stage);
-					if (stage.getStageScoreSheets() != null && stage.getStageScoreSheets().size() > 0) {
-						stagesWithNewResults.add(stage);
-						for (StageScoreSheet sheet : stage.getStageScoreSheets()) {
-							if (!divisionsWithNewResults.contains(sheet.getIpscDivision()))
-								divisionsWithNewResults.add(sheet.getIpscDivision());
+					if (stage.getSaveAsClassifierStage() != null) {
+						stage.setClassifierStage(stage.getSaveAsClassifierStage());
+						findWinMSSStageScoreSheets(stage);
+						if (stage.getStageScoreSheets() != null && stage.getStageScoreSheets().size() > 0) {
+							stagesWithNewResults.add(stage);
+							for (StageScoreSheet sheet : stage.getStageScoreSheets()) {
+								if (!divisionsWithNewResults.contains(sheet.getIpscDivision()))
+									divisionsWithNewResults.add(sheet.getIpscDivision());
+							}
 						}
 					}
-					addImportProgress(stage.getStageScoreSheets().size());
+					if (stage.getStageScoreSheets() != null)
+						addImportProgress(stage.getStageScoreSheets().size());
 				}
 			}
-			if (stagesWithNewResults.size() > 0)
+			if (stagesWithNewResults.size() > 0) {
+				match.setStages(stagesWithNewResults);
 				matchesWithNewResults.add(match);
+			}
 		}
 		entityManager.getTransaction().commit();
 		entityManager.close();
-		if (matchesWithNewResults.size() > 0)
-
+		if (matchesWithNewResults.size() > 0) {
 			save(matchesWithNewResults);
+		}
 		setImportProgressStatus(ImportStatus.GENERATING_RANKING);
 		RankingService.generateRanking();
 		setImportProgressStatus(ImportStatus.SAVE_TO_HAUR_RANKING_DB_DONE);
@@ -150,7 +158,8 @@ public class MatchService {
 						}
 					}
 					stageScoreSheetCount += stage.getStageScoreSheets().size();
-					addImportProgress(stage.getStageScoreSheets().size() / 2.0);
+					if (stage.getStageScoreSheets() != null)
+						addImportProgress(stage.getStageScoreSheets().size() / 2.0);
 				}
 			}
 			Match existingMatch = find(newMatch, entityManager);
@@ -193,7 +202,9 @@ public class MatchService {
 				rowData[0] = "";
 				rowData[1] = "";
 				rowData[2] = "";
-				rowData[3] = match.getStages().get(i).getName();
+				ClassifierStage classifier = match.getStages().get(i).getClassifierStage();
+				if (classifier != null)
+					rowData[3] = classifier.toString();
 				tableRows.add(rowData);
 			}
 		}

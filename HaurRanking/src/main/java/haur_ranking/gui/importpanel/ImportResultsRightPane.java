@@ -102,7 +102,6 @@ public class ImportResultsRightPane extends JPanel implements GUIDataEventListen
 						stage.setSaveAsClassifierStage((ClassifierStage) importAsClassifierCellValue);
 					} else
 						stage.setSaveAsClassifierStage(null);
-
 				}
 			}
 		});
@@ -110,10 +109,6 @@ public class ImportResultsRightPane extends JPanel implements GUIDataEventListen
 		renderer.setModel(comboBoxCellRendererModel);
 		importStageColumn.setCellRenderer(renderer);
 		return table;
-
-	}
-
-	private void updateImportMatchListData() {
 
 	}
 
