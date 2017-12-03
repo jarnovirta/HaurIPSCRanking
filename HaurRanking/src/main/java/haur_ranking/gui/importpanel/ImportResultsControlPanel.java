@@ -30,6 +30,7 @@ public class ImportResultsControlPanel extends JPanel implements GUIDataEventLis
 	private String lastMSSDbFileLocation = null;
 	private JButton importResultsButton;
 	private JButton loadWinMSSDataButton;
+	private JButton clearImportAsClassifierSelectionsButton;
 	private JFrame progressBarFrame;
 
 	public ImportResultsControlPanel() {
@@ -42,6 +43,14 @@ public class ImportResultsControlPanel extends JPanel implements GUIDataEventLis
 
 		add(Box.createRigidArea(new Dimension(0, 20)));
 
+		clearImportAsClassifierSelectionsButton = new JButton("Poista tallennusvalinnat");
+		clearImportAsClassifierSelectionsButton.setActionCommand("clearImportAsClassifierSelections");
+		clearImportAsClassifierSelectionsButton.addActionListener(new ButtonClickListener());
+		clearImportAsClassifierSelectionsButton.setEnabled(false);
+		this.add(clearImportAsClassifierSelectionsButton);
+
+		add(Box.createRigidArea(new Dimension(0, 20)));
+
 		importResultsButton = new JButton("Tuo tulokset");
 		importResultsButton.setActionCommand("importResults");
 		importResultsButton.addActionListener(new ButtonClickListener());
@@ -50,6 +59,7 @@ public class ImportResultsControlPanel extends JPanel implements GUIDataEventLis
 		progressBarFrame = new ImportProgressBarFrame();
 		progressBarFrame.setLocationRelativeTo(this);
 		MatchService.addImportProgressEventListener(this);
+
 	}
 
 	private void loadWinMSSDataCommandHandler() {
@@ -86,12 +96,15 @@ public class ImportResultsControlPanel extends JPanel implements GUIDataEventLis
 	public void processData(GUIDataEvent event) {
 		if (event.getImportStatus() == ImportStatus.SAVE_TO_HAUR_RANKING_DB_DONE) {
 			loadWinMSSDataButton.setEnabled(true);
+			clearImportAsClassifierSelectionsButton.setEnabled(false);
+			importResultsButton.setEnabled(false);
 			progressBarFrame.setVisible(false);
 			GUIDataService.updateRankingData();
 		}
 		if (event.getImportStatus() == ImportStatus.LOAD_FROM_WINMSS_DONE) {
 			loadWinMSSDataButton.setEnabled(true);
 			importResultsButton.setEnabled(true);
+			clearImportAsClassifierSelectionsButton.setEnabled(true);
 			progressBarFrame.setVisible(false);
 			GUIDataService.updateRankingData();
 		}
@@ -107,6 +120,9 @@ public class ImportResultsControlPanel extends JPanel implements GUIDataEventLis
 			}
 			if (command.equals("importResults")) {
 				importResultsCommandHandler();
+			}
+			if (command.equals("clearImportAsClassifierSelections")) {
+				GUIDataService.clearImportAsClassifierSelections();
 			}
 		}
 	}

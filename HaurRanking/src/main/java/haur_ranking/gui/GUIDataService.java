@@ -5,6 +5,7 @@ import java.util.List;
 
 import haur_ranking.domain.Match;
 import haur_ranking.domain.Ranking;
+import haur_ranking.domain.Stage;
 import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
@@ -42,9 +43,17 @@ public class GUIDataService {
 
 	public static void setImportResultsPanelMatchList(List<Match> matches) {
 		importResultsPanelMatchList = matches;
-		GUIDataEvent event = new GUIDataEvent(GUIDataEventType.NEW_WINMSS_DB_DATA);
-		event.setWinMSSNewMatches(matches);
-		emitEvent(event);
+		emitEvent(new GUIDataEvent(GUIDataEventType.NEW_WINMSS_DB_DATA));
+	}
+
+	public static void clearImportAsClassifierSelections() {
+		for (Match match : importResultsPanelMatchList) {
+			for (Stage stage : match.getStages()) {
+				stage.setSaveAsClassifierStage(null);
+			}
+		}
+		emitEvent(new GUIDataEvent(GUIDataEventType.NEW_WINMSS_DB_DATA));
+
 	}
 
 	private static void emitEvent(GUIDataEvent event) {
@@ -52,4 +61,5 @@ public class GUIDataService {
 			listener.processData(event);
 		}
 	}
+
 }

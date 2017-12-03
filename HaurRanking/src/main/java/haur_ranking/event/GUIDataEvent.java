@@ -3,7 +3,6 @@ package haur_ranking.event;
 import java.util.List;
 
 import haur_ranking.domain.DatabaseStatistics;
-import haur_ranking.domain.Match;
 import haur_ranking.domain.Ranking;
 import haur_ranking.service.MatchService.ImportStatus;
 
@@ -18,7 +17,6 @@ public class GUIDataEvent {
 	private List<String[]> importedMatchesTableData;
 	private int progressPercent;
 	private ImportStatus importStatus;
-	private List<Match> winMSSNewMatches;
 
 	public GUIDataEvent() {
 	}
@@ -73,14 +71,6 @@ public class GUIDataEvent {
 
 	public void setImportStatus(ImportStatus importStatus) {
 		this.importStatus = importStatus;
-	}
-
-	public List<Match> getWinMSSNewMatches() {
-		return winMSSNewMatches;
-	}
-
-	public void setWinMSSNewMatches(List<Match> winMSSNewMatches) {
-		this.winMSSNewMatches = winMSSNewMatches;
 	}
 
 }

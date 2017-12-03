@@ -78,12 +78,15 @@ public class DatabasePanelRightPane extends JPanel implements GUIDataEventListen
 			for (int i = 0; i < (17 - rowCounter); i++)
 				tableModel.addRow(new String[] { "", "", "", "" });
 		}
+		tableModel.fireTableDataChanged();
 	}
 
 	@Override
 	public void processData(GUIDataEvent event) {
 		if (event.getEventType() == GUIDataEventType.NEW_HAUR_RANKING_DB_DATA) {
-			updateDatabaseMatchInfoTable(event.getImportedMatchesTableData());
+			if (event.getImportedMatchesTableData() != null && event.getImportedMatchesTableData().size() > 0) {
+				updateDatabaseMatchInfoTable(event.getImportedMatchesTableData());
+			}
 		}
 	}
 }

@@ -180,8 +180,8 @@ public class ImportResultsRightPane extends JPanel implements GUIDataEventListen
 		if (!stage.isNewStage()) {
 			return "Tallennettu";
 		} else {
-			if (stage.getClassifierStage() != null)
-				return stage.getClassifierStage();
+			if (stage.getSaveAsClassifierStage() != null)
+				return stage.getSaveAsClassifierStage();
 		}
 		return "Ei tallenneta";
 	}
@@ -189,7 +189,7 @@ public class ImportResultsRightPane extends JPanel implements GUIDataEventListen
 	@Override
 	public void processData(GUIDataEvent event) {
 		if (event.getEventType() == GUIDataEventType.NEW_WINMSS_DB_DATA) {
-			updateDatabaseMatchInfoTable(event.getWinMSSNewMatches());
+			updateDatabaseMatchInfoTable(GUIDataService.getImportResultsPanelMatchList());
 		}
 		if (event.getEventType() == GUIDataEventType.NEW_HAUR_RANKING_DB_DATA) {
 			updateDatabaseMatchInfoTable(null);
