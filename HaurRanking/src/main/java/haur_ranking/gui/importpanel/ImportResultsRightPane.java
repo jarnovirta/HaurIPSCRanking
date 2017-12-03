@@ -1,6 +1,8 @@
 package haur_ranking.gui.importpanel;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +31,8 @@ public class ImportResultsRightPane extends JPanel implements GUIDataEventListen
 	 */
 	private static final long serialVersionUID = 1L;
 	private JTable databaseMatchInfoTable;
-	private Map<String, Boolean> editableCellsMap = new HashMap<>();
+	private Map<String, Boolean> editableCellsMap = new HashMap<String, Boolean>();
+	private Map<Integer, Stage> TableRowToStageMap = new HashMap<Integer, Stage>();
 
 	public ImportResultsRightPane() {
 		setLayout(new BorderLayout());
@@ -77,7 +80,7 @@ public class ImportResultsRightPane extends JPanel implements GUIDataEventListen
 		importStageColumn.setHeaderValue("Tallenna");
 		importStageColumn.setPreferredWidth(300);
 
-		JComboBox<Object> comboBox = new JComboBox<Object>();
+		JComboBox<Object> importAsClassifierComboBox = new JComboBox<Object>();
 		ComboBoxCellRenderer renderer = new ComboBoxCellRenderer();
 		DefaultComboBoxModel<Object> comboBoxCellEditorModel = new DefaultComboBoxModel<Object>();
 		DefaultComboBoxModel<Object> comboBoxCellRendererModel = new DefaultComboBoxModel<Object>();
@@ -88,11 +91,29 @@ public class ImportResultsRightPane extends JPanel implements GUIDataEventListen
 			comboBoxCellEditorModel.addElement(classifier);
 			comboBoxCellRendererModel.addElement(classifier);
 		}
-		comboBox.setModel(comboBoxCellEditorModel);
-		importStageColumn.setCellEditor(new DefaultCellEditor(comboBox));
+		importAsClassifierComboBox.setModel(comboBoxCellEditorModel);
+		importAsClassifierComboBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				for (int row = 0; row < databaseMatchInfoTable.getRowCount(); row++) {
+					Object importAsClassifierCellValue = databaseMatchInfoTable.getModel().getValueAt(row, 5);
+					Stage stage = TableRowToStageMap.get(row);
+					if (importAsClassifierCellValue instanceof ClassifierStage) {
+						stage.setSaveAsClassifierStage((ClassifierStage) importAsClassifierCellValue);
+					} else
+						stage.setSaveAsClassifierStage(null);
+
+				}
+			}
+		});
+		importStageColumn.setCellEditor(new DefaultCellEditor(importAsClassifierComboBox));
 		renderer.setModel(comboBoxCellRendererModel);
 		importStageColumn.setCellRenderer(renderer);
 		return table;
+
+	}
+
+	private void updateImportMatchListData() {
 
 	}
 
@@ -123,6 +144,7 @@ public class ImportResultsRightPane extends JPanel implements GUIDataEventListen
 		}
 
 		int matchCounter = 1;
+		int rowCounter = 0;
 		for (Match match : winMSSMatches) {
 			Object[] rowData = new Object[6];
 			rowData[0] = (matchCounter++) + ".";
@@ -135,8 +157,9 @@ public class ImportResultsRightPane extends JPanel implements GUIDataEventListen
 			if (stage.getClassifierStage() != null)
 				rowData[4] = stage.getClassifierStage().toString();
 			rowData[5] = getImportCell(stage);
-
 			tableModel.addRow(rowData);
+			TableRowToStageMap.put(rowCounter, stage);
+			rowCounter++;
 			if (match.getStages().size() == 1)
 				continue;
 			for (int i = 1; i < match.getStages().size(); i++) {
@@ -150,6 +173,8 @@ public class ImportResultsRightPane extends JPanel implements GUIDataEventListen
 					rowData[4] = stage.getClassifierStage();
 				rowData[5] = getImportCell(stage);
 				tableModel.addRow(rowData);
+				TableRowToStageMap.put(rowCounter, stage);
+				rowCounter++;
 			}
 		}
 		setEditableCells(tableModel, winMSSMatches);

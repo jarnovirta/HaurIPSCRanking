@@ -38,6 +38,9 @@ public class Stage {
 	@Transient
 	boolean newStage;
 
+	@Transient
+	ClassifierStage saveAsClassifierStage;
+
 	public Stage() {
 	}
 
@@ -109,6 +112,14 @@ public class Stage {
 
 	public void setNewStage(boolean newStage) {
 		this.newStage = newStage;
+	}
+
+	public ClassifierStage getSaveAsClassifierStage() {
+		return saveAsClassifierStage;
+	}
+
+	public void setSaveAsClassifierStage(ClassifierStage saveAsClassifierStage) {
+		this.saveAsClassifierStage = saveAsClassifierStage;
 	}
 
 }
