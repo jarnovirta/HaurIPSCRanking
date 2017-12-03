@@ -1,4 +1,4 @@
-package haur_ranking.Event;
+package haur_ranking.event;
 
 public interface GUIDataEventListener {
 	public void processData(GUIDataEvent event);

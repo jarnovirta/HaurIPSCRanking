@@ -11,10 +11,10 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
-import haur_ranking.Event.GUIDataEvent;
-import haur_ranking.Event.GUIDataEvent.GUIDataEventType;
-import haur_ranking.Event.GUIDataEventListener;
 import haur_ranking.domain.DatabaseStatistics;
+import haur_ranking.event.GUIDataEvent;
+import haur_ranking.event.GUIDataEventListener;
+import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.gui.GUIDataService;
 
 public class DatabaseStatisticsPanel extends JPanel implements GUIDataEventListener {

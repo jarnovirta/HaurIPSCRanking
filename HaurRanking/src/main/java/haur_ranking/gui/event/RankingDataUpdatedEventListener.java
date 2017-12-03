@@ -1,4 +1,4 @@
-package haur_ranking.gui.Event;
+package haur_ranking.gui.event;
 
 import haur_ranking.domain.Ranking;
 

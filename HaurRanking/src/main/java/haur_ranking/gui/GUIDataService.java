@@ -3,11 +3,11 @@ package haur_ranking.gui;
 import java.util.ArrayList;
 import java.util.List;
 
-import haur_ranking.Event.GUIDataEvent;
-import haur_ranking.Event.GUIDataEvent.GUIDataEventType;
-import haur_ranking.Event.GUIDataEventListener;
 import haur_ranking.domain.Match;
 import haur_ranking.domain.Ranking;
+import haur_ranking.event.GUIDataEvent;
+import haur_ranking.event.GUIDataEventListener;
+import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.service.DatabaseStatisticsService;
 import haur_ranking.service.MatchService;
 import haur_ranking.service.RankingService;

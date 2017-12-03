@@ -5,15 +5,15 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 
-import haur_ranking.Event.GUIDataEvent;
-import haur_ranking.Event.GUIDataEvent.GUIDataEventType;
-import haur_ranking.Event.GUIDataEventListener;
 import haur_ranking.domain.ClassifierStage;
 import haur_ranking.domain.Competitor;
 import haur_ranking.domain.IPSCDivision;
 import haur_ranking.domain.Match;
 import haur_ranking.domain.Stage;
 import haur_ranking.domain.StageScoreSheet;
+import haur_ranking.event.GUIDataEvent;
+import haur_ranking.event.GUIDataEventListener;
+import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
 import haur_ranking.repository.haur_ranking_repository.MatchRepository;
 import haur_ranking.repository.winmss_repository.WinMSSMatchRepository;

@@ -9,8 +9,8 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
-import haur_ranking.Event.GUIDataEvent;
-import haur_ranking.Event.GUIDataEventListener;
+import haur_ranking.event.GUIDataEvent;
+import haur_ranking.event.GUIDataEventListener;
 import haur_ranking.gui.GUIDataService;
 
 public class DatabasePanelRightPane extends JPanel implements GUIDataEventListener {

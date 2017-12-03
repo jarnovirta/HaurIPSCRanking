@@ -6,9 +6,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 
-import haur_ranking.Event.GUIDataEvent;
-import haur_ranking.Event.GUIDataEvent.GUIDataEventType;
-import haur_ranking.Event.GUIDataEventListener;
+import haur_ranking.event.GUIDataEvent;
+import haur_ranking.event.GUIDataEventListener;
+import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.service.MatchService;
 
 public class ImportProgressBarFrame extends JFrame implements GUIDataEventListener {

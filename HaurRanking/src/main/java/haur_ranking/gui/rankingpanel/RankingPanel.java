@@ -27,12 +27,12 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
-import haur_ranking.Event.GUIDataEvent;
-import haur_ranking.Event.GUIDataEventListener;
 import haur_ranking.domain.DivisionRanking;
 import haur_ranking.domain.DivisionRankingRow;
 import haur_ranking.domain.IPSCDivision;
 import haur_ranking.domain.Ranking;
+import haur_ranking.event.GUIDataEvent;
+import haur_ranking.event.GUIDataEventListener;
 import haur_ranking.gui.GUIDataService;
 import haur_ranking.gui.filters.FileFilterUtils;
 import haur_ranking.gui.filters.PdfFileFilter;

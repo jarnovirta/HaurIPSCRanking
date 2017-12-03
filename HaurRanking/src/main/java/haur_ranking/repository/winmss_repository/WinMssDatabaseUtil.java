@@ -33,9 +33,9 @@ public class WinMssDatabaseUtil {
 	}
 
 	public static Connection createConnection(String newFileLocation) {
-		if (connection != null && fileLocation != null && fileLocation.equals(newFileLocation))
+		if (connection != null && fileLocation != null && fileLocation.equals(newFileLocation)) {
 			return connection;
-
+		}
 		try {
 			Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
 			String dbConnectionString = "jdbc:ucanaccess://" + newFileLocation
