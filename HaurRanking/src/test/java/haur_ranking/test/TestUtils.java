@@ -30,9 +30,9 @@ public class TestUtils {
 
 	static List<Match> testMatches = null;
 
-	static ClassifierStage[] classifierStages = new ClassifierStage[] { ClassifierStage.CLC01, ClassifierStage.CLC02,
-			ClassifierStage.CLC03, ClassifierStage.CLC04, ClassifierStage.CLC05, ClassifierStage.CLC06,
-			ClassifierStage.CLC07, ClassifierStage.CLC08, ClassifierStage.CLC09, ClassifierStage.CLC10 };
+	static ClassifierStage[] classifierStages = new ClassifierStage[] { ClassifierStage.CLC01, ClassifierStage.CLC03,
+			ClassifierStage.CLC05, ClassifierStage.CLC07, ClassifierStage.CLC09, ClassifierStage.CLC11,
+			ClassifierStage.CLC13, ClassifierStage.CLC15, ClassifierStage.CLC17, ClassifierStage.CLC19 };
 	static Competitor jarno = new Competitor("Jarno", "Virta");
 	static Competitor jerry = new Competitor("Jerry", "Miculek");
 	static Competitor ben = new Competitor("Ben", "Stoeger");
@@ -180,14 +180,14 @@ public class TestUtils {
 	public static Map<ClassifierStage, Double> getAverageOfTopTwoForStage() {
 		Map<ClassifierStage, Double> averages = new HashMap<ClassifierStage, Double>();
 		averages.put(ClassifierStage.CLC01, 3.55);
-		averages.put(ClassifierStage.CLC02, 4.0);
-		averages.put(ClassifierStage.CLC03, 3.25);
-		averages.put(ClassifierStage.CLC04, 4.65);
-		averages.put(ClassifierStage.CLC05, 5.75);
-		averages.put(ClassifierStage.CLC06, 3.15);
-		averages.put(ClassifierStage.CLC07, 4.2);
-		averages.put(ClassifierStage.CLC08, 3.05);
-		averages.put(ClassifierStage.CLC10, 2.65);
+		averages.put(ClassifierStage.CLC03, 4.0);
+		averages.put(ClassifierStage.CLC05, 3.25);
+		averages.put(ClassifierStage.CLC07, 4.65);
+		averages.put(ClassifierStage.CLC09, 5.75);
+		averages.put(ClassifierStage.CLC11, 3.15);
+		averages.put(ClassifierStage.CLC13, 4.2);
+		averages.put(ClassifierStage.CLC15, 3.05);
+		averages.put(ClassifierStage.CLC17, 2.65);
 		return averages;
 	}
 
