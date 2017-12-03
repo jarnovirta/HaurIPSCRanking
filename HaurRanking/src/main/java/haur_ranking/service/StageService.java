@@ -9,8 +9,11 @@ import haur_ranking.domain.IPSCDivision;
 import haur_ranking.domain.Stage;
 import haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
 import haur_ranking.repository.haur_ranking_repository.StageRepository;
+import haur_ranking.repository.winmss_repository.WinMSSStageRepository;
 
 public class StageService {
+	private static Map<ClassifierStage, Stage> validClassifiers;
+
 	public static Stage find(Stage stage, EntityManager entityManager) {
 		return StageRepository.find(stage, entityManager);
 	}
@@ -21,5 +24,19 @@ public class StageService {
 				.getClassifierStagesWithTwoOrMoreResults(division, entityManager);
 		entityManager.close();
 		return classifierStages;
+	}
+
+	public static boolean isValidClassifier(Stage stage) {
+		if (validClassifiers == null) {
+			validClassifiers = WinMSSStageRepository.getValidClassifiers();
+		}
+		Stage validStage = validClassifiers.get(stage.getSaveAsClassifierStage());
+		if (stage.getPaperTargetCount() != validStage.getPaperTargetCount()
+				|| stage.getPlateCount() != validStage.getPlateCount()
+				|| stage.getPopperCount() != validStage.getPopperCount()
+				|| stage.getMinShotsCount() != validStage.getMinShotsCount()) {
+			return false;
+		}
+		return true;
 	}
 }

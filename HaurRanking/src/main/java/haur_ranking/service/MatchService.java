@@ -62,6 +62,7 @@ public class MatchService {
 	// Find stages with new results, from which user selects stage results to
 	// be imported
 	public static List<Match> findNewResultsInWinMSSDatabase(String winMssDbLocation) {
+
 		setImportProgressStatus(ImportStatus.LOADING_FROM_WINMSS);
 		entityManager = HaurRankingDatabaseUtils.getEntityManager();
 		List<Match> winMSSMatches = WinMSSMatchRepository.findAll(winMssDbLocation);
@@ -90,6 +91,7 @@ public class MatchService {
 	// Fetch stage score sheets for stages selected by user and save to Ranking
 	// Database
 	public static void importSelectedResults(List<Match> matches) {
+		List<Stage> invalidClassifiers = new ArrayList<Stage>();
 		setImportProgressStatus(ImportStatus.SAVING_TO_HAUR_RANKING_DB);
 		// Initialize progress counter variables to be queried by GUI for
 		// progress bar
@@ -105,6 +107,10 @@ public class MatchService {
 				if (stage.isNewStage()) {
 					if (stage.getSaveAsClassifierStage() != null) {
 						stage.setClassifierStage(stage.getSaveAsClassifierStage());
+						if (!StageService.isValidClassifier(stage)) {
+							invalidClassifiers.add(stage);
+							continue;
+						}
 						findWinMSSStageScoreSheets(stage);
 						if (stage.getStageScoreSheets() != null && stage.getStageScoreSheets().size() > 0) {
 							stagesWithNewResults.add(stage);
@@ -128,6 +134,7 @@ public class MatchService {
 		if (matchesWithNewResults.size() > 0) {
 			save(matchesWithNewResults);
 		}
+		System.out.println("INVALID CLASSIFIERS COUNT : " + invalidClassifiers.size());
 		setImportProgressStatus(ImportStatus.GENERATING_RANKING);
 		RankingService.generateRanking();
 		setImportProgressStatus(ImportStatus.SAVE_TO_HAUR_RANKING_DB_DONE);

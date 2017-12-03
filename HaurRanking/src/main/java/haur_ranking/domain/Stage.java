@@ -39,7 +39,25 @@ public class Stage {
 	boolean newStage;
 
 	@Transient
+	int paperTargetCount;
+
+	@Transient
+	int popperCount;
+
+	@Transient
+	int plateCount;
+
+	@Transient
+	int minShotsCount;
+
+	@Transient
+	int penaltyTargetCount;
+
+	@Transient
 	ClassifierStage saveAsClassifierStage;
+
+	@Transient
+	int winMSSStandardStageSetupType;
 
 	public Stage() {
 	}
@@ -122,4 +140,51 @@ public class Stage {
 		this.saveAsClassifierStage = saveAsClassifierStage;
 	}
 
+	public int getPaperTargetCount() {
+		return paperTargetCount;
+	}
+
+	public void setPaperTargetCount(int paperTargetCount) {
+		this.paperTargetCount = paperTargetCount;
+	}
+
+	public int getPopperCount() {
+		return popperCount;
+	}
+
+	public void setPopperCount(int popperCount) {
+		this.popperCount = popperCount;
+	}
+
+	public int getPlateCount() {
+		return plateCount;
+	}
+
+	public void setPlateCount(int plateCount) {
+		this.plateCount = plateCount;
+	}
+
+	public int getWinMSSStandardStageSetupType() {
+		return winMSSStandardStageSetupType;
+	}
+
+	public void setWinMSSStandardStageSetupType(int winMSSStandardStageSetupType) {
+		this.winMSSStandardStageSetupType = winMSSStandardStageSetupType;
+	}
+
+	public int getMinShotsCount() {
+		return minShotsCount;
+	}
+
+	public void setMinShotsCount(int minShotsCount) {
+		this.minShotsCount = minShotsCount;
+	}
+
+	public int getPenaltyTargetCount() {
+		return penaltyTargetCount;
+	}
+
+	public void setPenaltyTargetCount(int penaltyTargetCount) {
+		this.penaltyTargetCount = penaltyTargetCount;
+	}
 }
