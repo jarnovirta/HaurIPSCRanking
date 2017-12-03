@@ -83,6 +83,7 @@ public class ImportResultsRightPane extends JPanel implements GUIDataEventListen
 		DefaultComboBoxModel<Object> comboBoxCellRendererModel = new DefaultComboBoxModel<Object>();
 		comboBoxCellEditorModel.addElement("Ei tallenneta");
 		comboBoxCellRendererModel.addElement("Ei tallenneta");
+		comboBoxCellRendererModel.addElement("Tallennettu");
 		for (ClassifierStage classifier : ClassifierStage.values()) {
 			comboBoxCellEditorModel.addElement(classifier);
 			comboBoxCellRendererModel.addElement(classifier);
@@ -91,7 +92,6 @@ public class ImportResultsRightPane extends JPanel implements GUIDataEventListen
 		importStageColumn.setCellEditor(new DefaultCellEditor(comboBox));
 		renderer.setModel(comboBoxCellRendererModel);
 		importStageColumn.setCellRenderer(renderer);
-
 		return table;
 
 	}
