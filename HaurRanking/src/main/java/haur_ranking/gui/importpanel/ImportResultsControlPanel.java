@@ -19,8 +19,6 @@ import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
 import haur_ranking.gui.GUIDataService;
 import haur_ranking.gui.filters.WinMSSFileFilter;
-import haur_ranking.service.LoadResultDataFromWinMSSTask;
-import haur_ranking.service.SaveSelectedResultsToHaurRankingDbTask;
 
 public class ImportResultsControlPanel extends JPanel implements GUIDataEventListener {
 
@@ -76,20 +74,14 @@ public class ImportResultsControlPanel extends JPanel implements GUIDataEventLis
 			String absoluteFilePath = fileChooser.getSelectedFile().getAbsolutePath();
 			lastMSSDbFileLocation = Paths.get(absoluteFilePath).getParent().toString();
 			loadWinMSSDataButton.setEnabled(false);
-
-			LoadResultDataFromWinMSSTask loadDataTask = new LoadResultDataFromWinMSSTask(absoluteFilePath);
-			Thread importTaskThread = new Thread(loadDataTask);
-			importTaskThread.start();
 			progressBarFrame.setVisible(true);
+			GUIDataService.loadDataFromWinMSS(absoluteFilePath);
 		}
 	}
 
 	private void importResultsCommandHandler() {
-		SaveSelectedResultsToHaurRankingDbTask importResultsTask = new SaveSelectedResultsToHaurRankingDbTask(
-				GUIDataService.getImportResultsPanelMatchList());
-		Thread importTaskThread = new Thread(importResultsTask);
-		importTaskThread.start();
 		progressBarFrame.setVisible(true);
+		GUIDataService.saveResultsToHaurRankingDatabase();
 	}
 
 	@Override

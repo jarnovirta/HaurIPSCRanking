@@ -13,8 +13,10 @@ import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
 import haur_ranking.service.DatabaseStatisticsService;
+import haur_ranking.service.LoadResultDataFromWinMSSTask;
 import haur_ranking.service.MatchService;
 import haur_ranking.service.RankingService;
+import haur_ranking.service.SaveSelectedResultsToHaurRankingDbTask;
 
 public class GUIDataService {
 
@@ -70,6 +72,19 @@ public class GUIDataService {
 			}
 		}
 		emitEvent(new GUIDataEvent(GUIDataEventType.GUI_DATA_UPDATE));
+	}
+
+	public static void loadDataFromWinMSS(String winMSSDatabasePath) {
+		LoadResultDataFromWinMSSTask loadDataTask = new LoadResultDataFromWinMSSTask(winMSSDatabasePath);
+		Thread importTaskThread = new Thread(loadDataTask);
+		importTaskThread.start();
+	}
+
+	public static void saveResultsToHaurRankingDatabase() {
+		SaveSelectedResultsToHaurRankingDbTask importResultsTask = new SaveSelectedResultsToHaurRankingDbTask(
+				GUIDataService.getImportResultsPanelMatchList());
+		Thread importTaskThread = new Thread(importResultsTask);
+		importTaskThread.start();
 	}
 
 	private static void emitEvent(GUIDataEvent event) {

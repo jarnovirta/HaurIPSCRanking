@@ -221,7 +221,6 @@ public class ImportResultsRightPane extends JPanel implements GUIDataEventListen
 
 	@Override
 	public void processData(GUIDataEvent event) {
-		System.out.println("RIGHT PANE GOT EVENT: " + event.getEventType());
 		if (event.getEventType() == GUIDataEventType.WINMSS_DATA_IMPORT_EVENT
 				&& event.getDataImportEvent().getDataImportEventType() == DataImportEventType.IMPORT_STATUS_CHANGE) {
 			if (event.getDataImportEvent().getImportStatus() == ImportStatus.LOAD_FROM_WINMSS_DONE) {
