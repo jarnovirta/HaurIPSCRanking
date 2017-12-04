@@ -87,7 +87,7 @@ public class MainWindow {
 	}
 
 	public void showHaurRankingGui() {
-		GUIDataService.updateRankingData();
+		GUIDataService.updateGUIData();
 		mainFrame.setVisible(true);
 	}
 

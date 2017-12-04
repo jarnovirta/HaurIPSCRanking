@@ -12,8 +12,10 @@ import haur_ranking.domain.Competitor;
 import haur_ranking.domain.DivisionRanking;
 import haur_ranking.domain.DivisionRankingRow;
 import haur_ranking.domain.IPSCDivision;
+import haur_ranking.domain.Match;
 import haur_ranking.domain.Ranking;
 import haur_ranking.domain.StageScoreSheet;
+import haur_ranking.pdf.PdfGenerator;
 import haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
 import haur_ranking.repository.haur_ranking_repository.RankingRepository;
 import haur_ranking.repository.haur_ranking_repository.StageScoreSheetRepository;
@@ -117,10 +119,49 @@ public class RankingService {
 			ranking.getDivisionRankings().add(getDivisionRanking(division));
 		}
 		ranking.setTotalCompetitorsAndResultsCounts();
-
-		delete();
+		Match latestIncludedMatch = MatchService.findLatestMatch();
+		if (latestIncludedMatch != null) {
+			ranking.setLatestIncludedMatchDate(latestIncludedMatch.getDate());
+			ranking.setLatestIncludedMatchName(latestIncludedMatch.getName());
+		}
 		persist(ranking);
 		return ranking;
+	}
+
+	public static void createPdfRankingFile(Ranking ranking, Ranking compareToRanking, String pdfFilePath) {
+		// Check for improved positions in the ranking compared to an older
+		// ranking. Those having improved their position
+		// are shown in bold in the ranking pdf.
+		for (DivisionRanking divisionRanking : ranking.getDivisionRankings()) {
+			DivisionRanking compareToDivisionRanking = null;
+			for (DivisionRanking compare : compareToRanking.getDivisionRankings()) {
+				if (compare.getDivision().equals(divisionRanking.getDivision()))
+					compareToDivisionRanking = compare;
+			}
+			if (compareToDivisionRanking == null)
+				continue;
+			for (DivisionRankingRow row : divisionRanking.getDivisionRankingRows()) {
+				Competitor competitor = row.getCompetitor();
+				row.setImprovedResult(true);
+				for (DivisionRankingRow compareToRow : compareToDivisionRanking.getDivisionRankingRows()) {
+					if (compareToRow.getCompetitor().equals(competitor)) {
+						int newPosition = divisionRanking.getDivisionRankingRows().indexOf(row);
+						int oldPosition = compareToDivisionRanking.getDivisionRankingRows().indexOf(compareToRow);
+						if (newPosition > oldPosition || newPosition == oldPosition) {
+							row.setImprovedResult(false);
+						}
+					}
+				}
+			}
+		}
+		PdfGenerator.createPdfRankingFile(ranking, compareToRanking, pdfFilePath);
+	}
+
+	public static List<Ranking> findOldRankings() {
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		List<Ranking> rankings = RankingRepository.findOldRankings(entityManager);
+		entityManager.close();
+		return rankings;
 	}
 
 	public static Ranking findCurrentRanking() {
@@ -128,14 +169,6 @@ public class RankingService {
 		Ranking ranking = RankingRepository.findCurrentRanking(entityManager);
 		entityManager.close();
 		return ranking;
-	}
-
-	public static void delete() {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
-		entityManager.getTransaction().begin();
-		RankingRepository.delete(entityManager);
-		entityManager.getTransaction().commit();
-		entityManager.close();
 	}
 
 	public static void persist(Ranking ranking) {

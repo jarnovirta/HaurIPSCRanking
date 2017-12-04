@@ -26,6 +26,7 @@ import haur_ranking.domain.DivisionRanking;
 import haur_ranking.domain.DivisionRankingRow;
 import haur_ranking.domain.Ranking;
 import haur_ranking.utils.DataFormatUtils;
+import haur_ranking.utils.DateFormatUtils;
 
 public class PdfGenerator {
 
@@ -33,18 +34,20 @@ public class PdfGenerator {
 	private static Font h2Font = new Font(Font.FontFamily.TIMES_ROMAN, 14, Font.BOLD);
 	private static Font tableHeaderFont = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD);
 	private static Font defaultFont = new Font(Font.FontFamily.TIMES_ROMAN, 12);
+	private static Font boldFont = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD);
 	private static Ranking ranking;
 	private static Document doc;
 	private static boolean firstPage = true;
 
-	public static void createPdfRankingFile(Ranking rankingData, String path) {
+	public static void createPdfRankingFile(Ranking rankingData, Ranking compareToRanking, String path) {
 		ranking = rankingData;
 		try {
 			doc = new Document(PageSize.A4, 50, 50, 90, 120);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			PdfWriter pdfWriter = PdfWriter.getInstance(doc, baos);
-			Footer footer = new Footer(ranking.getDateString(), ranking.getTotalResultsCount(),
-					ranking.getCompetitorsWithRank(), ranking.getValidClassifiersCount());
+			Footer footer = new Footer(DateFormatUtils.calendarToDateString(ranking.getDate()),
+					ranking.getTotalResultsCount(), ranking.getCompetitorsWithRank(),
+					ranking.getValidClassifiersCount());
 			pdfWriter.setPageEvent(footer);
 			doc.open();
 			doc.add(getTitleParagraph());
@@ -109,11 +112,16 @@ public class PdfGenerator {
 			table.addCell(cell);
 
 			int position = 1;
-			for (DivisionRankingRow line : divisionRanking.getDivisionRankingRows()) {
+			for (DivisionRankingRow row : divisionRanking.getDivisionRankingRows()) {
+				Font rowFont;
+				if (row.isImprovedResult())
+					rowFont = boldFont;
+				else
+					rowFont = defaultFont;
 				String positionString = "--";
-				if (line.isRankedCompetitor())
+				if (row.isRankedCompetitor())
 					positionString = position + ".";
-				cell = new PdfPCell(new Paragraph(new Chunk(positionString, defaultFont)));
+				cell = new PdfPCell(new Paragraph(new Chunk(positionString, rowFont)));
 				cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
 				cell.setPadding(5);
 				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
@@ -121,33 +129,33 @@ public class PdfGenerator {
 				table.addCell(cell);
 
 				cell = new PdfPCell(new Paragraph(new Chunk(
-						line.getCompetitor().getFirstName() + " " + line.getCompetitor().getLastName(), defaultFont)));
+						row.getCompetitor().getFirstName() + " " + row.getCompetitor().getLastName(), rowFont)));
 				cell.setHorizontalAlignment(Element.ALIGN_LEFT);
 				cell.setPadding(5);
 				cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
 				table.addCell(cell);
 
 				String percentageString = "--";
-				if (line.isRankedCompetitor())
-					percentageString = DataFormatUtils.formatTwoDecimalNumberToString(
-							DataFormatUtils.round(line.getResultPercentage(), 2)) + " %";
-				cell = new PdfPCell(new Paragraph(new Chunk(percentageString, defaultFont)));
+				if (row.isRankedCompetitor())
+					percentageString = DataFormatUtils
+							.formatTwoDecimalNumberToString(DataFormatUtils.round(row.getResultPercentage(), 2)) + " %";
+				cell = new PdfPCell(new Paragraph(new Chunk(percentageString, rowFont)));
 				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 				cell.setPadding(5);
 				cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
 				table.addCell(cell);
 
 				String averageHfString = "--";
-				if (line.isRankedCompetitor())
+				if (row.isRankedCompetitor())
 					averageHfString = DataFormatUtils
-							.formatTwoDecimalNumberToString(DataFormatUtils.round(line.getHitFactorAverage(), 2));
-				cell = new PdfPCell(new Paragraph(new Chunk(averageHfString, defaultFont)));
+							.formatTwoDecimalNumberToString(DataFormatUtils.round(row.getHitFactorAverage(), 2));
+				cell = new PdfPCell(new Paragraph(new Chunk(averageHfString, rowFont)));
 				cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
 				cell.setPadding(5);
 				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 				table.addCell(cell);
 
-				cell = new PdfPCell(new Paragraph(new Chunk(String.valueOf(line.getResultsCount()), defaultFont)));
+				cell = new PdfPCell(new Paragraph(new Chunk(String.valueOf(row.getResultsCount()), rowFont)));
 				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 				cell.setPadding(5);
 				cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);

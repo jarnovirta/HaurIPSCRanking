@@ -26,6 +26,21 @@ public class MatchRepository {
 		}
 	}
 
+	public static Match findLatestMatch(EntityManager entityManager) {
+		try {
+			String queryString = "SELECT m FROM Match m ORDER BY m.date DESC";
+			TypedQuery<Match> query = entityManager.createQuery(queryString, Match.class);
+			query.setMaxResults(1);
+			List<Match> matches = query.getResultList();
+			if (matches != null && matches.size() > 0)
+				return matches.get(0);
+			return null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	public static List<Match> findAll(EntityManager entityManager) {
 		try {
 			String queryString = "SELECT m FROM Match m ORDER BY m.date DESC";

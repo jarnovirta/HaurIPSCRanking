@@ -15,6 +15,7 @@ public class GUIDataEvent {
 	private Ranking ranking;
 	private DatabaseStatistics databaseStatistics;
 	private List<String[]> importedMatchesTableData;
+	private List<String[]> previousRankingsTableData;
 
 	public GUIDataEvent() {
 	}
@@ -61,6 +62,14 @@ public class GUIDataEvent {
 
 	public void setDataImportEvent(DataImportEvent dataImportEvent) {
 		this.dataImportEvent = dataImportEvent;
+	}
+
+	public List<String[]> getPreviousRankingsTableData() {
+		return previousRankingsTableData;
+	}
+
+	public void setPreviousRankingsTableData(List<String[]> previousRankingsTableData) {
+		this.previousRankingsTableData = previousRankingsTableData;
 	}
 
 }

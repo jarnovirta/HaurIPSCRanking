@@ -23,6 +23,11 @@ public class GUIDataService {
 	private static Ranking ranking;
 	private static List<GUIDataEventListener> dataUpdateListeners = new ArrayList<GUIDataEventListener>();
 	private static List<Match> importResultsPanelMatchList;
+	private static List<Ranking> previousRankingsTableData;
+	// Older ranking chosen for comparison of competitor ranking positions.
+	// People having improved their position
+	// are highlighted in ranking pdf.
+	private static Ranking previousRankingsTableSelectedRanking;
 
 	public static void init() {
 		MatchService.addImportProgressEventListener(new GUIDataImportEventListener());
@@ -40,12 +45,13 @@ public class GUIDataService {
 		if (event.getDataImportEventType() == DataImportEventType.IMPORT_STATUS_CHANGE
 				&& event.getImportStatus() == ImportStatus.SAVE_TO_HAUR_RANKING_DB_DONE) {
 			importResultsPanelMatchList = null;
-			updateRankingData();
+			updateGUIData();
 		}
 	}
 
-	public static void updateRankingData() {
+	public static void updateGUIData() {
 		ranking = RankingService.findCurrentRanking();
+		previousRankingsTableData = RankingService.findOldRankings();
 		GUIDataEvent event = new GUIDataEvent(GUIDataEventType.GUI_DATA_UPDATE);
 		event.setRanking(ranking);
 		event.setDatabaseStatistics(DatabaseStatisticsService.getDatabaseStatistics());
@@ -92,4 +98,21 @@ public class GUIDataService {
 			listener.processData(event);
 		}
 	}
+
+	public static List<Ranking> getPreviousRankingsTableData() {
+		return previousRankingsTableData;
+	}
+
+	public static void setPreviousRankingsTableData(List<Ranking> previousRankingsTableData) {
+		GUIDataService.previousRankingsTableData = previousRankingsTableData;
+	}
+
+	public static Ranking getPreviousRankingsTableSelectedRanking() {
+		return previousRankingsTableSelectedRanking;
+	}
+
+	public static void setPreviousRankingsTableSelectedRanking(Ranking previousRankingsTableSelectedRanking) {
+		GUIDataService.previousRankingsTableSelectedRanking = previousRankingsTableSelectedRanking;
+	}
+
 }

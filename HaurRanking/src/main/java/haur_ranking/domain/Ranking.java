@@ -1,14 +1,14 @@
 package haur_ranking.domain;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,18 +25,21 @@ public class Ranking {
 	@GeneratedValue(strategy = GenerationType.TABLE)
 	private Long id;
 
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<DivisionRanking> divisionRankings = new ArrayList<DivisionRanking>();
 
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date date;
+	private Calendar date;
 
 	private int totalResultsCount;
 	private int competitorsWithRank;
 	private int validClassifiersCount;
 
+	private Calendar latestIncludedMatchDate;
+	private String latestIncludedMatchName;
+
 	public Ranking() {
-		date = new Date();
+		date = Calendar.getInstance();
 	}
 
 	public void setTotalCompetitorsAndResultsCounts() {
@@ -60,25 +63,12 @@ public class Ranking {
 		competitorsWithRank = competitors.size();
 	}
 
-	public Date getDate() {
-		return date;
-	}
-
-	public String getDateString() {
-		SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
-		return DATE_FORMAT.format(this.date);
-	}
-
 	public List<DivisionRanking> getDivisionRankings() {
 		return divisionRankings;
 	}
 
 	public Long getId() {
 		return id;
-	}
-
-	public void setDate(Date date) {
-		this.date = date;
 	}
 
 	public void setDivisionRankings(List<DivisionRanking> divisionRankings) {
@@ -113,4 +103,27 @@ public class Ranking {
 		this.validClassifiersCount = validClassifiersCount;
 	}
 
+	public String getLatestIncludedMatchName() {
+		return latestIncludedMatchName;
+	}
+
+	public void setLatestIncludedMatchName(String latestIncludedMatchName) {
+		this.latestIncludedMatchName = latestIncludedMatchName;
+	}
+
+	public Calendar getDate() {
+		return date;
+	}
+
+	public void setDate(Calendar date) {
+		this.date = date;
+	}
+
+	public Calendar getLatestIncludedMatchDate() {
+		return latestIncludedMatchDate;
+	}
+
+	public void setLatestIncludedMatchDate(Calendar latestIncludedMatchDate) {
+		this.latestIncludedMatchDate = latestIncludedMatchDate;
+	}
 }

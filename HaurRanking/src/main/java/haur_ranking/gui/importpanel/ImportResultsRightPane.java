@@ -86,6 +86,9 @@ public class ImportResultsRightPane extends JPanel implements GUIDataEventListen
 		table.getTableHeader().setReorderingAllowed(false);
 		table.getTableHeader().setResizingAllowed(true);
 		table.setRowHeight(35);
+		table.setCellSelectionEnabled(false);
+		table.setColumnSelectionAllowed(false);
+		table.setRowSelectionAllowed(false);
 
 		TableColumn matchCountColumn = table.getColumnModel().getColumn(0);
 		TableColumn matchNameColumn = table.getColumnModel().getColumn(1);

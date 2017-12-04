@@ -1,3 +1,27 @@
-[EL Info]: 2017-12-04 01:28:52.498--ServerSession(2098041249)--EclipseLink, version: Eclipse Persistence Services - 2.6.5.v20170607-b3d05bd
-[EL Info]: connection: 2017-12-04 01:28:52.946--ServerSession(2098041249)--/file:/C:/Users/Jarno/git/HaurIPSCRanking/HaurRanking/target/classes/_fi.haur_ranking.jpa login successful
-[EL Info]: connection: 2017-12-04 01:31:15.024--ServerSession(2098041249)--/file:/C:/Users/Jarno/git/HaurIPSCRanking/HaurRanking/target/classes/_fi.haur_ranking.jpa logout successful
+[EL Info]: 2017-12-04 22:53:05.204--ServerSession(1204822967)--EclipseLink, version: Eclipse Persistence Services - 2.6.5.v20170607-b3d05bd
+[EL Info]: connection: 2017-12-04 22:53:05.839--ServerSession(1204822967)--/file:/C:/Users/Jarno/git/HaurIPSCRanking/HaurRanking/target/classes/_fi.haur_ranking.jpa login successful
+[EL Warning]: 2017-12-04 22:53:05.987--ServerSession(1204822967)--Exception [EclipseLink-4002] (Eclipse Persistence Services - 2.6.5.v20170607-b3d05bd): org.eclipse.persistence.exceptions.DatabaseException
+Internal Exception: java.sql.SQLSyntaxErrorException: object name already exists: FK_STAGE_MATCH_ID in statement [ALTER TABLE Stage ADD CONSTRAINT FK_Stage_MATCH_ID FOREIGN KEY (MATCH_ID) REFERENCES Match (ID)]
+Error Code: -5504
+Call: ALTER TABLE Stage ADD CONSTRAINT FK_Stage_MATCH_ID FOREIGN KEY (MATCH_ID) REFERENCES Match (ID)
+Query: DataModifyQuery(sql="ALTER TABLE Stage ADD CONSTRAINT FK_Stage_MATCH_ID FOREIGN KEY (MATCH_ID) REFERENCES Match (ID)")
+[EL Warning]: 2017-12-04 22:53:05.989--ServerSession(1204822967)--Exception [EclipseLink-4002] (Eclipse Persistence Services - 2.6.5.v20170607-b3d05bd): org.eclipse.persistence.exceptions.DatabaseException
+Internal Exception: java.sql.SQLSyntaxErrorException: object name already exists: FK_STAGESCORESHEET_COMPETITOR_ID in statement [ALTER TABLE StageScoreSheet ADD CONSTRAINT FK_StageScoreSheet_COMPETITOR_ID FOREIGN KEY (COMPETITOR_ID) REFERENCES Competitor (ID)]
+Error Code: -5504
+Call: ALTER TABLE StageScoreSheet ADD CONSTRAINT FK_StageScoreSheet_COMPETITOR_ID FOREIGN KEY (COMPETITOR_ID) REFERENCES Competitor (ID)
+Query: DataModifyQuery(sql="ALTER TABLE StageScoreSheet ADD CONSTRAINT FK_StageScoreSheet_COMPETITOR_ID FOREIGN KEY (COMPETITOR_ID) REFERENCES Competitor (ID)")
+[EL Warning]: 2017-12-04 22:53:05.99--ServerSession(1204822967)--Exception [EclipseLink-4002] (Eclipse Persistence Services - 2.6.5.v20170607-b3d05bd): org.eclipse.persistence.exceptions.DatabaseException
+Internal Exception: java.sql.SQLSyntaxErrorException: object name already exists: FK_DIVISIONRANKINGLINE_COMPETITOR_ID in statement [ALTER TABLE DivisionRankingLine ADD CONSTRAINT FK_DivisionRankingLine_COMPETITOR_ID FOREIGN KEY (COMPETITOR_ID) REFERENCES Competitor (ID)]
+Error Code: -5504
+Call: ALTER TABLE DivisionRankingLine ADD CONSTRAINT FK_DivisionRankingLine_COMPETITOR_ID FOREIGN KEY (COMPETITOR_ID) REFERENCES Competitor (ID)
+Query: DataModifyQuery(sql="ALTER TABLE DivisionRankingLine ADD CONSTRAINT FK_DivisionRankingLine_COMPETITOR_ID FOREIGN KEY (COMPETITOR_ID) REFERENCES Competitor (ID)")
+[EL Warning]: 2017-12-04 22:53:05.99--ServerSession(1204822967)--Exception [EclipseLink-4002] (Eclipse Persistence Services - 2.6.5.v20170607-b3d05bd): org.eclipse.persistence.exceptions.DatabaseException
+Internal Exception: java.sql.SQLSyntaxErrorException: object name already exists: FK_RANKING_DIVISIONRANKING_RANKING_ID in statement [ALTER TABLE Ranking_DivisionRanking ADD CONSTRAINT FK_Ranking_DivisionRanking_Ranking_ID FOREIGN KEY (Ranking_ID) REFERENCES Ranking (ID)]
+Error Code: -5504
+Call: ALTER TABLE Ranking_DivisionRanking ADD CONSTRAINT FK_Ranking_DivisionRanking_Ranking_ID FOREIGN KEY (Ranking_ID) REFERENCES Ranking (ID)
+Query: DataModifyQuery(sql="ALTER TABLE Ranking_DivisionRanking ADD CONSTRAINT FK_Ranking_DivisionRanking_Ranking_ID FOREIGN KEY (Ranking_ID) REFERENCES Ranking (ID)")
+[EL Warning]: 2017-12-04 22:53:05.99--ServerSession(1204822967)--Exception [EclipseLink-4002] (Eclipse Persistence Services - 2.6.5.v20170607-b3d05bd): org.eclipse.persistence.exceptions.DatabaseException
+Internal Exception: java.sql.SQLSyntaxErrorException: object name already exists: DIVISIONRANKING_DIVISIONRANKINGLINE_RANKINGROWS_ID in statement [ALTER TABLE DivisionRanking_DivisionRankingLine ADD CONSTRAINT DivisionRanking_DivisionRankingLine_rankingRows_ID FOREIGN KEY (rankingRows_ID) REFERENCES DivisionRankingLine (ID)]
+Error Code: -5504
+Call: ALTER TABLE DivisionRanking_DivisionRankingLine ADD CONSTRAINT DivisionRanking_DivisionRankingLine_rankingRows_ID FOREIGN KEY (rankingRows_ID) REFERENCES DivisionRankingLine (ID)
+Query: DataModifyQuery(sql="ALTER TABLE DivisionRanking_DivisionRankingLine ADD CONSTRAINT DivisionRanking_DivisionRankingLine_rankingRows_ID FOREIGN KEY (rankingRows_ID) REFERENCES DivisionRankingLine (ID)")

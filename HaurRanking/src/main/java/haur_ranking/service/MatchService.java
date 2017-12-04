@@ -134,7 +134,6 @@ public class MatchService {
 		if (matchesWithNewResults.size() > 0) {
 			save(matchesWithNewResults);
 		}
-		System.out.println("INVALID CLASSIFIERS COUNT : " + invalidClassifiers.size());
 		setImportProgressStatus(ImportStatus.GENERATING_RANKING);
 		RankingService.generateRanking();
 		setImportProgressStatus(ImportStatus.SAVE_TO_HAUR_RANKING_DB_DONE);
@@ -185,6 +184,13 @@ public class MatchService {
 		entityManager.close();
 		StageScoreSheetService.removeExtraStageScoreSheets(newStageScoreSheets);
 
+	}
+
+	public static Match findLatestMatch() {
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		Match match = MatchRepository.findLatestMatch(entityManager);
+		entityManager.close();
+		return match;
 	}
 
 	public static List<String[]> getGUIImportedMatchesTableData() {

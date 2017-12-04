@@ -1,6 +1,5 @@
 package haur_ranking.domain;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 
@@ -15,6 +14,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+
+import haur_ranking.utils.DateFormatUtils;
 
 @Entity
 @Table(name = "Match")
@@ -39,7 +40,7 @@ public class Match {
 		this.name = matchName;
 		this.winMssMatchId = winMssMatchId;
 		this.date = date;
-		setDateString(date);
+		this.dateString = DateFormatUtils.calendarToDateString(date);
 	}
 
 	public Match(String matchName) {
@@ -84,15 +85,6 @@ public class Match {
 
 	public void setWinMssMatchId(Long winMssMatchId) {
 		this.winMssMatchId = winMssMatchId;
-	}
-
-	private void setDateString(Calendar date) {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-		try {
-			this.dateString = sdf.format(date.getTime());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	public String getDateString() {
