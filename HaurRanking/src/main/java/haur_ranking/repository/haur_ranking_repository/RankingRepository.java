@@ -19,11 +19,15 @@ public class RankingRepository {
 	public static List<Ranking> findOldRankings(EntityManager entityManager) {
 		List<Ranking> rankings = null;
 		try {
-			String queryString = "SELECT r FROM Ranking r ORDER BY r.date";
+			String queryString = "SELECT r FROM Ranking r ORDER BY r.date DESC";
 			TypedQuery<Ranking> query = entityManager.createQuery(queryString, Ranking.class);
 			rankings = query.getResultList();
-			if (rankings != null && rankings.size() > 1)
-				rankings = rankings.subList(1, rankings.size());
+			if (rankings != null) {
+				if (rankings.size() == 1)
+					rankings = null;
+				else
+					rankings = rankings.subList(1, rankings.size());
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -43,7 +47,7 @@ public class RankingRepository {
 
 	public static Ranking findCurrentRanking(EntityManager entityManager) {
 		try {
-			String queryString = "SELECT r FROM Ranking r ORDER BY r.date";
+			String queryString = "SELECT r FROM Ranking r ORDER BY r.date DESC";
 			TypedQuery<Ranking> query = entityManager.createQuery(queryString, Ranking.class);
 			query.setMaxResults(1);
 			List<Ranking> result = query.getResultList();

@@ -141,8 +141,11 @@ public class RankingService {
 			if (compareToDivisionRanking == null)
 				continue;
 			for (DivisionRankingRow row : divisionRanking.getDivisionRankingRows()) {
-				Competitor competitor = row.getCompetitor();
+				if (row.getResultsCount() < 4) {
+					continue;
+				}
 				row.setImprovedResult(true);
+				Competitor competitor = row.getCompetitor();
 				for (DivisionRankingRow compareToRow : compareToDivisionRanking.getDivisionRankingRows()) {
 					if (compareToRow.getCompetitor().equals(competitor)) {
 						int newPosition = divisionRanking.getDivisionRankingRows().indexOf(row);
