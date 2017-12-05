@@ -22,8 +22,8 @@ import javax.swing.table.TableColumn;
 import haur_ranking.domain.Ranking;
 import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
+import haur_ranking.gui.service.GUIDataService;
 import haur_ranking.event.GUIDataEventListener;
-import haur_ranking.gui.GUIDataService;
 import haur_ranking.utils.DateFormatUtils;
 
 public class RankingPanelRightPane extends JPanel implements GUIDataEventListener {

@@ -17,8 +17,8 @@ import haur_ranking.event.DataImportEvent.ImportStatus;
 import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
-import haur_ranking.gui.GUIDataService;
-import haur_ranking.gui.filters.WinMSSFileFilter;
+import haur_ranking.gui.filter.WinMSSFileFilter;
+import haur_ranking.gui.service.GUIDataService;
 
 public class ImportResultsControlPanel extends JPanel implements GUIDataEventListener {
 

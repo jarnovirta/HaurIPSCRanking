@@ -20,6 +20,7 @@ import javax.swing.plaf.FontUIResource;
 import haur_ranking.gui.databasepanel.DatabasePanel;
 import haur_ranking.gui.importpanel.ImportResultsPanel;
 import haur_ranking.gui.rankingpanel.RankingPanel;
+import haur_ranking.gui.service.GUIDataService;
 import haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
 import haur_ranking.repository.winmss_repository.WinMSSDatabaseUtil;
 

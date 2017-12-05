@@ -1,4 +1,4 @@
-package haur_ranking.gui.filters;
+package haur_ranking.gui.filter;
 
 import java.io.File;
 

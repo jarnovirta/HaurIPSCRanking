@@ -1,4 +1,4 @@
-package haur_ranking.gui;
+package haur_ranking.gui.service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,7 @@ public class GUIDataService {
 	private static Ranking previousRankingsTableSelectedRanking;
 
 	public static void init() {
-		MatchService.addImportProgressEventListener(new GUIDataImportEventListener());
+		MatchService.addImportProgressEventListener(new DataImportEventHelper());
 	}
 
 	public static void processData(DataImportEvent event) {
