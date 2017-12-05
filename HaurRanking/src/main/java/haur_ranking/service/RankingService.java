@@ -129,19 +129,26 @@ public class RankingService {
 	}
 
 	public static void createPdfRankingFile(Ranking ranking, Ranking compareToRanking, String pdfFilePath) {
+		setImprovedRankingResults(ranking, compareToRanking);
+		PdfGenerator.createPdfRankingFile(ranking, compareToRanking, pdfFilePath);
+	}
+
+	public static void setImprovedRankingResults(Ranking ranking, Ranking compareToRanking) {
 		// Check for improved positions in the ranking compared to an older
 		// ranking. Those having improved their position
 		// are shown in bold in the ranking pdf.
 		for (DivisionRanking divisionRanking : ranking.getDivisionRankings()) {
 			DivisionRanking compareToDivisionRanking = null;
 			for (DivisionRanking compare : compareToRanking.getDivisionRankings()) {
-				if (compare.getDivision().equals(divisionRanking.getDivision()))
+				if (compare.getDivision().equals(divisionRanking.getDivision())) {
 					compareToDivisionRanking = compare;
+				}
 			}
 			if (compareToDivisionRanking == null)
 				continue;
 			for (DivisionRankingRow row : divisionRanking.getDivisionRankingRows()) {
-				if (row.getResultsCount() < 4) {
+				if (!row.isRankedCompetitor()) {
+					row.setImprovedResult(false);
 					continue;
 				}
 				row.setImprovedResult(true);
@@ -157,7 +164,6 @@ public class RankingService {
 				}
 			}
 		}
-		PdfGenerator.createPdfRankingFile(ranking, compareToRanking, pdfFilePath);
 	}
 
 	public static List<Ranking> findOldRankings() {

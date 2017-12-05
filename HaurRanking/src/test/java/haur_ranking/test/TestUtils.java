@@ -1,12 +1,7 @@
 package haur_ranking.test;
 
 import java.io.File;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,12 +12,16 @@ import org.apache.commons.io.FileUtils;
 
 import haur_ranking.domain.ClassifierStage;
 import haur_ranking.domain.Competitor;
+import haur_ranking.domain.DivisionRanking;
+import haur_ranking.domain.DivisionRankingRow;
 import haur_ranking.domain.IPSCDivision;
 import haur_ranking.domain.Match;
+import haur_ranking.domain.Ranking;
 import haur_ranking.domain.Stage;
 import haur_ranking.domain.StageScoreSheet;
 import haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
 import haur_ranking.service.MatchService;
+import haur_ranking.utils.DateFormatUtils;
 
 // LUO LAPPUJA MUIHIN DIVISIOONIIN
 
@@ -33,12 +32,12 @@ public class TestUtils {
 	static ClassifierStage[] classifierStages = new ClassifierStage[] { ClassifierStage.CLC01, ClassifierStage.CLC03,
 			ClassifierStage.CLC05, ClassifierStage.CLC07, ClassifierStage.CLC09, ClassifierStage.CLC11,
 			ClassifierStage.CLC13, ClassifierStage.CLC15, ClassifierStage.CLC17, ClassifierStage.CLC19 };
-	static Competitor jarno = new Competitor("Jarno", "Virta");
-	static Competitor jerry = new Competitor("Jerry", "Miculek");
-	static Competitor ben = new Competitor("Ben", "Stoeger");
-	static Competitor rob = new Competitor("Rob", "Leatham");
-	static Competitor clint = new Competitor("Clint", "Eastwood");
-	static Competitor charles = new Competitor("Charles", "Bronson");
+	static Competitor jarno = new Competitor("Jarno", "Virta", "");
+	static Competitor jerry = new Competitor("Jerry", "Miculek", "");
+	static Competitor ben = new Competitor("Ben", "Stoeger", "");
+	static Competitor rob = new Competitor("Rob", "Leatham", "");
+	static Competitor clint = new Competitor("Clint", "Eastwood", "");
+	static Competitor charles = new Competitor("Charles", "Bronson", "");
 
 	static Double[] jarnoNewMatchHitFactors = new Double[] { 4.0, 3.9, 2.0, null, 5.5, 4.0, 4.5, null, null, null };
 
@@ -73,7 +72,7 @@ public class TestUtils {
 	protected static Match createNewTestMatch() {
 		Match newTestMatch = new Match();
 		newTestMatch.setName("New match");
-		newTestMatch.setDate(getCalendarFromString("18.11.2017"));
+		newTestMatch.setDate(DateFormatUtils.stringToCalendar("18.11.2017"));
 		newTestMatch.setStages(createTestStages(newTestMatch));
 		return newTestMatch;
 	}
@@ -81,7 +80,7 @@ public class TestUtils {
 	protected static Match createOldTestMatch() {
 		Match oldTestMatch = new Match();
 		oldTestMatch.setName("Old match");
-		oldTestMatch.setDate(getCalendarFromString("12.11.2017"));
+		oldTestMatch.setDate(DateFormatUtils.stringToCalendar("12.11.2017"));
 		oldTestMatch.setStages(createTestStages(oldTestMatch));
 		return oldTestMatch;
 	}
@@ -99,7 +98,7 @@ public class TestUtils {
 	protected static Match createSpringTestMatch() {
 		Match springTestMatch = new Match();
 		springTestMatch.setName("Spring match");
-		springTestMatch.setDate(getCalendarFromString("1.4.2017"));
+		springTestMatch.setDate(DateFormatUtils.stringToCalendar("01.04.2017"));
 		springTestMatch.setStages(createTestStages(springTestMatch));
 		return springTestMatch;
 	}
@@ -210,16 +209,39 @@ public class TestUtils {
 		HaurRankingDatabaseUtils.closeEntityManagerFactory();
 	}
 
-	private static Calendar getCalendarFromString(String dateString) {
-		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-		Date date = null;
-		try {
-			date = formatter.parse(dateString);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		return calendar;
+	protected static Ranking getTestRanking() {
+		Ranking ranking = new Ranking();
+		DivisionRanking divisionRanking = new DivisionRanking(IPSCDivision.PRODUCTION);
+		List<DivisionRankingRow> rows = new ArrayList<DivisionRankingRow>();
+		rows.add(new DivisionRankingRow(jarno, true, 1));
+		rows.add(new DivisionRankingRow(jerry, true, 1));
+		rows.add(new DivisionRankingRow(ben, true, 1));
+		rows.add(new DivisionRankingRow(clint, false, 1));
+		rows.add(new DivisionRankingRow(rob, true, 1));
+
+		divisionRanking.setDivisionRankingRows(rows);
+		List<DivisionRanking> divisionRankings = new ArrayList<DivisionRanking>();
+		divisionRankings.add(divisionRanking);
+		ranking.setDivisionRankings(divisionRankings);
+		return ranking;
 	}
+
+	protected static Ranking getCompareToRanking() {
+		Ranking compareToRanking = new Ranking();
+		DivisionRanking compareToDivisionRanking = new DivisionRanking(IPSCDivision.PRODUCTION);
+
+		List<DivisionRankingRow> compareToRows = new ArrayList<DivisionRankingRow>();
+		compareToRows.add(new DivisionRankingRow(jerry, true, 4));
+		compareToRows.add(new DivisionRankingRow(jarno, true, 4));
+		compareToRows.add(new DivisionRankingRow(ben, true, 4));
+		compareToRows.add(new DivisionRankingRow(rob, true, 4));
+		compareToRows.add(new DivisionRankingRow(clint, false, 4));
+
+		compareToDivisionRanking.setDivisionRankingRows(compareToRows);
+		List<DivisionRanking> compareToDivisionRankings = new ArrayList<DivisionRanking>();
+		compareToDivisionRankings.add(compareToDivisionRanking);
+		compareToRanking.setDivisionRankings(compareToDivisionRankings);
+		return compareToRanking;
+	}
+
 }

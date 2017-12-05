@@ -1,6 +1,8 @@
 package haur_ranking.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -21,6 +23,30 @@ public class RankingServiceTests {
 	@BeforeClass
 	public static void init() {
 		TestUtils.setupDatabase();
+	}
+
+	@Test
+	public void setImprovedRankingResultsTest() {
+		Ranking ranking = TestUtils.getTestRanking();
+		Ranking compareToRanking = TestUtils.getCompareToRanking();
+		System.out.println("Calling setImprovedResults");
+		RankingService.setImprovedRankingResults(ranking, compareToRanking);
+
+		DivisionRankingRow firstRow = ranking.getDivisionRankings().get(0).getDivisionRankingRows().get(0);
+		DivisionRankingRow secondRow = ranking.getDivisionRankings().get(0).getDivisionRankingRows().get(1);
+		DivisionRankingRow thirdRow = ranking.getDivisionRankings().get(0).getDivisionRankingRows().get(2);
+		DivisionRankingRow fourthRow = ranking.getDivisionRankings().get(0).getDivisionRankingRows().get(3);
+		DivisionRankingRow fifthRow = ranking.getDivisionRankings().get(0).getDivisionRankingRows().get(4);
+		// Jarno went from 2nd to 1st
+		assertTrue("Jarno should have improvedResult set to 'true'", firstRow.isImprovedResult());
+		// Jerry went from 1st to second
+		assertFalse("Jerry should have improvedResult set to 'false'", secondRow.isImprovedResult());
+		// Ben stayed 3rd
+		assertFalse("Ben should have improvedResult set to 'false'", thirdRow.isImprovedResult());
+		// Clint does not have a ranking position
+		assertFalse("Clint should have improvedResult set to 'false'", fourthRow.isImprovedResult());
+		// Rob went from 4th to 5th.
+		assertFalse("Rob should have improvedResult set to 'false'", fifthRow.isImprovedResult());
 	}
 
 	@Test

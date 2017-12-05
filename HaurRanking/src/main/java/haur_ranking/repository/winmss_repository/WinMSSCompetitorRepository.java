@@ -18,7 +18,7 @@ public class WinMSSCompetitorRepository {
 			resultSet = statement
 					.executeQuery("SELECT Firstname, Lastname FROM tblMember WHERE MemberId = " + winMSSMemberId);
 			if (resultSet.next()) {
-				competitor = new Competitor(resultSet.getString(1), resultSet.getString(2));
+				competitor = new Competitor(resultSet.getString(1), resultSet.getString(2), resultSet.getString(3));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

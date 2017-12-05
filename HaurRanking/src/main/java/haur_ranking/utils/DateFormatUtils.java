@@ -14,4 +14,15 @@ public class DateFormatUtils {
 		}
 		return dateString;
 	}
+
+	public static Calendar stringToCalendar(String dateString) {
+		Calendar calendar = Calendar.getInstance();
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+			calendar.setTime(sdf.parse(dateString));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return calendar;
+	}
 }
