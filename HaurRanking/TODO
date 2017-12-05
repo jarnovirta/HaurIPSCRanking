@@ -1,15 +1,9 @@
 TODO:
-- 
-- PÃ¤ivÃ¤mÃ¤Ã¤rÃ¤t Date muotoon ja niiden vertailu Date.
-- lisÃ¤Ã¤ toisen nimen alkukirjain kilpailijoille
+
 - Varmista ettÃ¤ DQ kisaajat eivÃ¤t ole mukana (testi)
 
-- korjaa hf keskiarvo kahdeksasta suorituksesta
 - exception handling
 - laske ranking vain muuttuneiden divisioonien osalta. Nyt vissiin lasketaan kaikki?
 
-- tietokantalistaus : EI Match list vaan suoraan tekstirivit tietokannasta.
-
-- kaikki tablet EI editable, ei focus ym.
 
 - Tallennettaessa tyhj� stage ilman tuloslistoja menee aina uudelleen kantaan.

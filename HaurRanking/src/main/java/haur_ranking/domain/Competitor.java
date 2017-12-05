@@ -13,20 +13,24 @@ public class Competitor {
 	@GeneratedValue(strategy = GenerationType.TABLE)
 	private Long id;
 	private Long ssiPrimaryKey;
-	private Long winMssCompetitorId;
-	private Long winMssMemberId;
+	private Long winMSSCompetitorId;
+	private Long winMSSMemberId;
 	private String firstName;
+
 	private String lastName;
+	// winMSSComment is Comment column in WinMSSTable tblMember.
+	// It commonly holds the competitor's middle initial.
+	private String winMSSComment;
 	private String ICS;
 	private String email;
 	private String ssiDisqualificationReason = "no";
-	private int winMssTypeDisqualifyRuleId;
-	private int winMssTypeDisqualificationRuleId;
+	private int winMSSTypeDisqualifyRuleId;
+	private int winMSSTypeDisqualificationRuleId;
 
 	public Competitor() {
 	}
 
-	public Competitor(String firstName, String lastName) {
+	public Competitor(String firstName, String lastName, String winMSSComment) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 	}
@@ -42,7 +46,8 @@ public class Competitor {
 			return false;
 
 		final Competitor other = (Competitor) obj;
-		if (other.getFirstName().equals(this.firstName) && other.getLastName().equals(this.lastName))
+		if (other.getFirstName().equals(this.firstName) && other.getLastName().equals(this.lastName)
+				&& other.getWinMSSComment().equals(this.winMSSComment))
 			return true;
 		else
 			return false;
@@ -77,19 +82,19 @@ public class Competitor {
 	}
 
 	public Long getWinMssCompetitorId() {
-		return winMssCompetitorId;
+		return winMSSCompetitorId;
 	}
 
 	public Long getWinMssMemberId() {
-		return winMssMemberId;
+		return winMSSMemberId;
 	}
 
 	public int getWinMssTypeDisqualificationRuleId() {
-		return winMssTypeDisqualificationRuleId;
+		return winMSSTypeDisqualificationRuleId;
 	}
 
 	public int getWinMssTypeDisqualifyRuleId() {
-		return winMssTypeDisqualifyRuleId;
+		return winMSSTypeDisqualifyRuleId;
 	}
 
 	@Override
@@ -129,19 +134,27 @@ public class Competitor {
 	}
 
 	public void setWinMssCompetitorId(Long winMssCompetitorId) {
-		this.winMssCompetitorId = winMssCompetitorId;
+		this.winMSSCompetitorId = winMssCompetitorId;
 	}
 
 	public void setWinMssMemberId(Long winMssMemberId) {
-		this.winMssMemberId = winMssMemberId;
+		this.winMSSMemberId = winMssMemberId;
 	}
 
 	public void setWinMssTypeDisqualificationRuleId(int winMssTypeDisqualificationRuleId) {
-		this.winMssTypeDisqualificationRuleId = winMssTypeDisqualificationRuleId;
+		this.winMSSTypeDisqualificationRuleId = winMssTypeDisqualificationRuleId;
 	}
 
 	public void setWinMssTypeDisqualifyRuleId(int winMssTypeDisqualifyRuleId) {
-		this.winMssTypeDisqualifyRuleId = winMssTypeDisqualifyRuleId;
+		this.winMSSTypeDisqualifyRuleId = winMssTypeDisqualifyRuleId;
+	}
+
+	public String getWinMSSComment() {
+		return winMSSComment;
+	}
+
+	public void setWinMSSComment(String winMSSComment) {
+		this.winMSSComment = winMSSComment;
 	}
 
 }
