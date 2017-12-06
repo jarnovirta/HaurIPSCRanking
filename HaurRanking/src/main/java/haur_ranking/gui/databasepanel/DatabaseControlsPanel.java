@@ -66,7 +66,7 @@ public class DatabaseControlsPanel extends JPanel {
 	}
 
 	private void deleteStagesCommandHandler() {
-
+		GUIDataService.deleteStages();
 		chooseStagesToDeleteButton.setEnabled(true);
 		cancelDeleteButton.setEnabled(false);
 		deleteStagesButton.setEnabled(false);

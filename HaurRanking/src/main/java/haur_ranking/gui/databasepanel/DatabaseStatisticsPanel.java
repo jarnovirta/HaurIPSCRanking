@@ -78,8 +78,8 @@ public class DatabaseStatisticsPanel extends JPanel implements GUIDataEventListe
 	@Override
 	public void process(GUIDataEvent event) {
 		if (event.getEventType() == GUIDataEventType.GUI_DATA_UPDATE) {
-			if (event.getDatabaseStatistics() != null)
-				setStatisticsTableData(event.getDatabaseStatistics());
+			if (GUIDataService.getDatabaseStatistics() != null)
+				setStatisticsTableData(GUIDataService.getDatabaseStatistics());
 		}
 	}
 }

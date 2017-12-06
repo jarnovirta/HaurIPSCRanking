@@ -33,6 +33,7 @@ import haur_ranking.domain.DivisionRankingRow;
 import haur_ranking.domain.IPSCDivision;
 import haur_ranking.domain.Ranking;
 import haur_ranking.event.GUIDataEvent;
+import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
 import haur_ranking.gui.filter.FileFilterUtils;
 import haur_ranking.gui.filter.PdfFileFilter;
@@ -161,10 +162,15 @@ public class RankingPanelLeftPane extends JPanel implements GUIDataEventListener
 	public void updateRankingTablesData(Ranking ranking) {
 		if (ranking == null)
 			ranking = new Ranking();
-		for (DivisionRanking divisionRanking : ranking.getDivisionRankings()) {
-			JTable divisionTable = divisionRankingTables.get(divisionRanking.getDivision());
+		// Clear tables
+		for (IPSCDivision division : IPSCDivision.values()) {
+			JTable divisionTable = divisionRankingTables.get(division);
 			DefaultTableModel divisionTableModel = (DefaultTableModel) divisionTable.getModel();
 			divisionTableModel.setRowCount(0);
+			divisionTableModel.fireTableDataChanged();
+		}
+		for (DivisionRanking divisionRanking : ranking.getDivisionRankings()) {
+			JTable divisionTable = divisionRankingTables.get(divisionRanking.getDivision());
 			addRowsToDivisionRankingTable(divisionTable, divisionRanking.getDivisionRankingRows());
 		}
 
@@ -246,7 +252,9 @@ public class RankingPanelLeftPane extends JPanel implements GUIDataEventListener
 
 	@Override
 	public void process(GUIDataEvent event) {
-		updateRankingTablesData(event.getRanking());
+		if (event.getEventType() == GUIDataEventType.GUI_DATA_UPDATE && GUIDataService.getRanking() != null) {
+			updateRankingTablesData(GUIDataService.getRanking());
+		}
 	}
 
 	private class ButtonClickListener implements ActionListener {

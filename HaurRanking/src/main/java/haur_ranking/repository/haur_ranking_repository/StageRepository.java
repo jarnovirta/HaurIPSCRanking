@@ -23,6 +23,14 @@ public class StageRepository {
 		}
 	}
 
+	public static void delete(Stage stage, EntityManager entityManager) {
+		try {
+			entityManager.remove(stage);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public static Stage find(Stage stage, EntityManager entityManager) {
 		try {
 			String queryString = "SELECT s FROM Stage s WHERE s.name = :stageName AND s.match.name = :matchName and s.match.date = :matchDate";

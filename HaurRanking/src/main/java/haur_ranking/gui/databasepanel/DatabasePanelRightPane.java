@@ -16,6 +16,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
+import haur_ranking.domain.Match;
 import haur_ranking.domain.Stage;
 import haur_ranking.event.GUIActionEvent;
 import haur_ranking.event.GUIActionEventListener;
@@ -24,6 +25,7 @@ import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
 import haur_ranking.gui.service.GUIActionEventService;
 import haur_ranking.gui.service.GUIDataService;
+import haur_ranking.utils.DateFormatUtils;
 
 public class DatabasePanelRightPane extends JPanel implements GUIDataEventListener, GUIActionEventListener {
 	/**
@@ -69,12 +71,7 @@ public class DatabasePanelRightPane extends JPanel implements GUIDataEventListen
 		table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent event) {
-				GUIDataService.setDatabaseMatchInfoTableStagesToDelete(new ArrayList<Stage>());
-				int[] selectedRowIndexes = table.getSelectedRows();
-				for (int index : selectedRowIndexes) {
-					GUIDataService.getDatabaseMatchInfoTableStagesToDelete()
-							.add(GUIDataService.getDatabaseMatchInfoTableStages().get(index));
-				}
+				setSelectedStagesToDelete();
 			}
 		});
 
@@ -105,17 +102,38 @@ public class DatabasePanelRightPane extends JPanel implements GUIDataEventListen
 		return table;
 	}
 
-	private void updateDatabaseMatchInfoTable(List<String[]> databaseMatchTableData) {
+	private void updateDatabaseMatchInfoTable(List<Match> databaseMatchTableData) {
 		if (databaseMatchTableData == null) {
 			return;
 		}
 
 		DefaultTableModel tableModel = (DefaultTableModel) databaseMatchInfoTable.getModel();
 		tableModel.setRowCount(0);
+
 		int rowCounter = 0;
-		for (String[] row : databaseMatchTableData) {
-			tableModel.addRow(row);
-			rowCounter++;
+		for (Match match : databaseMatchTableData) {
+			String[] row = new String[4];
+			row[0] = rowCounter + 1 + ".";
+			row[1] = match.getName();
+			row[2] = DateFormatUtils.calendarToDateString(match.getDate());
+			if (match.getStages() != null) {
+				if (match.getStages().size() > 0) {
+					row[3] = match.getStages().get(0).getName();
+					tableModel.addRow(row);
+					rowCounter++;
+				}
+				if (match.getStages().size() > 1) {
+					for (int i = 1; i < match.getStages().size(); i++) {
+						row = new String[4];
+						row[0] = "";
+						row[1] = "";
+						row[2] = "";
+						row[3] = match.getStages().get(i).getName();
+						tableModel.addRow(row);
+						rowCounter++;
+					}
+				}
+			}
 		}
 		if (rowCounter > 0) {
 			for (int i = 0; i < (17 - rowCounter); i++)
@@ -124,6 +142,7 @@ public class DatabasePanelRightPane extends JPanel implements GUIDataEventListen
 		tableModel.fireTableDataChanged();
 		if (databaseMatchInfoTable.getRowCount() > 0) {
 			databaseMatchInfoTable.setRowSelectionInterval(0, 0);
+
 		}
 		cardLayout.show(this, DatabaseDataTableStatus.HAS_DATA.toString());
 	}
@@ -131,8 +150,8 @@ public class DatabasePanelRightPane extends JPanel implements GUIDataEventListen
 	@Override
 	public void process(GUIDataEvent event) {
 		if (event.getEventType() == GUIDataEventType.GUI_DATA_UPDATE) {
-			if (event.getImportedMatchesTableData() != null && event.getImportedMatchesTableData().size() > 0) {
-				updateDatabaseMatchInfoTable(event.getImportedMatchesTableData());
+			if (GUIDataService.getDatabaseMatchInfoTableData() != null) {
+				updateDatabaseMatchInfoTable(GUIDataService.getDatabaseMatchInfoTableData());
 			}
 		}
 	}
@@ -141,13 +160,25 @@ public class DatabasePanelRightPane extends JPanel implements GUIDataEventListen
 	public void process(GUIActionEvent event) {
 		switch (event.getEventType()) {
 		case CHOOSE_STAGES_TO_DELETE_BUTTON_CLICKED:
+			setSelectedStagesToDelete();
 			databaseMatchInfoTable.setRowSelectionAllowed(true);
 			break;
 		case DELETE_STAGES_BUTTON_CLICKED:
+
+			databaseMatchInfoTable.setRowSelectionAllowed(false);
 			break;
 		case CANCEL_DELETE_STAGES_BUTTON_CLICKED:
 			databaseMatchInfoTable.setRowSelectionAllowed(false);
 			break;
+		}
+	}
+
+	private void setSelectedStagesToDelete() {
+		GUIDataService.setDatabaseMatchInfoTableStagesToDelete(new ArrayList<Stage>());
+		int[] selectedRowIndexes = databaseMatchInfoTable.getSelectedRows();
+		for (int index : selectedRowIndexes) {
+			GUIDataService.getDatabaseMatchInfoTableStagesToDelete()
+					.add(GUIDataService.getDatabaseMatchInfoTableStages().get(index));
 		}
 	}
 }

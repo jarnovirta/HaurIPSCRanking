@@ -1,11 +1,13 @@
 package haur_ranking.service;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
 
 import haur_ranking.domain.ClassifierStage;
 import haur_ranking.domain.IPSCDivision;
+import haur_ranking.domain.Match;
 import haur_ranking.domain.Stage;
 import haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
 import haur_ranking.repository.haur_ranking_repository.StageRepository;
@@ -38,5 +40,21 @@ public class StageService {
 			return false;
 		}
 		return true;
+	}
+
+	public static void delete(List<Stage> stages) {
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		entityManager.getTransaction().begin();
+		for (Stage stage : stages) {
+			Match match = stage.getMatch();
+			match.getStages().remove(stage);
+			if (!entityManager.contains(stage))
+				stage = entityManager.merge(stage);
+			StageRepository.delete(stage, entityManager);
+			entityManager.flush();
+			if (match.getStages().size() == 0)
+				MatchService.delete(match);
+		}
+		entityManager.getTransaction().commit();
 	}
 }

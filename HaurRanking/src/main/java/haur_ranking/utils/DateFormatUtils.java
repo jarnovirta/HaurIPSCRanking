@@ -5,6 +5,8 @@ import java.util.Calendar;
 
 public class DateFormatUtils {
 	public static String calendarToDateString(Calendar date) {
+		if (date == null)
+			return "";
 		String dateString = null;
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
 		try {

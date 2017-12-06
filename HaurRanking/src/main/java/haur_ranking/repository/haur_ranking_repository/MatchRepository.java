@@ -26,6 +26,14 @@ public class MatchRepository {
 		}
 	}
 
+	public static void delete(Match match, EntityManager entityManager) {
+		try {
+			entityManager.remove(match);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public static Match findLatestMatch(EntityManager entityManager) {
 		try {
 			String queryString = "SELECT m FROM Match m ORDER BY m.date DESC";

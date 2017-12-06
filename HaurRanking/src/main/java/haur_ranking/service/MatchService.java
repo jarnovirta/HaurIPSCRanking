@@ -33,6 +33,24 @@ public class MatchService {
 		return MatchRepository.find(match, entityManager);
 	}
 
+	public static void delete(Match match) {
+		try {
+			EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+			boolean commitTransaction = false;
+			if (!entityManager.getTransaction().isActive()) {
+				entityManager.getTransaction().begin();
+				commitTransaction = true;
+			}
+			if (!entityManager.contains(match))
+				match = entityManager.merge(match);
+			MatchRepository.delete(match, entityManager);
+			if (commitTransaction)
+				entityManager.getTransaction().commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public static List<Match> findAll() {
 		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
 		List<Match> matches = null;

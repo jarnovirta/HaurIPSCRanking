@@ -116,13 +116,18 @@ public class RankingService {
 	public static Ranking generateRanking() {
 		Ranking ranking = new Ranking();
 		for (IPSCDivision division : IPSCDivision.values()) {
-			ranking.getDivisionRankings().add(getDivisionRanking(division));
+			DivisionRanking divRanking = getDivisionRanking(division);
+			if (divRanking.getDivisionRankingRows().size() > 0) {
+				ranking.getDivisionRankings().add(getDivisionRanking(division));
+			}
 		}
 		ranking.setTotalCompetitorsAndResultsCounts();
 		Match latestIncludedMatch = MatchService.findLatestMatch();
 		if (latestIncludedMatch != null) {
 			ranking.setLatestIncludedMatchDate(latestIncludedMatch.getDate());
 			ranking.setLatestIncludedMatchName(latestIncludedMatch.getName());
+		} else {
+			ranking.setLatestIncludedMatchName("--");
 		}
 		persist(ranking);
 		return ranking;

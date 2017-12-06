@@ -3,6 +3,7 @@ package haur_ranking.gui.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import haur_ranking.domain.DatabaseStatistics;
 import haur_ranking.domain.Match;
 import haur_ranking.domain.Ranking;
 import haur_ranking.domain.Stage;
@@ -17,6 +18,7 @@ import haur_ranking.service.LoadResultDataFromWinMSSTask;
 import haur_ranking.service.MatchService;
 import haur_ranking.service.RankingService;
 import haur_ranking.service.SaveSelectedResultsToHaurRankingDbTask;
+import haur_ranking.service.StageService;
 
 public class GUIDataService {
 
@@ -26,6 +28,8 @@ public class GUIDataService {
 	private static List<Ranking> previousRankingsTableData = new ArrayList<Ranking>();
 	private static List<Stage> databaseMatchInfoTableStages = new ArrayList<Stage>();;
 	private static List<Stage> databaseMatchInfoTableStagesToDelete = new ArrayList<Stage>();
+	private static List<Match> databaseMatchInfoTableData;
+	private static DatabaseStatistics databaseStatistics;
 
 	// Older ranking chosen for comparison of competitor ranking positions.
 	// People having improved their position
@@ -56,16 +60,21 @@ public class GUIDataService {
 		ranking = RankingService.findCurrentRanking();
 		previousRankingsTableData = RankingService.findOldRankings();
 		GUIDataEvent event = new GUIDataEvent(GUIDataEventType.GUI_DATA_UPDATE);
-		event.setRanking(ranking);
-		event.setDatabaseStatistics(DatabaseStatisticsService.getDatabaseStatistics());
-		List<Match> databaseMatches = MatchService.findAll();
-
-		for (Match match : databaseMatches) {
+		databaseStatistics = DatabaseStatisticsService.getDatabaseStatistics();
+		databaseMatchInfoTableStages.clear();
+		databaseMatchInfoTableData = MatchService.findAll();
+		for (Match match : databaseMatchInfoTableData) {
 			if (match.getStages() != null)
 				databaseMatchInfoTableStages.addAll(match.getStages());
 		}
-		event.setImportedMatchesTableData(MatchService.getGUIImportedMatchesTableData());
 		emitEvent(event);
+	}
+
+	public static void deleteStages() {
+		StageService.delete(GUIDataService.getDatabaseMatchInfoTableStagesToDelete());
+		GUIDataService.clearStagesToDelete();
+		RankingService.generateRanking();
+		GUIDataService.updateGUIData();
 	}
 
 	public static Ranking getRanking() {
@@ -142,6 +151,22 @@ public class GUIDataService {
 
 	public static void clearStagesToDelete() {
 		databaseMatchInfoTableStagesToDelete.clear();
+	}
+
+	public static DatabaseStatistics getDatabaseStatistics() {
+		return databaseStatistics;
+	}
+
+	public static void setDatabaseStatistics(DatabaseStatistics databaseStatistics) {
+		GUIDataService.databaseStatistics = databaseStatistics;
+	}
+
+	public static List<Match> getDatabaseMatchInfoTableData() {
+		return databaseMatchInfoTableData;
+	}
+
+	public static void setDatabaseMatchInfoTableData(List<Match> databaseMatchInfoTableData) {
+		GUIDataService.databaseMatchInfoTableData = databaseMatchInfoTableData;
 	}
 
 }
