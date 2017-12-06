@@ -47,7 +47,7 @@ public class Competitor {
 
 		final Competitor other = (Competitor) obj;
 		if (other.getFirstName().equals(this.firstName) && other.getLastName().equals(this.lastName)
-				&& other.getWinMSSComment().equals(this.winMSSComment))
+				&& (other.getWinMSSComment() != null && other.getWinMSSComment().equals(this.winMSSComment)))
 			return true;
 		else
 			return false;

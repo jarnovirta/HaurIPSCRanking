@@ -23,7 +23,7 @@ public class RankingRepository {
 			TypedQuery<Ranking> query = entityManager.createQuery(queryString, Ranking.class);
 			rankings = query.getResultList();
 			if (rankings != null) {
-				if (rankings.size() == 1)
+				if (rankings.size() == 0 || rankings.size() == 1)
 					rankings = null;
 				else
 					rankings = rankings.subList(1, rankings.size());

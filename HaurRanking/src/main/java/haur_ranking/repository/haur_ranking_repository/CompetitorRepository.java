@@ -25,6 +25,7 @@ public class CompetitorRepository {
 	}
 
 	public static List<Competitor> findAll(EntityManager entityManager) {
+
 		try {
 			String queryString = "SELECT c FROM Competitor c";
 			final TypedQuery<Competitor> query = entityManager.createQuery(queryString, Competitor.class);
