@@ -21,9 +21,12 @@ import haur_ranking.service.SaveSelectedResultsToHaurRankingDbTask;
 public class GUIDataService {
 
 	private static Ranking ranking;
-	private static List<GUIDataEventListener> dataUpdateListeners = new ArrayList<GUIDataEventListener>();
-	private static List<Match> importResultsPanelMatchList;
-	private static List<Ranking> previousRankingsTableData;
+	private static List<GUIDataEventListener> dataEventListeners = new ArrayList<GUIDataEventListener>();
+	private static List<Match> importResultsPanelMatchList = new ArrayList<Match>();
+	private static List<Ranking> previousRankingsTableData = new ArrayList<Ranking>();
+	private static List<Stage> databaseMatchInfoTableStages = new ArrayList<Stage>();;
+	private static List<Stage> databaseMatchInfoTableStagesToDelete = new ArrayList<Stage>();
+
 	// Older ranking chosen for comparison of competitor ranking positions.
 	// People having improved their position
 	// are highlighted in ranking pdf.
@@ -55,6 +58,12 @@ public class GUIDataService {
 		GUIDataEvent event = new GUIDataEvent(GUIDataEventType.GUI_DATA_UPDATE);
 		event.setRanking(ranking);
 		event.setDatabaseStatistics(DatabaseStatisticsService.getDatabaseStatistics());
+		List<Match> databaseMatches = MatchService.findAll();
+
+		for (Match match : databaseMatches) {
+			if (match.getStages() != null)
+				databaseMatchInfoTableStages.addAll(match.getStages());
+		}
 		event.setImportedMatchesTableData(MatchService.getGUIImportedMatchesTableData());
 		emitEvent(event);
 	}
@@ -63,8 +72,8 @@ public class GUIDataService {
 		return ranking;
 	}
 
-	public static void addRankingDataUpdatedEventListener(GUIDataEventListener listener) {
-		dataUpdateListeners.add(listener);
+	public static void addDataEventListener(GUIDataEventListener listener) {
+		dataEventListeners.add(listener);
 	}
 
 	public static List<Match> getImportResultsPanelMatchList() {
@@ -94,8 +103,8 @@ public class GUIDataService {
 	}
 
 	private static void emitEvent(GUIDataEvent event) {
-		for (GUIDataEventListener listener : dataUpdateListeners) {
-			listener.processData(event);
+		for (GUIDataEventListener listener : dataEventListeners) {
+			listener.process(event);
 		}
 	}
 
@@ -113,6 +122,26 @@ public class GUIDataService {
 
 	public static void setPreviousRankingsTableSelectedRanking(Ranking previousRankingsTableSelectedRanking) {
 		GUIDataService.previousRankingsTableSelectedRanking = previousRankingsTableSelectedRanking;
+	}
+
+	public static List<Stage> getDatabaseMatchInfoTableStages() {
+		return databaseMatchInfoTableStages;
+	}
+
+	public static void setDatabaseMatchInfoTableStages(List<Stage> databaseMatchInfoTableStages) {
+		GUIDataService.databaseMatchInfoTableStages = databaseMatchInfoTableStages;
+	}
+
+	public static List<Stage> getDatabaseMatchInfoTableStagesToDelete() {
+		return databaseMatchInfoTableStagesToDelete;
+	}
+
+	public static void setDatabaseMatchInfoTableStagesToDelete(List<Stage> databaseMatchInfoTableStagesToDelete) {
+		GUIDataService.databaseMatchInfoTableStagesToDelete = databaseMatchInfoTableStagesToDelete;
+	}
+
+	public static void clearStagesToDelete() {
+		databaseMatchInfoTableStagesToDelete.clear();
 	}
 
 }

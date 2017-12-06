@@ -22,8 +22,8 @@ import javax.swing.table.TableColumn;
 import haur_ranking.domain.Ranking;
 import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
-import haur_ranking.gui.service.GUIDataService;
 import haur_ranking.event.GUIDataEventListener;
+import haur_ranking.gui.service.GUIDataService;
 import haur_ranking.utils.DateFormatUtils;
 
 public class RankingPanelRightPane extends JPanel implements GUIDataEventListener {
@@ -59,7 +59,7 @@ public class RankingPanelRightPane extends JPanel implements GUIDataEventListene
 		JPanel previousRankingsPaneControlPanel = new JPanel();
 		previousRankingsPaneControlPanel.add(Box.createRigidArea(new Dimension(0, 160)));
 		add(previousRankingsPaneControlPanel);
-		GUIDataService.addRankingDataUpdatedEventListener(this);
+		GUIDataService.addDataEventListener(this);
 
 	}
 
@@ -152,7 +152,7 @@ public class RankingPanelRightPane extends JPanel implements GUIDataEventListene
 	}
 
 	@Override
-	public void processData(GUIDataEvent event) {
+	public void process(GUIDataEvent event) {
 		if (event.getEventType() == GUIDataEventType.GUI_DATA_UPDATE) {
 			updateDatabaseMatchInfoTable(GUIDataService.getPreviousRankingsTableData());
 		}

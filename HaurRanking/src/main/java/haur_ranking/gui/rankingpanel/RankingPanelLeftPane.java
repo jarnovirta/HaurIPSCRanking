@@ -88,7 +88,7 @@ public class RankingPanelLeftPane extends JPanel implements GUIDataEventListener
 		buttonsPanel.add(pdfButton);
 		rankingTabViewPanel.add(buttonsPanel);
 		this.add(rankingTabViewPanel);
-		GUIDataService.addRankingDataUpdatedEventListener(this);
+		GUIDataService.addDataEventListener(this);
 	}
 
 	private JTable getDivisionRankingTable() {
@@ -245,7 +245,7 @@ public class RankingPanelLeftPane extends JPanel implements GUIDataEventListener
 	}
 
 	@Override
-	public void processData(GUIDataEvent event) {
+	public void process(GUIDataEvent event) {
 		updateRankingTablesData(event.getRanking());
 	}
 

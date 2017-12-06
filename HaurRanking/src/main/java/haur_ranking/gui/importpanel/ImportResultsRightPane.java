@@ -27,8 +27,8 @@ import haur_ranking.event.DataImportEvent.DataImportEventType;
 import haur_ranking.event.DataImportEvent.ImportStatus;
 import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
-import haur_ranking.gui.service.GUIDataService;
 import haur_ranking.event.GUIDataEventListener;
+import haur_ranking.gui.service.GUIDataService;
 
 public class ImportResultsRightPane extends JPanel implements GUIDataEventListener {
 
@@ -55,7 +55,7 @@ public class ImportResultsRightPane extends JPanel implements GUIDataEventListen
 		add(getNoTableDataPanel(), ImportTableStatus.NO_WINMSS_DB_SELECTED.toString());
 		add(getImportResultPanel(), ImportTableStatus.IMPORT_RESULT.toString());
 		cardLayout.show(this, ImportTableStatus.NO_WINMSS_DB_SELECTED.toString());
-		GUIDataService.addRankingDataUpdatedEventListener(this);
+		GUIDataService.addDataEventListener(this);
 	}
 
 	private JPanel getNoTableDataPanel() {
@@ -223,7 +223,7 @@ public class ImportResultsRightPane extends JPanel implements GUIDataEventListen
 	}
 
 	@Override
-	public void processData(GUIDataEvent event) {
+	public void process(GUIDataEvent event) {
 		if (event.getEventType() == GUIDataEventType.WINMSS_DATA_IMPORT_EVENT
 				&& event.getDataImportEvent().getDataImportEventType() == DataImportEventType.IMPORT_STATUS_CHANGE) {
 			if (event.getDataImportEvent().getImportStatus() == ImportStatus.LOAD_FROM_WINMSS_DONE) {

@@ -30,7 +30,7 @@ public class Match {
 	@Transient
 	private Long winMssMatchId;
 	private String name;
-	@OneToMany(mappedBy = "match", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "match", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Stage> stages;
 
 	public Match() {

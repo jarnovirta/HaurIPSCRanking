@@ -31,20 +31,21 @@ public class ImportResultsControlPanel extends JPanel implements GUIDataEventLis
 	private JButton loadWinMSSDataButton;
 	private JButton clearImportAsClassifierSelectionsButton;
 	private JFrame progressBarFrame;
+	ButtonClickListener buttonClickListener = new ButtonClickListener();
 
 	public ImportResultsControlPanel() {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		add(Box.createRigidArea(new Dimension(0, 20)));
 		loadWinMSSDataButton = new JButton("Avaa WinMSS tiedosto");
 		loadWinMSSDataButton.setActionCommand("loadWinMSSData");
-		loadWinMSSDataButton.addActionListener(new ButtonClickListener());
+		loadWinMSSDataButton.addActionListener(buttonClickListener);
 		this.add(loadWinMSSDataButton);
 
 		add(Box.createRigidArea(new Dimension(0, 20)));
 
 		clearImportAsClassifierSelectionsButton = new JButton("Poista tallennusvalinnat");
 		clearImportAsClassifierSelectionsButton.setActionCommand("clearImportAsClassifierSelections");
-		clearImportAsClassifierSelectionsButton.addActionListener(new ButtonClickListener());
+		clearImportAsClassifierSelectionsButton.addActionListener(buttonClickListener);
 		clearImportAsClassifierSelectionsButton.setEnabled(false);
 		this.add(clearImportAsClassifierSelectionsButton);
 
@@ -52,12 +53,12 @@ public class ImportResultsControlPanel extends JPanel implements GUIDataEventLis
 
 		importResultsButton = new JButton("Tuo tulokset");
 		importResultsButton.setActionCommand("importResults");
-		importResultsButton.addActionListener(new ButtonClickListener());
+		importResultsButton.addActionListener(buttonClickListener);
 		importResultsButton.setEnabled(false);
 		this.add(importResultsButton);
 		progressBarFrame = new ImportProgressBarFrame();
 		progressBarFrame.setLocationRelativeTo(this);
-		GUIDataService.addRankingDataUpdatedEventListener(this);
+		GUIDataService.addDataEventListener(this);
 
 	}
 
@@ -85,7 +86,7 @@ public class ImportResultsControlPanel extends JPanel implements GUIDataEventLis
 	}
 
 	@Override
-	public void processData(GUIDataEvent event) {
+	public void process(GUIDataEvent event) {
 		if (event.getEventType() == GUIDataEventType.WINMSS_DATA_IMPORT_EVENT
 				&& event.getDataImportEvent().getDataImportEventType() == DataImportEventType.IMPORT_STATUS_CHANGE) {
 			if (event.getDataImportEvent().getImportStatus() == ImportStatus.SAVE_TO_HAUR_RANKING_DB_DONE) {

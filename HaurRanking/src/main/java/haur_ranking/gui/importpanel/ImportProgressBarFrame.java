@@ -9,8 +9,8 @@ import javax.swing.JProgressBar;
 import haur_ranking.event.DataImportEvent.DataImportEventType;
 import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
-import haur_ranking.gui.service.GUIDataService;
 import haur_ranking.event.GUIDataEventListener;
+import haur_ranking.gui.service.GUIDataService;
 
 public class ImportProgressBarFrame extends JFrame implements GUIDataEventListener {
 	/**
@@ -33,12 +33,12 @@ public class ImportProgressBarFrame extends JFrame implements GUIDataEventListen
 		progressBarPanel.setOpaque(true);
 		setContentPane(progressBarPanel);
 		pack();
-		GUIDataService.addRankingDataUpdatedEventListener(this);
+		GUIDataService.addDataEventListener(this);
 
 	}
 
 	@Override
-	public void processData(GUIDataEvent event) {
+	public void process(GUIDataEvent event) {
 
 		if (event.getEventType() == GUIDataEventType.WINMSS_DATA_IMPORT_EVENT
 				&& event.getDataImportEvent().getDataImportEventType() == DataImportEventType.IMPORT_PROGRESS) {
