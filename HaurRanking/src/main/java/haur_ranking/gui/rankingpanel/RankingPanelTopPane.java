@@ -8,7 +8,8 @@ import javax.swing.JPanel;
 
 import haur_ranking.gui.MainWindow;
 
-public class RankingPanel extends JPanel {
+public class RankingPanelTopPane extends JPanel {
+
 	/**
 	 *
 	 */
@@ -17,10 +18,9 @@ public class RankingPanel extends JPanel {
 	GridBagLayout gridBagLayout;
 	GridBagConstraints gridBagConstraints;
 
-	RankingPanelLeftPane leftPane;
-	RankingPanelRightPane rightPane;
+	RankingTable rankingTablePane;
 
-	public RankingPanel() {
+	public RankingPanelTopPane() {
 		gridBagLayout = new GridBagLayout();
 
 		int verticalSpacingBetweenPanes = 60;
@@ -36,13 +36,13 @@ public class RankingPanel extends JPanel {
 		gridBagConstraints.weightx = 1.0;
 		gridBagConstraints.weighty = 1.0;
 
-		leftPane = new RankingPanelLeftPane();
+		JPanel emptyLeftPane = new JPanel();
 
-		this.addPanels(0, 0, 1, 1, leftPane); // row, col, height, width
-												// component
+		this.addPanels(0, 0, 1, 1, emptyLeftPane); // row, col, height, width
+													// component
 
-		rightPane = new RankingPanelRightPane();
-		this.addPanels(0, 1, 1, 2, rightPane);
+		rankingTablePane = new RankingTable();
+		this.addPanels(0, 1, 1, 2, rankingTablePane);
 	}
 
 	private void addPanels(int row, int col, int height, int width, Component component) {
@@ -53,5 +53,4 @@ public class RankingPanel extends JPanel {
 		gridBagLayout.setConstraints(component, gridBagConstraints);
 		this.add(component);
 	}
-
 }

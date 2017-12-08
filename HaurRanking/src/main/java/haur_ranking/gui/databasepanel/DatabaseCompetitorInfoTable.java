@@ -86,7 +86,7 @@ public class DatabaseCompetitorInfoTable extends JPanel implements GUIDataEventL
 		competitorCountColumn.setHeaderValue("");
 		competitorCountColumn.setPreferredWidth(50);
 
-		competitorNameColumn.setHeaderValue("Nimi");
+		competitorNameColumn.setHeaderValue("Kilpailija");
 		competitorNameColumn.setPreferredWidth(400);
 
 		resultsCount.setHeaderValue("Tuloksia");

@@ -1,22 +1,17 @@
 package haur_ranking.gui.rankingpanel;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.Calendar;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import haur_ranking.gui.filter.FileFilterUtils;
@@ -25,12 +20,13 @@ import haur_ranking.gui.service.DataService;
 import haur_ranking.service.RankingService;
 import haur_ranking.utils.DateFormatUtils;
 
-public class RankingPanelLeftPane extends JPanel {
+public class PreviousRankingsControlsPanel extends JPanel {
 
 	/**
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
+
 	private JButton choosePreviousRankingsToDeleteButton;
 	private JButton deleteRankingsButton;
 	private JButton cancelDeleteButton;
@@ -39,31 +35,46 @@ public class RankingPanelLeftPane extends JPanel {
 
 	private String lastRankingPdfFileLocation;
 
-	public RankingPanelLeftPane() {
-
+	public PreviousRankingsControlsPanel() {
 		setLayout(new BorderLayout());
 
-		JPanel instructions = new JPanel();
-		instructions.setLayout(new BoxLayout(instructions, BoxLayout.Y_AXIS));
-		instructions.setBorder(BorderFactory.createEmptyBorder(40, 15, 0, 0));
-		JLabel firstLine = new JLabel("Valitse vertailu-ranking:");
-		instructions.add(firstLine);
-		firstLine.setFont(new Font(firstLine.getFont().getName(), Font.BOLD, firstLine.getFont().getSize()));
-		instructions.add(Box.createRigidArea(new Dimension(0, 20)));
+		// JPanel instructions = new JPanel();
+		// instructions.setLayout(new BoxLayout(instructions,
+		// BoxLayout.Y_AXIS));
+		// instructions.setBorder(BorderFactory.createEmptyBorder(40, 15, 0,
+		// 0));
+		// JLabel firstLine = new JLabel("Valitse vertailu-ranking:");
+		// instructions.add(firstLine);
+		// firstLine.setFont(new Font(firstLine.getFont().getName(), Font.BOLD,
+		// firstLine.getFont().getSize()));
+		// instructions.add(Box.createRigidArea(new Dimension(0, 20)));
+		//
+		// JLabel secondLine = new JLabel("Tulosparannukset lihavoituina.");
+		// secondLine.setAlignmentX(Component.LEFT_ALIGNMENT);
+		// secondLine.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
+		// secondLine.setFont(new Font(secondLine.getFont().getName(),
+		// Font.PLAIN, secondLine.getFont().getSize()));
+		// instructions.add(secondLine);
 
-		JLabel secondLine = new JLabel("Tulosparannukset lihavoituina.");
-		secondLine.setAlignmentX(Component.LEFT_ALIGNMENT);
-		secondLine.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
-		secondLine.setFont(new Font(secondLine.getFont().getName(), Font.PLAIN, secondLine.getFont().getSize()));
-		instructions.add(secondLine);
-
-		add(instructions, BorderLayout.NORTH);
+		// add(instructions, BorderLayout.NORTH);
 
 		JPanel buttonsPanel = new JPanel();
 		buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.Y_AXIS));
-		buttonsPanel.setBorder(BorderFactory.createEmptyBorder(0, 15, 30, 15));
 
 		JPanel buttonsTopLine = new JPanel(new BorderLayout());
+
+		choosePreviousRankingsToDeleteButton = new JButton("Valitse poistettavat");
+		choosePreviousRankingsToDeleteButton.setActionCommand("chooseRankingsToDelete");
+		choosePreviousRankingsToDeleteButton.addActionListener(buttonClickListener);
+
+		buttonsTopLine.add(choosePreviousRankingsToDeleteButton, BorderLayout.EAST);
+		buttonsPanel.add(buttonsTopLine);
+		JPanel buttonsBottomLine = new JPanel(new BorderLayout());
+
+		JButton pdfButton = new JButton("Tallenna Pdf");
+		pdfButton.setActionCommand("generatePdf");
+		pdfButton.addActionListener(new ButtonClickListener());
+		buttonsBottomLine.add(pdfButton, BorderLayout.WEST);
 
 		JPanel deleteCancelButtonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
@@ -80,33 +91,12 @@ public class RankingPanelLeftPane extends JPanel {
 		cancelDeleteButton.setEnabled(false);
 
 		deleteCancelButtonsPanel.add(cancelDeleteButton);
-		buttonsTopLine.add(deleteCancelButtonsPanel, BorderLayout.EAST);
 
-		buttonsPanel.add(buttonsTopLine);
-
-		JPanel buttonsBottomLine = new JPanel(new BorderLayout());
-		buttonsBottomLine.setBorder(BorderFactory.createEmptyBorder(15, 0, 0, 0));
-		JPanel pdfButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-
-		JButton pdfButton = new JButton("Tallenna Pdf");
-		pdfButton.setActionCommand("generatePdf");
-		pdfButton.addActionListener(buttonClickListener);
-		pdfButtonPanel.add(pdfButton);
-
-		buttonsBottomLine.add(pdfButtonPanel, BorderLayout.WEST);
-
-		JPanel chooseDeleteRankings = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-
-		choosePreviousRankingsToDeleteButton = new JButton("Valitse poistettavat");
-		choosePreviousRankingsToDeleteButton.setActionCommand("chooseRankingsToDelete");
-		choosePreviousRankingsToDeleteButton.addActionListener(buttonClickListener);
-		chooseDeleteRankings.add(choosePreviousRankingsToDeleteButton);
-		buttonsBottomLine.add(chooseDeleteRankings, BorderLayout.EAST);
+		buttonsBottomLine.add(deleteCancelButtonsPanel);
 
 		buttonsPanel.add(buttonsBottomLine);
 
 		add(buttonsPanel, BorderLayout.SOUTH);
-		add(Box.createRigidArea(new Dimension(0, 30)));
 	}
 
 	private void generatePdfCommandHandler() {
