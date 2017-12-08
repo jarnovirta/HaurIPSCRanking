@@ -1,9 +1,10 @@
 TODO:
 
-- Varmista ettÃ¤ DQ kisaajat eivÃ¤t ole mukana (testi)
+- Varmista ettÃƒÂ¤ DQ kisaajat eivÃƒÂ¤t ole mukana (testi)
 
 - exception handling
 - laske ranking vain muuttuneiden divisioonien osalta. Nyt vissiin lasketaan kaikki?
 
 
-- Tallennettaessa tyhj� stage ilman tuloslistoja menee aina uudelleen kantaan.
+- Tallennettaessa tyhjä stage ilman tuloslistoja menee aina uudelleen kantaan.
+- GUI: ei actionevent vaan serviceen componentit ja niihin metodi jolla saa buttoniin lisättyä listener
