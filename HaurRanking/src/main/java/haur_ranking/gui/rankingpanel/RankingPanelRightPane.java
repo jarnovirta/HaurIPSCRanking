@@ -23,7 +23,7 @@ import haur_ranking.domain.Ranking;
 import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
-import haur_ranking.gui.service.GUIDataService;
+import haur_ranking.gui.service.DataService;
 import haur_ranking.utils.DateFormatUtils;
 
 public class RankingPanelRightPane extends JPanel implements GUIDataEventListener {
@@ -59,7 +59,7 @@ public class RankingPanelRightPane extends JPanel implements GUIDataEventListene
 		JPanel previousRankingsPaneControlPanel = new JPanel();
 		previousRankingsPaneControlPanel.add(Box.createRigidArea(new Dimension(0, 160)));
 		add(previousRankingsPaneControlPanel);
-		GUIDataService.addDataEventListener(this);
+		DataService.addDataEventListener(this);
 
 	}
 
@@ -93,8 +93,8 @@ public class RankingPanelRightPane extends JPanel implements GUIDataEventListene
 			public void valueChanged(ListSelectionEvent event) {
 				int selectedRowIndex = rankingTable.getSelectedRow();
 				if (selectedRowIndex >= 0) {
-					GUIDataService.setPreviousRankingsTableSelectedRanking(
-							GUIDataService.getPreviousRankingsTableData().get(selectedRowIndex));
+					DataService.setPreviousRankingsTableSelectedRanking(
+							DataService.getPreviousRankingsTableData().get(selectedRowIndex));
 				}
 			}
 		});
@@ -154,7 +154,7 @@ public class RankingPanelRightPane extends JPanel implements GUIDataEventListene
 	@Override
 	public void process(GUIDataEvent event) {
 		if (event.getEventType() == GUIDataEventType.GUI_DATA_UPDATE) {
-			updateDatabaseMatchInfoTable(GUIDataService.getPreviousRankingsTableData());
+			updateDatabaseMatchInfoTable(DataService.getPreviousRankingsTableData());
 		}
 	}
 }

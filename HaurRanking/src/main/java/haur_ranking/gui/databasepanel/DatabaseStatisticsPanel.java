@@ -15,7 +15,7 @@ import haur_ranking.domain.DatabaseStatistics;
 import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
-import haur_ranking.gui.service.GUIDataService;
+import haur_ranking.gui.service.DataService;
 
 public class DatabaseStatisticsPanel extends JPanel implements GUIDataEventListener {
 	/**
@@ -32,7 +32,7 @@ public class DatabaseStatisticsPanel extends JPanel implements GUIDataEventListe
 		statisticsTable.setAlignmentX(Component.LEFT_ALIGNMENT);
 		add(statisticsTable);
 		setMaximumSize(new Dimension(550, 310));
-		GUIDataService.addDataEventListener(this);
+		DataService.addDataEventListener(this);
 
 	}
 
@@ -78,8 +78,8 @@ public class DatabaseStatisticsPanel extends JPanel implements GUIDataEventListe
 	@Override
 	public void process(GUIDataEvent event) {
 		if (event.getEventType() == GUIDataEventType.GUI_DATA_UPDATE) {
-			if (GUIDataService.getDatabaseStatistics() != null)
-				setStatisticsTableData(GUIDataService.getDatabaseStatistics());
+			if (DataService.getDatabaseStatistics() != null)
+				setStatisticsTableData(DataService.getDatabaseStatistics());
 		}
 	}
 }

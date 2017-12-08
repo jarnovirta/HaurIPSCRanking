@@ -3,6 +3,8 @@ package haur_ranking.gui.databasepanel;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,16 +20,14 @@ import javax.swing.table.TableColumn;
 
 import haur_ranking.domain.Match;
 import haur_ranking.domain.Stage;
-import haur_ranking.event.GUIActionEvent;
-import haur_ranking.event.GUIActionEventListener;
 import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
-import haur_ranking.gui.service.GUIActionEventService;
-import haur_ranking.gui.service.GUIDataService;
+import haur_ranking.gui.service.ComponentService;
+import haur_ranking.gui.service.DataService;
 import haur_ranking.utils.DateFormatUtils;
 
-public class DatabasePanelRightPane extends JPanel implements GUIDataEventListener, GUIActionEventListener {
+public class DatabasePanelRightPane extends JPanel implements GUIDataEventListener, ActionListener {
 	/**
 	 *
 	 */
@@ -47,8 +47,8 @@ public class DatabasePanelRightPane extends JPanel implements GUIDataEventListen
 		add(scrollPane, DatabaseDataTableStatus.HAS_DATA.toString());
 		add(getNoDataPanel(), DatabaseDataTableStatus.NO_DATA.toString());
 		cardLayout.show(this, DatabaseDataTableStatus.NO_DATA.toString());
-		GUIDataService.addDataEventListener(this);
-		GUIActionEventService.addGUIActionEventListener(this);
+		DataService.addDataEventListener(this);
+		ComponentService.getDatabaseControlsPanel().addButtonClickListener(this);
 	}
 
 	private JPanel getNoDataPanel() {
@@ -150,35 +150,35 @@ public class DatabasePanelRightPane extends JPanel implements GUIDataEventListen
 	@Override
 	public void process(GUIDataEvent event) {
 		if (event.getEventType() == GUIDataEventType.GUI_DATA_UPDATE) {
-			if (GUIDataService.getDatabaseMatchInfoTableData() != null) {
-				updateDatabaseMatchInfoTable(GUIDataService.getDatabaseMatchInfoTableData());
+			if (DataService.getDatabaseMatchInfoTableData() != null) {
+				updateDatabaseMatchInfoTable(DataService.getDatabaseMatchInfoTableData());
 			}
 		}
 	}
 
 	@Override
-	public void process(GUIActionEvent event) {
-		switch (event.getEventType()) {
-		case CHOOSE_STAGES_TO_DELETE_BUTTON_CLICKED:
-			setSelectedStagesToDelete();
+	public void actionPerformed(ActionEvent event) {
+		switch (event.getActionCommand()) {
+		case "chooseStagesToDelete":
 			databaseMatchInfoTable.setRowSelectionAllowed(true);
+			setSelectedStagesToDelete();
 			break;
-		case DELETE_STAGES_BUTTON_CLICKED:
-
+		case "deleteStages":
 			databaseMatchInfoTable.setRowSelectionAllowed(false);
 			break;
-		case CANCEL_DELETE_STAGES_BUTTON_CLICKED:
+		case "cancelDelete":
 			databaseMatchInfoTable.setRowSelectionAllowed(false);
 			break;
 		}
+
 	}
 
 	private void setSelectedStagesToDelete() {
-		GUIDataService.setDatabaseMatchInfoTableStagesToDelete(new ArrayList<Stage>());
+		DataService.setDatabaseMatchInfoTableStagesToDelete(new ArrayList<Stage>());
 		int[] selectedRowIndexes = databaseMatchInfoTable.getSelectedRows();
 		for (int index : selectedRowIndexes) {
-			GUIDataService.getDatabaseMatchInfoTableStagesToDelete()
-					.add(GUIDataService.getDatabaseMatchInfoTableStages().get(index));
+			DataService.getDatabaseMatchInfoTableStagesToDelete()
+					.add(DataService.getDatabaseMatchInfoTableStages().get(index));
 		}
 	}
 }

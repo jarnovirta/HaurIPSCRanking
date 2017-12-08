@@ -37,7 +37,7 @@ import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
 import haur_ranking.gui.filter.FileFilterUtils;
 import haur_ranking.gui.filter.PdfFileFilter;
-import haur_ranking.gui.service.GUIDataService;
+import haur_ranking.gui.service.DataService;
 import haur_ranking.service.RankingService;
 import haur_ranking.utils.DataFormatUtils;
 import haur_ranking.utils.DateFormatUtils;
@@ -89,7 +89,7 @@ public class RankingPanelLeftPane extends JPanel implements GUIDataEventListener
 		buttonsPanel.add(pdfButton);
 		rankingTabViewPanel.add(buttonsPanel);
 		this.add(rankingTabViewPanel);
-		GUIDataService.addDataEventListener(this);
+		DataService.addDataEventListener(this);
 	}
 
 	private JTable getDivisionRankingTable() {
@@ -241,8 +241,8 @@ public class RankingPanelLeftPane extends JPanel implements GUIDataEventListener
 				absoluteFilePath += ".pdf";
 
 			lastRankingPdfFileLocation = Paths.get(absoluteFilePath).getParent().toString();
-			RankingService.createPdfRankingFile(GUIDataService.getRanking(),
-					GUIDataService.getPreviousRankingsTableSelectedRanking(), absoluteFilePath);
+			RankingService.createPdfRankingFile(DataService.getRanking(),
+					DataService.getPreviousRankingsTableSelectedRanking(), absoluteFilePath);
 		} else {
 			if (returnVal != JFileChooser.CANCEL_OPTION)
 				generatePdfCommandHandler();
@@ -252,8 +252,8 @@ public class RankingPanelLeftPane extends JPanel implements GUIDataEventListener
 
 	@Override
 	public void process(GUIDataEvent event) {
-		if (event.getEventType() == GUIDataEventType.GUI_DATA_UPDATE && GUIDataService.getRanking() != null) {
-			updateRankingTablesData(GUIDataService.getRanking());
+		if (event.getEventType() == GUIDataEventType.GUI_DATA_UPDATE && DataService.getRanking() != null) {
+			updateRankingTablesData(DataService.getRanking());
 		}
 	}
 

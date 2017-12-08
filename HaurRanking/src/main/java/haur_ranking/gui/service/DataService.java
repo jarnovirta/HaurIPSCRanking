@@ -20,7 +20,7 @@ import haur_ranking.service.RankingService;
 import haur_ranking.service.SaveSelectedResultsToHaurRankingDbTask;
 import haur_ranking.service.StageService;
 
-public class GUIDataService {
+public class DataService {
 
 	private static Ranking ranking;
 	private static List<GUIDataEventListener> dataEventListeners = new ArrayList<GUIDataEventListener>();
@@ -71,10 +71,10 @@ public class GUIDataService {
 	}
 
 	public static void deleteStages() {
-		StageService.delete(GUIDataService.getDatabaseMatchInfoTableStagesToDelete());
-		GUIDataService.clearStagesToDelete();
+		StageService.delete(DataService.getDatabaseMatchInfoTableStagesToDelete());
+		DataService.clearStagesToDelete();
 		RankingService.generateRanking();
-		GUIDataService.updateGUIData();
+		DataService.updateGUIData();
 	}
 
 	public static Ranking getRanking() {
@@ -106,7 +106,7 @@ public class GUIDataService {
 
 	public static void saveResultsToHaurRankingDatabase() {
 		SaveSelectedResultsToHaurRankingDbTask importResultsTask = new SaveSelectedResultsToHaurRankingDbTask(
-				GUIDataService.getImportResultsPanelMatchList());
+				DataService.getImportResultsPanelMatchList());
 		Thread importTaskThread = new Thread(importResultsTask);
 		importTaskThread.start();
 	}
@@ -122,7 +122,7 @@ public class GUIDataService {
 	}
 
 	public static void setPreviousRankingsTableData(List<Ranking> previousRankingsTableData) {
-		GUIDataService.previousRankingsTableData = previousRankingsTableData;
+		DataService.previousRankingsTableData = previousRankingsTableData;
 	}
 
 	public static Ranking getPreviousRankingsTableSelectedRanking() {
@@ -130,7 +130,7 @@ public class GUIDataService {
 	}
 
 	public static void setPreviousRankingsTableSelectedRanking(Ranking previousRankingsTableSelectedRanking) {
-		GUIDataService.previousRankingsTableSelectedRanking = previousRankingsTableSelectedRanking;
+		DataService.previousRankingsTableSelectedRanking = previousRankingsTableSelectedRanking;
 	}
 
 	public static List<Stage> getDatabaseMatchInfoTableStages() {
@@ -138,7 +138,7 @@ public class GUIDataService {
 	}
 
 	public static void setDatabaseMatchInfoTableStages(List<Stage> databaseMatchInfoTableStages) {
-		GUIDataService.databaseMatchInfoTableStages = databaseMatchInfoTableStages;
+		DataService.databaseMatchInfoTableStages = databaseMatchInfoTableStages;
 	}
 
 	public static List<Stage> getDatabaseMatchInfoTableStagesToDelete() {
@@ -146,7 +146,7 @@ public class GUIDataService {
 	}
 
 	public static void setDatabaseMatchInfoTableStagesToDelete(List<Stage> databaseMatchInfoTableStagesToDelete) {
-		GUIDataService.databaseMatchInfoTableStagesToDelete = databaseMatchInfoTableStagesToDelete;
+		DataService.databaseMatchInfoTableStagesToDelete = databaseMatchInfoTableStagesToDelete;
 	}
 
 	public static void clearStagesToDelete() {
@@ -158,7 +158,7 @@ public class GUIDataService {
 	}
 
 	public static void setDatabaseStatistics(DatabaseStatistics databaseStatistics) {
-		GUIDataService.databaseStatistics = databaseStatistics;
+		DataService.databaseStatistics = databaseStatistics;
 	}
 
 	public static List<Match> getDatabaseMatchInfoTableData() {
@@ -166,7 +166,7 @@ public class GUIDataService {
 	}
 
 	public static void setDatabaseMatchInfoTableData(List<Match> databaseMatchInfoTableData) {
-		GUIDataService.databaseMatchInfoTableData = databaseMatchInfoTableData;
+		DataService.databaseMatchInfoTableData = databaseMatchInfoTableData;
 	}
 
 }

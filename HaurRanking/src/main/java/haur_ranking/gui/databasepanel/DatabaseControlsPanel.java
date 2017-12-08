@@ -6,10 +6,8 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-import haur_ranking.event.GUIActionEvent;
-import haur_ranking.event.GUIActionEvent.GUIActionEventType;
-import haur_ranking.gui.service.GUIActionEventService;
-import haur_ranking.gui.service.GUIDataService;
+import haur_ranking.gui.service.ComponentService;
+import haur_ranking.gui.service.DataService;
 
 public class DatabaseControlsPanel extends JPanel {
 	/**
@@ -39,6 +37,8 @@ public class DatabaseControlsPanel extends JPanel {
 		cancelDeleteButton.addActionListener(buttonClickListener);
 		cancelDeleteButton.setEnabled(false);
 		this.add(cancelDeleteButton);
+
+		ComponentService.setDatabaseControlsPanel(this);
 	}
 
 	private class ButtonClickListener implements ActionListener {
@@ -58,25 +58,29 @@ public class DatabaseControlsPanel extends JPanel {
 	}
 
 	private void chooseStagesToDeleteCommandHandler() {
-		GUIDataService.clearStagesToDelete();
-		GUIActionEventService.emit(new GUIActionEvent(GUIActionEventType.CHOOSE_STAGES_TO_DELETE_BUTTON_CLICKED));
 		cancelDeleteButton.setEnabled(true);
 		deleteStagesButton.setEnabled(true);
 		chooseStagesToDeleteButton.setEnabled(false);
 	}
 
 	private void deleteStagesCommandHandler() {
-		GUIDataService.deleteStages();
+		DataService.deleteStages();
+		chooseStagesToDeleteButton.setEnabled(true);
+		cancelDeleteButton.setEnabled(false);
+		deleteStagesButton.setEnabled(false);
+
+	}
+
+	private void cancelDeleteCommandHandler() {
+		DataService.clearStagesToDelete();
 		chooseStagesToDeleteButton.setEnabled(true);
 		cancelDeleteButton.setEnabled(false);
 		deleteStagesButton.setEnabled(false);
 	}
 
-	private void cancelDeleteCommandHandler() {
-		GUIDataService.clearStagesToDelete();
-		GUIActionEventService.emit(new GUIActionEvent(GUIActionEventType.CANCEL_DELETE_STAGES_BUTTON_CLICKED));
-		chooseStagesToDeleteButton.setEnabled(true);
-		cancelDeleteButton.setEnabled(false);
-		deleteStagesButton.setEnabled(false);
+	public void addButtonClickListener(ActionListener listener) {
+		chooseStagesToDeleteButton.addActionListener(listener);
+		deleteStagesButton.addActionListener(listener);
+		cancelDeleteButton.addActionListener(listener);
 	}
 }

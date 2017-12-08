@@ -8,6 +8,6 @@ import haur_ranking.event.DataImportEventListener;
 public class DataImportEventHelper implements DataImportEventListener {
 	@Override
 	public void processData(DataImportEvent event) {
-		GUIDataService.processData(event);
+		DataService.processData(event);
 	}
 }
