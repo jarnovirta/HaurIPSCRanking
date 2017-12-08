@@ -27,7 +27,7 @@ public class CompetitorRepository {
 	public static List<Competitor> findAll(EntityManager entityManager) {
 
 		try {
-			String queryString = "SELECT c FROM Competitor c";
+			String queryString = "SELECT c FROM Competitor c ORDER BY c.lastName";
 			final TypedQuery<Competitor> query = entityManager.createQuery(queryString, Competitor.class);
 			return query.getResultList();
 		} catch (Exception e) {

@@ -3,6 +3,7 @@ package haur_ranking.gui.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import haur_ranking.domain.Competitor;
 import haur_ranking.domain.DatabaseStatistics;
 import haur_ranking.domain.Match;
 import haur_ranking.domain.Ranking;
@@ -13,6 +14,7 @@ import haur_ranking.event.DataImportEvent.ImportStatus;
 import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
+import haur_ranking.service.CompetitorService;
 import haur_ranking.service.DatabaseStatisticsService;
 import haur_ranking.service.LoadResultDataFromWinMSSTask;
 import haur_ranking.service.MatchService;
@@ -29,6 +31,7 @@ public class DataService {
 	private static List<Stage> databaseMatchInfoTableStages = new ArrayList<Stage>();;
 	private static List<Stage> databaseMatchInfoTableStagesToDelete = new ArrayList<Stage>();
 	private static List<Match> databaseMatchInfoTableData;
+	private static List<Competitor> databaseCompetitorInfoTableData;
 	private static DatabaseStatistics databaseStatistics;
 
 	// Older ranking chosen for comparison of competitor ranking positions.
@@ -59,14 +62,15 @@ public class DataService {
 	public static void updateGUIData() {
 		ranking = RankingService.findCurrentRanking();
 		previousRankingsTableData = RankingService.findOldRankings();
-		GUIDataEvent event = new GUIDataEvent(GUIDataEventType.GUI_DATA_UPDATE);
 		databaseStatistics = DatabaseStatisticsService.getDatabaseStatistics();
 		databaseMatchInfoTableStages.clear();
 		databaseMatchInfoTableData = MatchService.findAll();
+		databaseCompetitorInfoTableData = CompetitorService.findCompetitorInfoTableData();
 		for (Match match : databaseMatchInfoTableData) {
 			if (match.getStages() != null)
 				databaseMatchInfoTableStages.addAll(match.getStages());
 		}
+		GUIDataEvent event = new GUIDataEvent(GUIDataEventType.GUI_DATA_UPDATE);
 		emitEvent(event);
 	}
 
@@ -167,6 +171,14 @@ public class DataService {
 
 	public static void setDatabaseMatchInfoTableData(List<Match> databaseMatchInfoTableData) {
 		DataService.databaseMatchInfoTableData = databaseMatchInfoTableData;
+	}
+
+	public static List<Competitor> getDatabaseCompetitorInfoTableData() {
+		return databaseCompetitorInfoTableData;
+	}
+
+	public static void setDatabaseCompetitorInfoTableData(List<Competitor> databaseCompetitorInfoTableData) {
+		DataService.databaseCompetitorInfoTableData = databaseCompetitorInfoTableData;
 	}
 
 }

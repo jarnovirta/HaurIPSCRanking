@@ -5,6 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "Competitor")
@@ -26,6 +27,9 @@ public class Competitor {
 	private String ssiDisqualificationReason = "no";
 	private int winMSSTypeDisqualifyRuleId;
 	private int winMSSTypeDisqualificationRuleId;
+
+	@Transient
+	private int resultCount;
 
 	public Competitor() {
 	}
@@ -155,6 +159,14 @@ public class Competitor {
 
 	public void setWinMSSComment(String winMSSComment) {
 		this.winMSSComment = winMSSComment;
+	}
+
+	public int getResultCount() {
+		return resultCount;
+	}
+
+	public void setResultCount(int resultCount) {
+		this.resultCount = resultCount;
 	}
 
 }

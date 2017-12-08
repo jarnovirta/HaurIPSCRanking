@@ -5,11 +5,10 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 
 import haur_ranking.domain.ClassifierStage;
+import haur_ranking.domain.Competitor;
 import haur_ranking.domain.IPSCDivision;
 import haur_ranking.domain.StageScoreSheet;
 
@@ -108,32 +107,29 @@ public class StageScoreSheetRepository {
 
 	}
 
-	public static List<StageScoreSheet> findAll() {
+	public static List<StageScoreSheet> findAll(EntityManager entityManager) {
+		List<StageScoreSheet> sheets = null;
 		try {
-			EntityManagerFactory emf = Persistence.createEntityManagerFactory("fi.haur_ranking.jpa");
-			EntityManager em = emf.createEntityManager();
-			List<StageScoreSheet> sheets = em.createQuery("SELECT s from StageScoreSheet s", StageScoreSheet.class)
-					.getResultList();
-			emf.close();
+			String queryString = "SELECT s from StageScoreSheet s";
+			TypedQuery<StageScoreSheet> query = entityManager.createQuery(queryString, StageScoreSheet.class);
+			sheets = query.getResultList();
 			return sheets;
 		} catch (Exception e) {
 			e.printStackTrace();
-			return null;
 		}
+		return sheets;
 	}
 
-	public static int getTotalStageScoreSheetCount() {
-		int matchCount;
+	public static int getTotalStageScoreSheetCount(EntityManager entityManager) {
+		int matchCount = -1;
 		try {
-			EntityManagerFactory emf = Persistence.createEntityManagerFactory("fi.haur_ranking.jpa");
-			EntityManager em = emf.createEntityManager();
-			matchCount = ((Long) em.createQuery("SELECT COUNT(s) from StageScoreSheet s").getSingleResult()).intValue();
-			emf.close();
-			return matchCount;
+			String queryString = "SELECT COUNT(s) from StageScoreSheet s";
+			TypedQuery<Long> query = entityManager.createQuery(queryString, Long.class);
+			matchCount = query.getSingleResult().intValue();
 		} catch (Exception e) {
 			e.printStackTrace();
-			return -1;
 		}
+		return matchCount;
 	}
 
 	public static void removeInBatch(List<Long> idList, EntityManager entityManager) {
@@ -153,5 +149,20 @@ public class StageScoreSheetRepository {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	public static int getCompetitorStageScoreSheetCount(Competitor competitor, EntityManager entityManager) {
+		int resultCount = -1;
+		try {
+			String queryString = "SELECT COUNT(s) FROM StageScoreSheet s WHERE s.competitor = :competitor";
+			TypedQuery<Long> query = entityManager.createQuery(queryString, Long.class);
+			query.setParameter("competitor", competitor);
+			resultCount = query.getSingleResult().intValue();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
+		return resultCount;
 	}
 }

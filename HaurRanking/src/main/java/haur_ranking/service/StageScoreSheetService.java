@@ -26,7 +26,10 @@ public class StageScoreSheetService {
 	}
 
 	public static List<StageScoreSheet> findAll() {
-		return StageScoreSheetRepository.findAll();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		List<StageScoreSheet> sheets = StageScoreSheetRepository.findAll(entityManager);
+		entityManager.close();
+		return sheets;
 	}
 
 	// Returns a list of score sheets for classifiers which are valid for
@@ -50,7 +53,10 @@ public class StageScoreSheetService {
 	}
 
 	public static int getTotalStageScoreSheetCount() {
-		return StageScoreSheetRepository.getTotalStageScoreSheetCount();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		int sheetCount = StageScoreSheetRepository.getTotalStageScoreSheetCount(entityManager);
+		entityManager.close();
+		return sheetCount;
 	}
 
 	public static void removeExtraStageScoreSheets(List<StageScoreSheet> newlyAddedScoreSheets) {

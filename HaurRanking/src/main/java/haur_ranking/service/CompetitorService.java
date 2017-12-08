@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 import haur_ranking.domain.Competitor;
 import haur_ranking.repository.haur_ranking_repository.CompetitorRepository;
 import haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
+import haur_ranking.repository.haur_ranking_repository.StageScoreSheetRepository;
 
 public class CompetitorService {
 
@@ -37,5 +38,16 @@ public class CompetitorService {
 		int count = CompetitorRepository.getTotalCompetitorCount(entityManager);
 		entityManager.close();
 		return count;
+	}
+
+	public static List<Competitor> findCompetitorInfoTableData() {
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		List<Competitor> competitors = CompetitorRepository.findAll(entityManager);
+		for (Competitor competitor : competitors) {
+			competitor.setResultCount(
+					StageScoreSheetRepository.getCompetitorStageScoreSheetCount(competitor, entityManager));
+		}
+		entityManager.close();
+		return competitors;
 	}
 }
