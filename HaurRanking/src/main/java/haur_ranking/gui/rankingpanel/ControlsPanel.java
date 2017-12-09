@@ -19,18 +19,20 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import haur_ranking.gui.MainWindow;
 import haur_ranking.gui.filter.FileFilterUtils;
 import haur_ranking.gui.filter.PdfFileFilter;
 import haur_ranking.gui.service.DataService;
 import haur_ranking.service.RankingService;
 import haur_ranking.utils.DateFormatUtils;
 
-public class RankingPanelLeftPane extends JPanel {
+public class ControlsPanel extends JPanel {
 
 	/**
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
+
 	private JButton choosePreviousRankingsToDeleteButton;
 	private JButton deleteRankingsButton;
 	private JButton cancelDeleteButton;
@@ -39,29 +41,35 @@ public class RankingPanelLeftPane extends JPanel {
 
 	private String lastRankingPdfFileLocation;
 
-	public RankingPanelLeftPane() {
-
+	public ControlsPanel() {
+		int verticalSpacingBetweenPanes = 60;
+		setPreferredSize(new Dimension(500, (MainWindow.HEIGHT - verticalSpacingBetweenPanes) / 2));
 		setLayout(new BorderLayout());
-
+		setBorder(BorderFactory.createEmptyBorder(0, 30, 0, 0));
 		JPanel instructions = new JPanel();
 		instructions.setLayout(new BoxLayout(instructions, BoxLayout.Y_AXIS));
-		instructions.setBorder(BorderFactory.createEmptyBorder(40, 15, 0, 0));
+		instructions.setBorder(BorderFactory.createEmptyBorder(40, 0, 0, 0));
 		JLabel firstLine = new JLabel("Valitse vertailu-ranking:");
 		instructions.add(firstLine);
 		firstLine.setFont(new Font(firstLine.getFont().getName(), Font.BOLD, firstLine.getFont().getSize()));
 		instructions.add(Box.createRigidArea(new Dimension(0, 20)));
 
-		JLabel secondLine = new JLabel("Tulosparannukset lihavoituina.");
+		JLabel secondLine = new JLabel("Tulosparannukset näkyvät pdf:ssä");
 		secondLine.setAlignmentX(Component.LEFT_ALIGNMENT);
-		secondLine.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
+		secondLine.setBorder(BorderFactory.createEmptyBorder(15, 0, 0, 0));
 		secondLine.setFont(new Font(secondLine.getFont().getName(), Font.PLAIN, secondLine.getFont().getSize()));
 		instructions.add(secondLine);
+
+		JLabel thirdLine = new JLabel("lihavoituina.");
+		thirdLine.setAlignmentX(Component.LEFT_ALIGNMENT);
+		thirdLine.setFont(new Font(thirdLine.getFont().getName(), Font.PLAIN, thirdLine.getFont().getSize()));
+		instructions.add(thirdLine);
 
 		add(instructions, BorderLayout.NORTH);
 
 		JPanel buttonsPanel = new JPanel();
 		buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.Y_AXIS));
-		buttonsPanel.setBorder(BorderFactory.createEmptyBorder(0, 15, 30, 15));
+		buttonsPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 30, 15));
 
 		JPanel buttonsTopLine = new JPanel(new BorderLayout());
 
@@ -106,7 +114,7 @@ public class RankingPanelLeftPane extends JPanel {
 		buttonsPanel.add(buttonsBottomLine);
 
 		add(buttonsPanel, BorderLayout.SOUTH);
-		add(Box.createRigidArea(new Dimension(0, 30)));
+
 	}
 
 	private void generatePdfCommandHandler() {
