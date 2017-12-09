@@ -139,6 +139,8 @@ public class RankingService {
 	}
 
 	public static void setImprovedRankingResults(Ranking ranking, Ranking compareToRanking) {
+		if (compareToRanking == null)
+			return;
 		// Check for improved positions in the ranking compared to an older
 		// ranking. Those having improved their position
 		// are shown in bold in the ranking pdf.
@@ -162,11 +164,14 @@ public class RankingService {
 					if (compareToRow.getCompetitor().equals(competitor)) {
 						int newPosition = divisionRanking.getDivisionRankingRows().indexOf(row);
 						int oldPosition = compareToDivisionRanking.getDivisionRankingRows().indexOf(compareToRow);
+						System.out.println(newPosition + " " + oldPosition);
 						if (newPosition > oldPosition || newPosition == oldPosition) {
 							row.setImprovedResult(false);
 						}
+						System.out.println(row.isImprovedResult());
 					}
 				}
+
 			}
 		}
 	}

@@ -50,8 +50,17 @@ public class Competitor {
 			return false;
 
 		final Competitor other = (Competitor) obj;
-		if (other.getFirstName().equals(this.firstName) && other.getLastName().equals(this.lastName)
-				&& (other.getWinMSSComment() != null && other.getWinMSSComment().equals(this.winMSSComment)))
+		boolean commentsEqual;
+		if (other.getWinMSSComment() != null && other.getWinMSSComment().equals(this.winMSSComment)) {
+			commentsEqual = true;
+		} else {
+			if (other.getWinMSSComment() == null && this.winMSSComment == null) {
+				commentsEqual = true;
+			} else {
+				commentsEqual = false;
+			}
+		}
+		if (other.getFirstName().equals(this.firstName) && other.getLastName().equals(this.lastName) && commentsEqual)
 			return true;
 		else
 			return false;

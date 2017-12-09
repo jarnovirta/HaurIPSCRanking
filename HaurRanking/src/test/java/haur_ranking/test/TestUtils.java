@@ -32,7 +32,7 @@ public class TestUtils {
 	static ClassifierStage[] classifierStages = new ClassifierStage[] { ClassifierStage.CLC01, ClassifierStage.CLC03,
 			ClassifierStage.CLC05, ClassifierStage.CLC07, ClassifierStage.CLC09, ClassifierStage.CLC11,
 			ClassifierStage.CLC13, ClassifierStage.CLC15, ClassifierStage.CLC17, ClassifierStage.CLC19 };
-	static Competitor jarno = new Competitor("Jarno", "Virta", "");
+	static Competitor jarno = new Competitor("Jarno", "Virta", null);
 	static Competitor jerry = new Competitor("Jerry", "Miculek", "");
 	static Competitor ben = new Competitor("Ben", "Stoeger", "");
 	static Competitor rob = new Competitor("Rob", "Leatham", "");

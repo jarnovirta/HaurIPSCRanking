@@ -29,7 +29,6 @@ public class RankingServiceTests {
 	public void setImprovedRankingResultsTest() {
 		Ranking ranking = TestUtils.getTestRanking();
 		Ranking compareToRanking = TestUtils.getCompareToRanking();
-		System.out.println("Calling setImprovedResults");
 		RankingService.setImprovedRankingResults(ranking, compareToRanking);
 
 		DivisionRankingRow firstRow = ranking.getDivisionRankings().get(0).getDivisionRankingRows().get(0);
