@@ -25,3 +25,4 @@ Internal Exception: java.sql.SQLSyntaxErrorException: object name already exists
 Error Code: -5504
 Call: ALTER TABLE DivisionRanking_DivisionRankingLine ADD CONSTRAINT DivisionRanking_DivisionRankingLine_rankingRows_ID FOREIGN KEY (rankingRows_ID) REFERENCES DivisionRankingLine (ID)
 Query: DataModifyQuery(sql="ALTER TABLE DivisionRanking_DivisionRankingLine ADD CONSTRAINT DivisionRanking_DivisionRankingLine_rankingRows_ID FOREIGN KEY (rankingRows_ID) REFERENCES DivisionRankingLine (ID)")
+[EL Info]: connection: 2017-12-10 13:47:28.975--ServerSession(203854885)--/file:/C:/Users/Jarno/git/HaurIPSCRanking/HaurRanking/target/classes/_fi.haur_ranking.jpa logout successful

@@ -9,7 +9,7 @@ import javax.swing.JPanel;
 
 import haur_ranking.gui.MainWindow;
 
-public class RankingPanelTopPane extends JPanel {
+public class CurrentRankingPane extends JPanel {
 
 	/**
 	 *
@@ -19,7 +19,7 @@ public class RankingPanelTopPane extends JPanel {
 	GridBagLayout gridBagLayout;
 	GridBagConstraints gridBagConstraints;
 
-	public RankingPanelTopPane() {
+	public CurrentRankingPane() {
 		setLayout(new BorderLayout());
 
 		JPanel emptyLeftPanel = new JPanel();

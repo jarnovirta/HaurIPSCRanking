@@ -14,9 +14,9 @@ public class RankingPanel extends JPanel {
 
 	public RankingPanel() {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		add(new RankingPanelTopPane());
+		add(new CurrentRankingPane());
 		add(Box.createRigidArea(new Dimension(0, 30)));
-		add(new RankingPanelBottomPane());
+		add(new PreviousRankingsPane());
 		add(Box.createRigidArea(new Dimension(0, 30)));
 	}
 }

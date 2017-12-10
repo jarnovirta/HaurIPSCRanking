@@ -6,7 +6,7 @@ import java.awt.GridBagLayout;
 
 import javax.swing.JPanel;
 
-public class RankingPanelBottomPane extends JPanel {
+public class PreviousRankingsPane extends JPanel {
 
 	/**
 	 *
@@ -18,7 +18,7 @@ public class RankingPanelBottomPane extends JPanel {
 	ControlsPanel controlsPane;
 	PreviousRankingsTable previousRankingsTablePane;
 
-	RankingPanelBottomPane() {
+	PreviousRankingsPane() {
 		setLayout(new BorderLayout());
 		add(new ControlsPanel(), BorderLayout.WEST);
 		add(new PreviousRankingsTable());
