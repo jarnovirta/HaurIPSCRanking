@@ -198,4 +198,14 @@ public class RankingService {
 		entityManager.close();
 	}
 
+	public static void delete(List<Ranking> rankings) {
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		entityManager.getTransaction().begin();
+		for (Ranking ranking : rankings) {
+			RankingRepository.delete(ranking, entityManager);
+		}
+		entityManager.getTransaction().commit();
+		entityManager.close();
+	}
+
 }

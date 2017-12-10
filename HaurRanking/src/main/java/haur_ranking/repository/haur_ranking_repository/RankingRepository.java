@@ -35,11 +35,22 @@ public class RankingRepository {
 		return rankings;
 	}
 
-	public static void delete(EntityManager entityManager) {
+	public static void deleteAll(EntityManager entityManager) {
 		try {
 			String queryString = "DELETE FROM Ranking r";
 			entityManager.createQuery(queryString).executeUpdate();
 
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void delete(Ranking ranking, EntityManager entityManager) {
+
+		try {
+			if (!entityManager.contains(ranking))
+				ranking = entityManager.merge(ranking);
+			entityManager.remove(ranking);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -3,6 +3,8 @@ package haur_ranking.gui.rankingpanel;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.DefaultListSelectionModel;
@@ -23,9 +25,11 @@ import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
 import haur_ranking.gui.service.DataService;
+import haur_ranking.gui.service.RankingPanelActionEventService;
+import haur_ranking.gui.service.RankingPanelActionEventService.RankingPanelButtonCommands;
 import haur_ranking.utils.DateFormatUtils;
 
-public class PreviousRankingsTable extends JPanel implements GUIDataEventListener {
+public class PreviousRankingsTable extends JPanel implements ActionListener, GUIDataEventListener {
 
 	/**
 	 *
@@ -44,11 +48,13 @@ public class PreviousRankingsTable extends JPanel implements GUIDataEventListene
 		cardLayout = new CardLayout();
 		setLayout(cardLayout);
 		previousRankingsTable = getPreviousRankingsTable();
+		setTableToSingeRowSelection();
 		JScrollPane scrollPane = new JScrollPane(previousRankingsTable);
 		add(scrollPane, PreviousRankingsTableStatus.HAS_DATA.toString());
 		add(getNoTableDataPanel(), PreviousRankingsTableStatus.NO_DATA.toString());
 		cardLayout.show(this, PreviousRankingsTableStatus.NO_DATA.toString());
 		DataService.addDataEventListener(this);
+		RankingPanelActionEventService.addButtonClickListener(this);
 
 	}
 
@@ -76,18 +82,6 @@ public class PreviousRankingsTable extends JPanel implements GUIDataEventListene
 		rankingTable.setCellSelectionEnabled(false);
 		rankingTable.setColumnSelectionAllowed(false);
 		rankingTable.setRowSelectionAllowed(true);
-		rankingTable.setSelectionModel(new SingleRowSelectionModel());
-
-		rankingTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent event) {
-				int selectedRowIndex = rankingTable.getSelectedRow();
-				if (selectedRowIndex >= 0) {
-					DataService.setPreviousRankingsTableSelectedRanking(
-							DataService.getPreviousRankingsTableData().get(selectedRowIndex));
-				}
-			}
-		});
 
 		TableColumn rankingDateColumn = rankingTable.getColumnModel().getColumn(0);
 		TableColumn lastMatchColumn = rankingTable.getColumnModel().getColumn(1);
@@ -148,6 +142,25 @@ public class PreviousRankingsTable extends JPanel implements GUIDataEventListene
 		}
 	}
 
+	@Override
+	public void actionPerformed(ActionEvent event) {
+		if (event.getActionCommand().equals(RankingPanelButtonCommands.CHOOSE_RANKINGS_TO_DELETE.toString())) {
+			setTableToMultiRowSelection();
+			if (previousRankingsTable.getRowCount() > 0) {
+				previousRankingsTable.setRowSelectionInterval(0, 0);
+			}
+			setRankingsToDelete();
+		}
+
+		if (event.getActionCommand().equals(RankingPanelButtonCommands.CANCEL_DELETE_RANKINGS.toString())
+				|| event.getActionCommand().equals(RankingPanelButtonCommands.DELETE_RANKINGS.toString())) {
+			setTableToSingeRowSelection();
+			if (previousRankingsTable.getRowCount() > 0) {
+				previousRankingsTable.setRowSelectionInterval(0, 0);
+			}
+		}
+	}
+
 	private class SingleRowSelectionModel extends DefaultListSelectionModel {
 
 		/**
@@ -167,5 +180,37 @@ public class PreviousRankingsTable extends JPanel implements GUIDataEventListene
 		public void removeSelectionInterval(int index0, int index1) {
 		}
 
+	}
+
+	private void setRankingsToDelete() {
+		DataService.getPreviousRankingsToDelete().clear();
+		int[] selectedRowIndexes = previousRankingsTable.getSelectedRows();
+		for (int index : selectedRowIndexes) {
+			DataService.getPreviousRankingsToDelete().add(DataService.getPreviousRankingsTableData().get(index));
+		}
+	}
+
+	private void setTableToMultiRowSelection() {
+		previousRankingsTable.setSelectionModel(new DefaultListSelectionModel());
+		previousRankingsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent event) {
+				setRankingsToDelete();
+			}
+		});
+	}
+
+	private void setTableToSingeRowSelection() {
+		previousRankingsTable.setSelectionModel(new SingleRowSelectionModel());
+		previousRankingsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent event) {
+				int selectedRowIndex = rankingTable.getSelectedRow();
+				if (selectedRowIndex >= 0) {
+					DataService.setPreviousRankingsTableSelectedRanking(
+							DataService.getPreviousRankingsTableData().get(selectedRowIndex));
+				}
+			}
+		});
 	}
 }

@@ -23,6 +23,8 @@ import haur_ranking.gui.MainWindow;
 import haur_ranking.gui.filter.FileFilterUtils;
 import haur_ranking.gui.filter.PdfFileFilter;
 import haur_ranking.gui.service.DataService;
+import haur_ranking.gui.service.RankingPanelActionEventService;
+import haur_ranking.gui.service.RankingPanelActionEventService.RankingPanelButtonCommands;
 import haur_ranking.service.RankingService;
 import haur_ranking.utils.DateFormatUtils;
 
@@ -33,13 +35,14 @@ public class ControlsPanel extends JPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private JButton choosePreviousRankingsToDeleteButton;
-	private JButton deleteRankingsButton;
-	private JButton cancelDeleteButton;
+	private static JButton choosePreviousRankingsToDeleteButton;
+	private static JButton deleteRankingsButton;
+	private static JButton cancelDeleteButton;
+	private static JButton pdfButton;
 
 	private ButtonClickListener buttonClickListener = new ButtonClickListener();
 
-	private String lastRankingPdfFileLocation;
+	private static String lastRankingPdfFileLocation;
 
 	public ControlsPanel() {
 		int verticalSpacingBetweenPanes = 60;
@@ -76,14 +79,14 @@ public class ControlsPanel extends JPanel {
 		JPanel deleteCancelButtonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
 		deleteRankingsButton = new JButton("Poista");
-		deleteRankingsButton.setActionCommand("deleteRankings");
+		deleteRankingsButton.setActionCommand(RankingPanelButtonCommands.DELETE_RANKINGS.toString());
 		deleteRankingsButton.addActionListener(buttonClickListener);
 		deleteRankingsButton.setEnabled(false);
 
 		deleteCancelButtonsPanel.add(deleteRankingsButton);
 
 		cancelDeleteButton = new JButton("Peruuta");
-		cancelDeleteButton.setActionCommand("cancenDelete");
+		cancelDeleteButton.setActionCommand(RankingPanelButtonCommands.CANCEL_DELETE_RANKINGS.toString());
 		cancelDeleteButton.addActionListener(buttonClickListener);
 		cancelDeleteButton.setEnabled(false);
 
@@ -96,8 +99,8 @@ public class ControlsPanel extends JPanel {
 		buttonsBottomLine.setBorder(BorderFactory.createEmptyBorder(15, 0, 0, 0));
 		JPanel pdfButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-		JButton pdfButton = new JButton("Tallenna Pdf");
-		pdfButton.setActionCommand("generatePdf");
+		pdfButton = new JButton("Tallenna Pdf");
+		pdfButton.setActionCommand(RankingPanelButtonCommands.GENERATE_RANKING_PDF.toString());
 		pdfButton.addActionListener(buttonClickListener);
 		pdfButtonPanel.add(pdfButton);
 
@@ -106,7 +109,8 @@ public class ControlsPanel extends JPanel {
 		JPanel chooseDeleteRankings = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
 		choosePreviousRankingsToDeleteButton = new JButton("Valitse poistettavat");
-		choosePreviousRankingsToDeleteButton.setActionCommand("chooseRankingsToDelete");
+		choosePreviousRankingsToDeleteButton
+				.setActionCommand(RankingPanelButtonCommands.CHOOSE_RANKINGS_TO_DELETE.toString());
 		choosePreviousRankingsToDeleteButton.addActionListener(buttonClickListener);
 		chooseDeleteRankings.add(choosePreviousRankingsToDeleteButton);
 		buttonsBottomLine.add(chooseDeleteRankings, BorderLayout.EAST);
@@ -117,7 +121,33 @@ public class ControlsPanel extends JPanel {
 
 	}
 
+	private void chooseRankingsToDeleteCommandHandler() {
+		choosePreviousRankingsToDeleteButton.setEnabled(false);
+		deleteRankingsButton.setEnabled(true);
+		cancelDeleteButton.setEnabled(true);
+		pdfButton.setEnabled(false);
+
+	}
+
+	private void cancelDeleteCommandHandler() {
+		choosePreviousRankingsToDeleteButton.setEnabled(true);
+		deleteRankingsButton.setEnabled(false);
+		cancelDeleteButton.setEnabled(false);
+		pdfButton.setEnabled(true);
+	}
+
+	private void deleteRankingsCommandHandler() {
+		deleteRankingsButton.setEnabled(false);
+		cancelDeleteButton.setEnabled(false);
+
+		DataService.deletePreviousRankings();
+
+		choosePreviousRankingsToDeleteButton.setEnabled(true);
+		pdfButton.setEnabled(true);
+	}
+
 	private void generatePdfCommandHandler() {
+		pdfButton.setEnabled(false);
 		JFileChooser fileChooser;
 		if (lastRankingPdfFileLocation != null)
 			fileChooser = new JFileChooser(lastRankingPdfFileLocation);
@@ -143,24 +173,26 @@ public class ControlsPanel extends JPanel {
 			if (returnVal != JFileChooser.CANCEL_OPTION)
 				generatePdfCommandHandler();
 		}
+		pdfButton.setEnabled(true);
 
 	}
 
 	private class ButtonClickListener implements ActionListener {
+
 		@Override
-		public void actionPerformed(ActionEvent e) {
-			switch (e.getActionCommand()) {
-			case "chooseRankingsToDelete":
-				break;
-			case "cancenDelete":
-				break;
-
-			case "deleteRankings":
-				break;
-
-			case "generatePdf":
+		public void actionPerformed(ActionEvent event) {
+			RankingPanelActionEventService.emit(event);
+			if (event.getActionCommand().equals(RankingPanelButtonCommands.CHOOSE_RANKINGS_TO_DELETE.toString())) {
+				chooseRankingsToDeleteCommandHandler();
+			}
+			if (event.getActionCommand().equals(RankingPanelButtonCommands.CANCEL_DELETE_RANKINGS.toString())) {
+				cancelDeleteCommandHandler();
+			}
+			if (event.getActionCommand().equals(RankingPanelButtonCommands.DELETE_RANKINGS.toString())) {
+				deleteRankingsCommandHandler();
+			}
+			if (event.getActionCommand().equals(RankingPanelButtonCommands.GENERATE_RANKING_PDF.toString())) {
 				generatePdfCommandHandler();
-				break;
 			}
 		}
 	}

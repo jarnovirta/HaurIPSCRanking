@@ -28,6 +28,7 @@ public class DataService {
 	private static List<GUIDataEventListener> dataEventListeners = new ArrayList<GUIDataEventListener>();
 	private static List<Match> importResultsPanelMatchList = new ArrayList<Match>();
 	private static List<Ranking> previousRankingsTableData = new ArrayList<Ranking>();
+	private static List<Ranking> previousRankingsToDelete = new ArrayList<Ranking>();
 	private static List<Stage> databaseMatchInfoTableStages = new ArrayList<Stage>();;
 	private static List<Stage> databaseMatchInfoTableStagesToDelete = new ArrayList<Stage>();
 	private static List<Match> databaseMatchInfoTableData;
@@ -121,6 +122,13 @@ public class DataService {
 		}
 	}
 
+	public static void deletePreviousRankings() {
+		if (previousRankingsToDelete != null) {
+			RankingService.delete(previousRankingsToDelete);
+			updateGUIData();
+		}
+	}
+
 	public static List<Ranking> getPreviousRankingsTableData() {
 		return previousRankingsTableData;
 	}
@@ -179,6 +187,14 @@ public class DataService {
 
 	public static void setDatabaseCompetitorInfoTableData(List<Competitor> databaseCompetitorInfoTableData) {
 		DataService.databaseCompetitorInfoTableData = databaseCompetitorInfoTableData;
+	}
+
+	public static List<Ranking> getPreviousRankingsToDelete() {
+		return previousRankingsToDelete;
+	}
+
+	public static void setPreviousRankingsToDelete(List<Ranking> previousRankingsToDelete) {
+		DataService.previousRankingsToDelete = previousRankingsToDelete;
 	}
 
 }
