@@ -46,50 +46,68 @@ public class ControlsPanel extends JPanel {
 
 	public ControlsPanel() {
 		int verticalSpacingBetweenPanes = 60;
-		setPreferredSize(new Dimension(500, (MainWindow.HEIGHT - verticalSpacingBetweenPanes) / 2));
+		setPreferredSize(
+				new Dimension(MainWindow.LEFT_PANE_WIDTH, (MainWindow.HEIGHT - verticalSpacingBetweenPanes) / 2));
 		setLayout(new BorderLayout());
-		setBorder(BorderFactory.createEmptyBorder(0, 30, 0, 0));
-		JPanel instructions = new JPanel();
-		instructions.setLayout(new BoxLayout(instructions, BoxLayout.Y_AXIS));
-		instructions.setBorder(BorderFactory.createEmptyBorder(40, 0, 0, 0));
-		JLabel firstLine = new JLabel("Valitse vertailu-ranking:");
-		instructions.add(firstLine);
+		setBorder(BorderFactory.createEmptyBorder(40, 30, 0, 20));
+		add(getGeneratePdfPanel(), BorderLayout.NORTH);
+		add(getDeleteOldRankingsInstructionPanel(), BorderLayout.SOUTH);
+
+	}
+
+	private JPanel getGeneratePdfPanel() {
+		JPanel generatePdfPanel = new JPanel();
+		generatePdfPanel.setLayout(new BoxLayout(generatePdfPanel, BoxLayout.Y_AXIS));
+
+		JLabel firstLine = new JLabel("Valitse vertailu-ranking");
+		firstLine.setAlignmentX(Component.LEFT_ALIGNMENT);
+		generatePdfPanel.add(firstLine);
 		firstLine.setFont(new Font(firstLine.getFont().getName(), Font.BOLD, firstLine.getFont().getSize()));
-		instructions.add(Box.createRigidArea(new Dimension(0, 20)));
+		generatePdfPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
 		JLabel secondLine = new JLabel("Tulosparannukset näkyvät pdf:ssä");
 		secondLine.setAlignmentX(Component.LEFT_ALIGNMENT);
 		secondLine.setBorder(BorderFactory.createEmptyBorder(15, 0, 0, 0));
 		secondLine.setFont(new Font(secondLine.getFont().getName(), Font.PLAIN, secondLine.getFont().getSize()));
-		instructions.add(secondLine);
+		generatePdfPanel.add(secondLine);
 
 		JLabel thirdLine = new JLabel("lihavoituina.");
 		thirdLine.setAlignmentX(Component.LEFT_ALIGNMENT);
 		thirdLine.setFont(new Font(thirdLine.getFont().getName(), Font.PLAIN, thirdLine.getFont().getSize()));
-		instructions.add(thirdLine);
+		generatePdfPanel.add(thirdLine);
 
-		instructions.add(Box.createRigidArea(new Dimension(0, 20)));
+		generatePdfPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 		pdfButton = new JButton("Tallenna Pdf");
 		pdfButton.setActionCommand(RankingPanelButtonCommands.GENERATE_RANKING_PDF.toString());
 		pdfButton.addActionListener(buttonClickListener);
-		instructions.add(pdfButton);
+		generatePdfPanel.add(pdfButton);
 
-		add(instructions, BorderLayout.NORTH);
+		return generatePdfPanel;
+	}
 
-		JPanel buttonsPanel = new JPanel();
-		buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.Y_AXIS));
-		buttonsPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 30, 15));
+	private JPanel getDeleteOldRankingsInstructionPanel() {
+		JPanel deleteOldRankingsPanel = new JPanel();
+		deleteOldRankingsPanel.setLayout(new BoxLayout(deleteOldRankingsPanel, BoxLayout.Y_AXIS));
 
-		JPanel buttonsTopLine = new JPanel(new BorderLayout());
+		JLabel firstLine = new JLabel("Poista vanhoja ranking-");
+		firstLine.setAlignmentX(Component.LEFT_ALIGNMENT);
+		deleteOldRankingsPanel.add(firstLine);
+		firstLine.setFont(new Font(firstLine.getFont().getName(), Font.BOLD, firstLine.getFont().getSize()));
 
-		JPanel chooseDeleteRankings = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		JLabel secondLine = new JLabel("tietoja");
+		secondLine.setAlignmentX(Component.LEFT_ALIGNMENT);
+		secondLine.setFont(new Font(secondLine.getFont().getName(), Font.BOLD, secondLine.getFont().getSize()));
+		deleteOldRankingsPanel.add(secondLine);
 
-		choosePreviousRankingsToDeleteButton = new JButton("Poista vanhoja");
+		deleteOldRankingsPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+
+		JPanel buttonsPanel = new JPanel(new BorderLayout());
+		buttonsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		choosePreviousRankingsToDeleteButton = new JButton("Valitse");
 		choosePreviousRankingsToDeleteButton
 				.setActionCommand(RankingPanelButtonCommands.CHOOSE_RANKINGS_TO_DELETE.toString());
 		choosePreviousRankingsToDeleteButton.addActionListener(buttonClickListener);
-		chooseDeleteRankings.add(choosePreviousRankingsToDeleteButton);
-		buttonsTopLine.add(chooseDeleteRankings, BorderLayout.WEST);
+		buttonsPanel.add(choosePreviousRankingsToDeleteButton, BorderLayout.WEST);
 
 		JPanel deleteCancelButtonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
@@ -98,7 +116,7 @@ public class ControlsPanel extends JPanel {
 		deleteRankingsButton.addActionListener(buttonClickListener);
 		deleteRankingsButton.setEnabled(false);
 
-		deleteCancelButtonsPanel.add(deleteRankingsButton);
+		deleteCancelButtonsPanel.add(deleteRankingsButton, BorderLayout.EAST);
 
 		cancelDeleteButton = new JButton("Peruuta");
 		cancelDeleteButton.setActionCommand(RankingPanelButtonCommands.CANCEL_DELETE_RANKINGS.toString());
@@ -106,12 +124,10 @@ public class ControlsPanel extends JPanel {
 		cancelDeleteButton.setEnabled(false);
 
 		deleteCancelButtonsPanel.add(cancelDeleteButton);
-		buttonsTopLine.add(deleteCancelButtonsPanel, BorderLayout.EAST);
+		buttonsPanel.add(deleteCancelButtonsPanel, BorderLayout.EAST);
 
-		buttonsPanel.add(buttonsTopLine);
-
-		add(buttonsPanel, BorderLayout.SOUTH);
-
+		deleteOldRankingsPanel.add(buttonsPanel);
+		return deleteOldRankingsPanel;
 	}
 
 	private void chooseRankingsToDeleteCommandHandler() {

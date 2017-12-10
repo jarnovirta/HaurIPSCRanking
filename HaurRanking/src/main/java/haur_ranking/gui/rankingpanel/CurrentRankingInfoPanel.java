@@ -28,7 +28,8 @@ public class CurrentRankingInfoPanel extends JPanel implements GUIDataEventListe
 
 	public CurrentRankingInfoPanel() {
 		int verticalSpacingBetweenPanes = 60;
-		setPreferredSize(new Dimension(500, (MainWindow.HEIGHT - verticalSpacingBetweenPanes) / 2));
+		setPreferredSize(
+				new Dimension(MainWindow.LEFT_PANE_WIDTH, (MainWindow.HEIGHT - verticalSpacingBetweenPanes) / 2));
 		setLayout(new BorderLayout());
 		setBorder(BorderFactory.createEmptyBorder(0, 30, 0, 0));
 		JPanel rankingInfoPanel = new JPanel();

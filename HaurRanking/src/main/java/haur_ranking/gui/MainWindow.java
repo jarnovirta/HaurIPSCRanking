@@ -29,6 +29,8 @@ public class MainWindow {
 	private JFrame mainFrame;
 	public static final int WIDTH = 1400;
 	public static final int HEIGHT = 800;
+	public static final int LEFT_PANE_WIDTH = 500;
+	public static final int RIGHT_PANE_WIDTH = WIDTH - LEFT_PANE_WIDTH;
 
 	private void initializeFonts() {
 		float multiplier = 1.9f;

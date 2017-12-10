@@ -1,12 +1,18 @@
 package haur_ranking.gui.databasepanel;
 
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import haur_ranking.gui.service.ComponentService;
 import haur_ranking.gui.service.DataService;
 
 public class DatabaseControlsPanel extends JPanel {
@@ -20,25 +26,37 @@ public class DatabaseControlsPanel extends JPanel {
 	private ButtonClickListener buttonClickListener = new ButtonClickListener();
 
 	public DatabaseControlsPanel() {
+		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		setAlignmentX(Component.LEFT_ALIGNMENT);
+		JLabel instructionLine = new JLabel("Poista tulostietoja");
+		instructionLine.setAlignmentX(Component.LEFT_ALIGNMENT);
+		instructionLine
+				.setFont(new Font(instructionLine.getFont().getName(), Font.BOLD, instructionLine.getFont().getSize()));
+		add(instructionLine);
 
-		chooseStagesToDeleteButton = new JButton("Poista tulostietoja");
+		add(Box.createRigidArea(new Dimension(0, 20)));
+
+		JPanel controlsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		controlsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+		chooseStagesToDeleteButton = new JButton("Valitse");
 		chooseStagesToDeleteButton.setActionCommand("chooseStagesToDelete");
 		chooseStagesToDeleteButton.addActionListener(buttonClickListener);
-		this.add(chooseStagesToDeleteButton);
+		controlsPanel.add(chooseStagesToDeleteButton);
 
-		deleteStagesButton = new JButton("Poista valitut tulokset");
+		deleteStagesButton = new JButton("Poista");
 		deleteStagesButton.setActionCommand("deleteStages");
 		deleteStagesButton.addActionListener(buttonClickListener);
 		deleteStagesButton.setEnabled(false);
-		this.add(deleteStagesButton);
+		controlsPanel.add(deleteStagesButton);
 
 		cancelDeleteButton = new JButton("Peruuta");
 		cancelDeleteButton.setActionCommand("cancelDelete");
 		cancelDeleteButton.addActionListener(buttonClickListener);
 		cancelDeleteButton.setEnabled(false);
-		this.add(cancelDeleteButton);
+		controlsPanel.add(cancelDeleteButton);
+		add(controlsPanel);
 
-		ComponentService.setDatabaseControlsPanel(this);
 	}
 
 	private class ButtonClickListener implements ActionListener {

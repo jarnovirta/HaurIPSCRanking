@@ -3,6 +3,7 @@ package haur_ranking.gui.databasepanel;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +22,7 @@ import haur_ranking.domain.Stage;
 import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
+import haur_ranking.gui.MainWindow;
 import haur_ranking.gui.service.DataService;
 
 public class DatabaseCompetitorInfoTable extends JPanel implements GUIDataEventListener {
@@ -37,6 +39,9 @@ public class DatabaseCompetitorInfoTable extends JPanel implements GUIDataEventL
 	};
 
 	public DatabaseCompetitorInfoTable() {
+		int verticalSpacingBetweenPanes = 60;
+		setPreferredSize(
+				new Dimension(MainWindow.LEFT_PANE_WIDTH, (MainWindow.HEIGHT - verticalSpacingBetweenPanes) / 2));
 		cardLayout = new CardLayout();
 		setLayout(cardLayout);
 		databaseCompetitorInfoTable = getDatabaseMatchInfoTable();

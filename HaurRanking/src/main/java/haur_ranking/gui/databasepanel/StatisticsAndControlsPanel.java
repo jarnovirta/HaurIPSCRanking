@@ -1,12 +1,12 @@
 package haur_ranking.gui.databasepanel;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 
-import javax.swing.BoxLayout;
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JTable;
-import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
@@ -15,9 +15,10 @@ import haur_ranking.domain.DatabaseStatistics;
 import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
+import haur_ranking.gui.MainWindow;
 import haur_ranking.gui.service.DataService;
 
-public class DatabaseStatisticsPanel extends JPanel implements GUIDataEventListener {
+public class StatisticsAndControlsPanel extends JPanel implements GUIDataEventListener {
 	/**
 	 *
 	 */
@@ -25,13 +26,16 @@ public class DatabaseStatisticsPanel extends JPanel implements GUIDataEventListe
 
 	JTable statisticsTable;
 
-	public DatabaseStatisticsPanel() {
-		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-		setBorder(new EmptyBorder(10, 10, 0, 0));
+	public StatisticsAndControlsPanel() {
+		int verticalSpacingBetweenPanes = 60;
+		setPreferredSize(
+				new Dimension(MainWindow.LEFT_PANE_WIDTH, (MainWindow.HEIGHT - verticalSpacingBetweenPanes) / 2));
+		setLayout(new BorderLayout());
+		setBorder(BorderFactory.createEmptyBorder(40, 30, 0, 20));
 		statisticsTable = getStatisticsTable();
 		statisticsTable.setAlignmentX(Component.LEFT_ALIGNMENT);
-		add(statisticsTable);
-		setMaximumSize(new Dimension(550, 310));
+		add(statisticsTable, BorderLayout.NORTH);
+		add(new DatabaseControlsPanel(), BorderLayout.SOUTH);
 		DataService.addDataEventListener(this);
 
 	}
