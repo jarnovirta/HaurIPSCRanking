@@ -68,6 +68,12 @@ public class ControlsPanel extends JPanel {
 		thirdLine.setFont(new Font(thirdLine.getFont().getName(), Font.PLAIN, thirdLine.getFont().getSize()));
 		instructions.add(thirdLine);
 
+		instructions.add(Box.createRigidArea(new Dimension(0, 20)));
+		pdfButton = new JButton("Tallenna Pdf");
+		pdfButton.setActionCommand(RankingPanelButtonCommands.GENERATE_RANKING_PDF.toString());
+		pdfButton.addActionListener(buttonClickListener);
+		instructions.add(pdfButton);
+
 		add(instructions, BorderLayout.NORTH);
 
 		JPanel buttonsPanel = new JPanel();
@@ -75,6 +81,15 @@ public class ControlsPanel extends JPanel {
 		buttonsPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 30, 15));
 
 		JPanel buttonsTopLine = new JPanel(new BorderLayout());
+
+		JPanel chooseDeleteRankings = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+
+		choosePreviousRankingsToDeleteButton = new JButton("Poista vanhoja");
+		choosePreviousRankingsToDeleteButton
+				.setActionCommand(RankingPanelButtonCommands.CHOOSE_RANKINGS_TO_DELETE.toString());
+		choosePreviousRankingsToDeleteButton.addActionListener(buttonClickListener);
+		chooseDeleteRankings.add(choosePreviousRankingsToDeleteButton);
+		buttonsTopLine.add(chooseDeleteRankings, BorderLayout.WEST);
 
 		JPanel deleteCancelButtonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
@@ -94,28 +109,6 @@ public class ControlsPanel extends JPanel {
 		buttonsTopLine.add(deleteCancelButtonsPanel, BorderLayout.EAST);
 
 		buttonsPanel.add(buttonsTopLine);
-
-		JPanel buttonsBottomLine = new JPanel(new BorderLayout());
-		buttonsBottomLine.setBorder(BorderFactory.createEmptyBorder(15, 0, 0, 0));
-		JPanel pdfButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-
-		pdfButton = new JButton("Tallenna Pdf");
-		pdfButton.setActionCommand(RankingPanelButtonCommands.GENERATE_RANKING_PDF.toString());
-		pdfButton.addActionListener(buttonClickListener);
-		pdfButtonPanel.add(pdfButton);
-
-		buttonsBottomLine.add(pdfButtonPanel, BorderLayout.WEST);
-
-		JPanel chooseDeleteRankings = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-
-		choosePreviousRankingsToDeleteButton = new JButton("Valitse poistettavat");
-		choosePreviousRankingsToDeleteButton
-				.setActionCommand(RankingPanelButtonCommands.CHOOSE_RANKINGS_TO_DELETE.toString());
-		choosePreviousRankingsToDeleteButton.addActionListener(buttonClickListener);
-		chooseDeleteRankings.add(choosePreviousRankingsToDeleteButton);
-		buttonsBottomLine.add(chooseDeleteRankings, BorderLayout.EAST);
-
-		buttonsPanel.add(buttonsBottomLine);
 
 		add(buttonsPanel, BorderLayout.SOUTH);
 

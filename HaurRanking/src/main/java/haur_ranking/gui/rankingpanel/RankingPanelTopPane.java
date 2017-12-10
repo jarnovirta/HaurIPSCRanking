@@ -19,8 +19,6 @@ public class RankingPanelTopPane extends JPanel {
 	GridBagLayout gridBagLayout;
 	GridBagConstraints gridBagConstraints;
 
-	RankingTable rankingTablePane;
-
 	public RankingPanelTopPane() {
 		setLayout(new BorderLayout());
 
@@ -28,7 +26,7 @@ public class RankingPanelTopPane extends JPanel {
 		int verticalSpacingBetweenPanes = 60;
 
 		emptyLeftPanel.setPreferredSize(new Dimension(500, (MainWindow.HEIGHT - verticalSpacingBetweenPanes) / 2));
-		add(emptyLeftPanel, BorderLayout.WEST);
+		add(new CurrentRankingInfoPanel(), BorderLayout.WEST);
 		add(new RankingTable());
 
 	}

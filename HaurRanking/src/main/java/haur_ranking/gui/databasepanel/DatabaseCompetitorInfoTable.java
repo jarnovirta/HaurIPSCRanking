@@ -115,10 +115,7 @@ public class DatabaseCompetitorInfoTable extends JPanel implements GUIDataEventL
 			tableModel.addRow(row);
 			rowCounter++;
 		}
-		if (rowCounter > 0) {
-			for (int i = 0; i < (17 - rowCounter); i++)
-				tableModel.addRow(new String[] { "", "", "" });
-		}
+
 		tableModel.fireTableDataChanged();
 		if (databaseCompetitorInfoTable.getRowCount() > 0) {
 			databaseCompetitorInfoTable.setRowSelectionInterval(0, 0);

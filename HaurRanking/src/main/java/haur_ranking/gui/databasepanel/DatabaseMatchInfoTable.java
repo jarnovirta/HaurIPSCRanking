@@ -135,10 +135,7 @@ public class DatabaseMatchInfoTable extends JPanel implements GUIDataEventListen
 				}
 			}
 		}
-		if (rowCounter > 0) {
-			for (int i = 0; i < (17 - rowCounter); i++)
-				tableModel.addRow(new String[] { "", "", "", "" });
-		}
+
 		tableModel.fireTableDataChanged();
 		if (databaseMatchInfoTable.getRowCount() > 0) {
 			databaseMatchInfoTable.setRowSelectionInterval(0, 0);

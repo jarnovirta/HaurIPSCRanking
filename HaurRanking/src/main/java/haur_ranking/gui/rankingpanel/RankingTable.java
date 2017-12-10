@@ -109,7 +109,7 @@ public class RankingTable extends JPanel implements GUIDataEventListener {
 
 		positionColumn.setCellRenderer(rightRenderer);
 		positionColumn.setHeaderValue("Sija");
-		positionColumn.setPreferredWidth(50);
+		positionColumn.setMaxWidth(150);
 
 		competitorNameColumn.setCellRenderer(leftRenderer);
 		competitorNameColumn.setHeaderValue("Nimi");
@@ -117,15 +117,18 @@ public class RankingTable extends JPanel implements GUIDataEventListener {
 
 		resultPercentageColumn.setCellRenderer(centerRenderer);
 		resultPercentageColumn.setHeaderValue("%");
-		resultPercentageColumn.setPreferredWidth(50);
+		resultPercentageColumn.setPreferredWidth(150);
+		resultPercentageColumn.setMaxWidth(150);
 
 		hitFactorAverageColumn.setCellRenderer(centerRenderer);
 		hitFactorAverageColumn.setHeaderValue("HF-keskiarvo");
-		hitFactorAverageColumn.setPreferredWidth(50);
+		hitFactorAverageColumn.setPreferredWidth(150);
+		hitFactorAverageColumn.setMaxWidth(150);
 
 		resultCountColumn.setCellRenderer(centerRenderer);
 		resultCountColumn.setHeaderValue("Tuloksia");
-		resultCountColumn.setPreferredWidth(50);
+		resultCountColumn.setPreferredWidth(150);
+		resultCountColumn.setMaxWidth(150);
 
 		return rankingTable;
 	}
