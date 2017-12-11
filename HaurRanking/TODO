@@ -1,10 +1,14 @@
 TODO:
 
-- Varmista ettÃƒÂ¤ DQ kisaajat eivÃƒÂ¤t ole mukana (testi)
+- Varmista että DQ kisaajat eivät ole mukana (testi)
 
 - exception handling
 - laske ranking vain muuttuneiden divisioonien osalta. Nyt vissiin lasketaan kaikki?
 
+- Delete-napilla poistot
+- Oletko varma-dialogit
 
+- Tulostietojen sivutus
+- Asetteluiden viimeistely
+- testit
 - Tallennettaessa tyhjä stage ilman tuloslistoja menee aina uudelleen kantaan.
-
