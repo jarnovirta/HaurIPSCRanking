@@ -7,4 +7,4 @@ TODO:
 
 
 - Tallennettaessa tyhjä stage ilman tuloslistoja menee aina uudelleen kantaan.
-- GUI: ei actionevent vaan serviceen componentit ja niihin metodi jolla saa buttoniin lisättyä listener
+
