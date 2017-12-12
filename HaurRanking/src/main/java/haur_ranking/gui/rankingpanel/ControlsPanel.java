@@ -19,16 +19,17 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import haur_ranking.event.GUIDataEvent;
+import haur_ranking.event.GUIDataEvent.GUIDataEventType;
+import haur_ranking.event.GUIDataEventListener;
 import haur_ranking.gui.MainWindow;
 import haur_ranking.gui.filter.FileFilterUtils;
 import haur_ranking.gui.filter.PdfFileFilter;
 import haur_ranking.gui.service.DataService;
-import haur_ranking.gui.service.RankingPanelActionEventService;
-import haur_ranking.gui.service.RankingPanelActionEventService.RankingPanelButtonCommands;
 import haur_ranking.service.RankingService;
 import haur_ranking.utils.DateFormatUtils;
 
-public class ControlsPanel extends JPanel {
+public class ControlsPanel extends JPanel implements GUIDataEventListener {
 
 	/**
 	 *
@@ -52,6 +53,7 @@ public class ControlsPanel extends JPanel {
 		setBorder(BorderFactory.createEmptyBorder(40, 30, 0, 20));
 		add(getGeneratePdfPanel(), BorderLayout.NORTH);
 		add(getDeleteOldRankingsInstructionPanel(), BorderLayout.SOUTH);
+		DataService.addDataEventListener(this);
 
 	}
 
@@ -107,6 +109,7 @@ public class ControlsPanel extends JPanel {
 		choosePreviousRankingsToDeleteButton
 				.setActionCommand(RankingPanelButtonCommands.CHOOSE_RANKINGS_TO_DELETE.toString());
 		choosePreviousRankingsToDeleteButton.addActionListener(buttonClickListener);
+		choosePreviousRankingsToDeleteButton.setEnabled(false);
 		buttonsPanel.add(choosePreviousRankingsToDeleteButton, BorderLayout.WEST);
 
 		JPanel deleteCancelButtonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -116,7 +119,7 @@ public class ControlsPanel extends JPanel {
 		deleteRankingsButton.addActionListener(buttonClickListener);
 		deleteRankingsButton.setEnabled(false);
 
-		deleteCancelButtonsPanel.add(deleteRankingsButton, BorderLayout.EAST);
+		deleteCancelButtonsPanel.add(deleteRankingsButton);
 
 		cancelDeleteButton = new JButton("Peruuta");
 		cancelDeleteButton.setActionCommand(RankingPanelButtonCommands.CANCEL_DELETE_RANKINGS.toString());
@@ -124,6 +127,7 @@ public class ControlsPanel extends JPanel {
 		cancelDeleteButton.setEnabled(false);
 
 		deleteCancelButtonsPanel.add(cancelDeleteButton);
+
 		buttonsPanel.add(deleteCancelButtonsPanel, BorderLayout.EAST);
 
 		deleteOldRankingsPanel.add(buttonsPanel);
@@ -139,7 +143,9 @@ public class ControlsPanel extends JPanel {
 	}
 
 	private void cancelDeleteCommandHandler() {
-		choosePreviousRankingsToDeleteButton.setEnabled(true);
+		if (DataService.getDatabaseMatchInfoTableData() != null
+				&& DataService.getPreviousRankingsTableData().size() > 0)
+			choosePreviousRankingsToDeleteButton.setEnabled(true);
 		deleteRankingsButton.setEnabled(false);
 		cancelDeleteButton.setEnabled(false);
 		pdfButton.setEnabled(true);
@@ -151,7 +157,8 @@ public class ControlsPanel extends JPanel {
 
 		DataService.deletePreviousRankings();
 
-		choosePreviousRankingsToDeleteButton.setEnabled(true);
+		if (DataService.getPreviousRankingsTableData() != null && DataService.getPreviousRankingsTableData().size() > 0)
+			choosePreviousRankingsToDeleteButton.setEnabled(true);
 		pdfButton.setEnabled(true);
 	}
 
@@ -190,7 +197,6 @@ public class ControlsPanel extends JPanel {
 
 		@Override
 		public void actionPerformed(ActionEvent event) {
-			RankingPanelActionEventService.emit(event);
 			if (event.getActionCommand().equals(RankingPanelButtonCommands.CHOOSE_RANKINGS_TO_DELETE.toString())) {
 				chooseRankingsToDeleteCommandHandler();
 			}
@@ -203,6 +209,23 @@ public class ControlsPanel extends JPanel {
 			if (event.getActionCommand().equals(RankingPanelButtonCommands.GENERATE_RANKING_PDF.toString())) {
 				generatePdfCommandHandler();
 			}
+		}
+	}
+
+	public void addButtonClickListener(ActionListener listener) {
+		choosePreviousRankingsToDeleteButton.addActionListener(listener);
+		deleteRankingsButton.addActionListener(listener);
+		cancelDeleteButton.addActionListener(listener);
+		pdfButton.addActionListener(listener);
+
+	}
+
+	@Override
+	public void process(GUIDataEvent event) {
+		if (event.getEventType() == GUIDataEventType.GUI_DATA_UPDATE) {
+			if (DataService.getPreviousRankingsTableData() != null
+					&& DataService.getPreviousRankingsTableData().size() > 0)
+				choosePreviousRankingsToDeleteButton.setEnabled(true);
 		}
 	}
 }

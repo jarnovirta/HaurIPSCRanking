@@ -25,8 +25,7 @@ import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
 import haur_ranking.gui.service.DataService;
-import haur_ranking.gui.service.RankingPanelActionEventService;
-import haur_ranking.gui.service.RankingPanelActionEventService.RankingPanelButtonCommands;
+import haur_ranking.gui.utils.JTableUtils;
 import haur_ranking.utils.DateFormatUtils;
 
 public class PreviousRankingsTable extends JPanel implements ActionListener, GUIDataEventListener {
@@ -54,7 +53,6 @@ public class PreviousRankingsTable extends JPanel implements ActionListener, GUI
 		add(getNoTableDataPanel(), PreviousRankingsTableStatus.NO_DATA.toString());
 		cardLayout.show(this, PreviousRankingsTableStatus.NO_DATA.toString());
 		DataService.addDataEventListener(this);
-		RankingPanelActionEventService.addButtonClickListener(this);
 
 	}
 
@@ -87,30 +85,20 @@ public class PreviousRankingsTable extends JPanel implements ActionListener, GUI
 		TableColumn lastMatchColumn = rankingTable.getColumnModel().getColumn(1);
 		TableColumn lastMatchDateColumn = rankingTable.getColumnModel().getColumn(2);
 
-		DefaultTableCellRenderer leftRenderer;
-		DefaultTableCellRenderer rightRenderer;
-		DefaultTableCellRenderer centerRenderer;
-
-		leftRenderer = new DefaultTableCellRenderer();
-		leftRenderer.setHorizontalAlignment(SwingConstants.LEFT);
-
-		rightRenderer = new DefaultTableCellRenderer();
-		rightRenderer.setHorizontalAlignment(SwingConstants.RIGHT);
-
-		centerRenderer = new DefaultTableCellRenderer();
-		centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+		DefaultTableCellRenderer leftRenderer = JTableUtils.getLeftRenderer();
+		DefaultTableCellRenderer centerRenderer = JTableUtils.getCenterRenderer();
 
 		rankingDateColumn.setCellRenderer(centerRenderer);
 		rankingDateColumn.setHeaderValue("Rankingin pvm");
-		rankingDateColumn.setPreferredWidth(100);
+		rankingDateColumn.setPreferredWidth(200);
 
 		lastMatchColumn.setCellRenderer(leftRenderer);
 		lastMatchColumn.setHeaderValue("Viimeinen huomioitu kisa");
-		lastMatchColumn.setPreferredWidth(300);
+		lastMatchColumn.setPreferredWidth(800);
 
-		lastMatchDateColumn.setCellRenderer(leftRenderer);
+		lastMatchDateColumn.setCellRenderer(centerRenderer);
 		lastMatchDateColumn.setHeaderValue("Kisan pvm");
-		lastMatchDateColumn.setPreferredWidth(100);
+		lastMatchDateColumn.setPreferredWidth(200);
 
 		return rankingTable;
 	}
@@ -119,6 +107,7 @@ public class PreviousRankingsTable extends JPanel implements ActionListener, GUI
 		DefaultTableModel tableModel = (DefaultTableModel) previousRankingsTable.getModel();
 		tableModel.setRowCount(0);
 		if (previousRankings == null) {
+			cardLayout.show(this, PreviousRankingsTableStatus.NO_DATA.toString());
 			return;
 		}
 		for (Ranking previousRanking : previousRankings) {
@@ -129,8 +118,8 @@ public class PreviousRankingsTable extends JPanel implements ActionListener, GUI
 			tableModel.addRow(rowData);
 		}
 		tableModel.fireTableDataChanged();
-		if (rankingTable.getRowCount() > 0) {
-			rankingTable.setRowSelectionInterval(0, 0);
+		if (previousRankingsTable.getRowCount() > 0) {
+			previousRankingsTable.setRowSelectionInterval(0, 0);
 		}
 		cardLayout.show(this, PreviousRankingsTableStatus.HAS_DATA.toString());
 	}

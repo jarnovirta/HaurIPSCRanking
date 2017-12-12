@@ -15,14 +15,12 @@ public class DatabasePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	GridBagLayout gridBagLayout;
 	GridBagConstraints gridBagConstraints;
-	DatabasePanelLeftPane leftPane;
-	DatabasePanelRightPane rightPane;
 
 	public DatabasePanel() {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		add(new ResultsDataPane());
+		add(new MatchPane());
 		add(Box.createRigidArea(new Dimension(0, 30)));
-		add(new CompetitorDataPane());
+		add(new CompetitorPane());
 		add(Box.createRigidArea(new Dimension(0, 30)));
 	}
 

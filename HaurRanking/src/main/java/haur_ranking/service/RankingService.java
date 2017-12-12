@@ -164,11 +164,9 @@ public class RankingService {
 					if (compareToRow.getCompetitor().equals(competitor)) {
 						int newPosition = divisionRanking.getDivisionRankingRows().indexOf(row);
 						int oldPosition = compareToDivisionRanking.getDivisionRankingRows().indexOf(compareToRow);
-						System.out.println(newPosition + " " + oldPosition);
 						if (newPosition > oldPosition || newPosition == oldPosition) {
 							row.setImprovedResult(false);
 						}
-						System.out.println(row.isImprovedResult());
 					}
 				}
 

@@ -18,6 +18,10 @@ public class DataImportEvent {
 	private ImportStatus importStatus;
 	private int progressPercent;
 	private List<Match> winMSSMatches;
+	private int newScoreSheetsCount;
+	private int newStagesCount;
+	private int newMatchesCount;
+	private int newCompetitorsCount;
 
 	public DataImportEvent(DataImportEventType eventType) {
 		this.dataImportEventType = eventType;
@@ -53,6 +57,38 @@ public class DataImportEvent {
 
 	public void setWinMSSMatches(List<Match> winMSSMatches) {
 		this.winMSSMatches = winMSSMatches;
+	}
+
+	public int getNewScoreSheetsCount() {
+		return newScoreSheetsCount;
+	}
+
+	public void setNewScoreSheetsCount(int newScoreSheetsCount) {
+		this.newScoreSheetsCount = newScoreSheetsCount;
+	}
+
+	public int getNewStagesCount() {
+		return newStagesCount;
+	}
+
+	public void setNewStagesCount(int newStagesCount) {
+		this.newStagesCount = newStagesCount;
+	}
+
+	public int getNewMatchesCount() {
+		return newMatchesCount;
+	}
+
+	public void setNewMatchesCount(int newMatchesCount) {
+		this.newMatchesCount = newMatchesCount;
+	}
+
+	public int getNewCompetitorsCount() {
+		return newCompetitorsCount;
+	}
+
+	public void setNewCompetitorsCount(int newCompetitorsCount) {
+		this.newCompetitorsCount = newCompetitorsCount;
 	}
 
 }

@@ -17,7 +17,7 @@ import javax.swing.JPanel;
 
 import haur_ranking.gui.MainWindow;
 
-public class CompetitorDataControlsPanel extends JPanel {
+public class CompetitorControlsPanel extends JPanel {
 	/**
 	 *
 	 */
@@ -28,7 +28,7 @@ public class CompetitorDataControlsPanel extends JPanel {
 	JButton cancelDeleteButton;
 	ButtonClickListener buttonClickListener = new ButtonClickListener();
 
-	public CompetitorDataControlsPanel() {
+	public CompetitorControlsPanel() {
 		int verticalSpacingBetweenPanes = 60;
 		setPreferredSize(
 				new Dimension(MainWindow.LEFT_PANE_WIDTH, (MainWindow.HEIGHT - verticalSpacingBetweenPanes) / 2));
@@ -46,25 +46,30 @@ public class CompetitorDataControlsPanel extends JPanel {
 
 		controlsPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
-		JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		JPanel buttonsPanel = new JPanel(new BorderLayout());
 		buttonsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
 		chooseCompetitorsToDeleteButton = new JButton("Valitse");
 		chooseCompetitorsToDeleteButton.setActionCommand("chooseStagesToDelete");
 		chooseCompetitorsToDeleteButton.addActionListener(buttonClickListener);
-		buttonsPanel.add(chooseCompetitorsToDeleteButton);
+		buttonsPanel.add(chooseCompetitorsToDeleteButton, BorderLayout.WEST);
+
+		JPanel deleteCancelButtonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
 		deleteCompetitorsButton = new JButton("Poista");
 		deleteCompetitorsButton.setActionCommand("deleteStages");
 		deleteCompetitorsButton.addActionListener(buttonClickListener);
 		deleteCompetitorsButton.setEnabled(false);
-		buttonsPanel.add(deleteCompetitorsButton);
+		deleteCancelButtonsPanel.add(deleteCompetitorsButton);
 
 		cancelDeleteButton = new JButton("Peruuta");
 		cancelDeleteButton.setActionCommand("cancelDelete");
 		cancelDeleteButton.addActionListener(buttonClickListener);
 		cancelDeleteButton.setEnabled(false);
-		buttonsPanel.add(cancelDeleteButton);
+		deleteCancelButtonsPanel.add(cancelDeleteButton);
+
+		buttonsPanel.add(deleteCancelButtonsPanel, BorderLayout.EAST);
+
 		controlsPanel.add(buttonsPanel);
 
 		add(controlsPanel, BorderLayout.SOUTH);

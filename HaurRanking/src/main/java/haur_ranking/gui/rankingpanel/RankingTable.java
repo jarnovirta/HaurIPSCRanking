@@ -27,6 +27,7 @@ import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
 import haur_ranking.gui.service.DataService;
+import haur_ranking.gui.utils.JTableUtils;
 import haur_ranking.utils.DataFormatUtils;
 
 public class RankingTable extends JPanel implements GUIDataEventListener {
@@ -94,41 +95,29 @@ public class RankingTable extends JPanel implements GUIDataEventListener {
 		TableColumn hitFactorAverageColumn = rankingTable.getColumnModel().getColumn(3);
 		TableColumn resultCountColumn = rankingTable.getColumnModel().getColumn(4);
 
-		DefaultTableCellRenderer leftRenderer;
-		DefaultTableCellRenderer rightRenderer;
-		DefaultTableCellRenderer centerRenderer;
-
-		leftRenderer = new DefaultTableCellRenderer();
-		leftRenderer.setHorizontalAlignment(SwingConstants.LEFT);
-
-		rightRenderer = new DefaultTableCellRenderer();
-		rightRenderer.setHorizontalAlignment(SwingConstants.RIGHT);
-
-		centerRenderer = new DefaultTableCellRenderer();
-		centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+		DefaultTableCellRenderer leftRenderer = JTableUtils.getLeftRenderer();
+		DefaultTableCellRenderer rightRenderer = JTableUtils.getRightRenderer();
+		DefaultTableCellRenderer centerRenderer = JTableUtils.getCenterRenderer();
 
 		positionColumn.setCellRenderer(rightRenderer);
 		positionColumn.setHeaderValue("Sija");
-		positionColumn.setMaxWidth(150);
+		positionColumn.setPreferredWidth(150);
 
 		competitorNameColumn.setCellRenderer(leftRenderer);
 		competitorNameColumn.setHeaderValue("Nimi");
-		competitorNameColumn.setPreferredWidth(300);
+		competitorNameColumn.setPreferredWidth(450);
 
 		resultPercentageColumn.setCellRenderer(centerRenderer);
 		resultPercentageColumn.setHeaderValue("%");
-		resultPercentageColumn.setPreferredWidth(150);
-		resultPercentageColumn.setMaxWidth(150);
+		resultPercentageColumn.setPreferredWidth(200);
 
 		hitFactorAverageColumn.setCellRenderer(centerRenderer);
 		hitFactorAverageColumn.setHeaderValue("HF-keskiarvo");
-		hitFactorAverageColumn.setPreferredWidth(150);
-		hitFactorAverageColumn.setMaxWidth(150);
+		hitFactorAverageColumn.setPreferredWidth(200);
 
 		resultCountColumn.setCellRenderer(centerRenderer);
 		resultCountColumn.setHeaderValue("Tuloksia");
-		resultCountColumn.setPreferredWidth(150);
-		resultCountColumn.setMaxWidth(150);
+		resultCountColumn.setPreferredWidth(200);
 
 		return rankingTable;
 	}

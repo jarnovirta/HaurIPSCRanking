@@ -4,6 +4,7 @@ import java.awt.Component;
 
 import javax.swing.JComboBox;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
@@ -20,9 +21,11 @@ public class ComboBoxCellRenderer extends JComboBox<Object> implements TableCell
 			String cellValue = (String) value;
 			DefaultTableCellRenderer defaultRenderer = new DefaultTableCellRenderer();
 			defaultRenderer.setText(cellValue);
+			defaultRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 			return defaultRenderer;
 		}
 		setSelectedItem(value);
+
 		return this;
 	}
 }

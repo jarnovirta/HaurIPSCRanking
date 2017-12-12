@@ -4,16 +4,16 @@ import java.awt.BorderLayout;
 
 import javax.swing.JPanel;
 
-public class ResultsDataPane extends JPanel {
+public class MatchPane extends JPanel {
 
 	/**
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public ResultsDataPane() {
+	public MatchPane() {
 		setLayout(new BorderLayout());
-		add(new StatisticsAndControlsPanel(), BorderLayout.WEST);
-		add(new DatabaseMatchInfoTable());
+		add(new MatchStatisticsAndControlsPanel(), BorderLayout.WEST);
+		add(new MatchDataPanel());
 	}
 }

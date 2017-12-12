@@ -3,12 +3,15 @@ package haur_ranking.gui.importpanel;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -17,6 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
@@ -29,13 +33,16 @@ import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
 import haur_ranking.gui.service.DataService;
+import haur_ranking.gui.utils.JTableUtils;
 
-public class ImportResultsRightPane extends JPanel implements GUIDataEventListener {
+public class WinMSSDatabasePane extends JPanel implements GUIDataEventListener {
 
 	/**
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
+
+	private JPanel cardLayoutPanel;
 	private JTable databaseMatchInfoTable;
 	private Map<String, Boolean> editableCellsMap = new HashMap<String, Boolean>();
 	private Map<Integer, Stage> TableRowToStageMap = new HashMap<Integer, Stage>();
@@ -45,16 +52,21 @@ public class ImportResultsRightPane extends JPanel implements GUIDataEventListen
 		NO_WINMSS_DB_SELECTED, SHOW_WINMSS_DATA, IMPORT_RESULT
 	};
 
-	public ImportResultsRightPane() {
-		cardLayout = new CardLayout();
-		setLayout(cardLayout);
+	public WinMSSDatabasePane() {
+		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		cardLayoutPanel = new JPanel();
 
+		cardLayout = new CardLayout();
+		cardLayoutPanel.setLayout(cardLayout);
 		databaseMatchInfoTable = getDatabaseMatchInfoTable();
 		JScrollPane scrollPane = new JScrollPane(databaseMatchInfoTable);
-		add(scrollPane, ImportTableStatus.SHOW_WINMSS_DATA.toString());
-		add(getNoTableDataPanel(), ImportTableStatus.NO_WINMSS_DB_SELECTED.toString());
-		add(getImportResultPanel(), ImportTableStatus.IMPORT_RESULT.toString());
-		cardLayout.show(this, ImportTableStatus.NO_WINMSS_DB_SELECTED.toString());
+		cardLayoutPanel.add(scrollPane, ImportTableStatus.SHOW_WINMSS_DATA.toString());
+		cardLayoutPanel.add(getNoTableDataPanel(), ImportTableStatus.NO_WINMSS_DB_SELECTED.toString());
+		cardLayoutPanel.add(new ImportResultPanel(), ImportTableStatus.IMPORT_RESULT.toString());
+
+		add(cardLayoutPanel);
+		add(Box.createRigidArea(new Dimension(0, 30)));
+		cardLayout.show(cardLayoutPanel, ImportTableStatus.NO_WINMSS_DB_SELECTED.toString());
 		DataService.addDataEventListener(this);
 	}
 
@@ -62,14 +74,6 @@ public class ImportResultsRightPane extends JPanel implements GUIDataEventListen
 		JPanel noResultsPanel = new JPanel(new BorderLayout());
 		noResultsPanel.setBackground(Color.WHITE);
 		JLabel noResultsLabel = new JLabel("Avaa WinMSS-tietokanta", SwingConstants.CENTER);
-		noResultsPanel.add(noResultsLabel);
-		return noResultsPanel;
-	}
-
-	private JPanel getImportResultPanel() {
-		JPanel noResultsPanel = new JPanel(new BorderLayout());
-		noResultsPanel.setBackground(Color.WHITE);
-		JLabel noResultsLabel = new JLabel("Tulostiedot tallennettu", SwingConstants.CENTER);
 		noResultsPanel.add(noResultsLabel);
 		return noResultsPanel;
 	}
@@ -97,23 +101,33 @@ public class ImportResultsRightPane extends JPanel implements GUIDataEventListen
 		TableColumn classifierColumn = table.getColumnModel().getColumn(4);
 		TableColumn importStageColumn = table.getColumnModel().getColumn(5);
 
+		DefaultTableCellRenderer leftRenderer = JTableUtils.getLeftRenderer();
+		DefaultTableCellRenderer rightRenderer = JTableUtils.getRightRenderer();
+		DefaultTableCellRenderer centerRenderer = JTableUtils.getCenterRenderer();
+
 		matchCountColumn.setHeaderValue("");
-		matchCountColumn.setPreferredWidth(50);
+		matchCountColumn.setCellRenderer(rightRenderer);
+		matchCountColumn.setPreferredWidth(150);
 
 		matchNameColumn.setHeaderValue("Kilpailu");
-		matchNameColumn.setPreferredWidth(400);
+		matchNameColumn.setCellRenderer(leftRenderer);
+		matchNameColumn.setPreferredWidth(300);
 
 		matchDateColumn.setHeaderValue("Pvm");
+		matchDateColumn.setCellRenderer(centerRenderer);
 		matchDateColumn.setPreferredWidth(200);
 
 		stageColumn.setHeaderValue("Asema");
-		stageColumn.setPreferredWidth(300);
+		stageColumn.setCellRenderer(centerRenderer);
+		stageColumn.setPreferredWidth(200);
 
 		classifierColumn.setHeaderValue("Luokitteluohjelma");
-		classifierColumn.setPreferredWidth(300);
+		classifierColumn.setCellRenderer(centerRenderer);
+		classifierColumn.setPreferredWidth(200);
 
 		importStageColumn.setHeaderValue("Tallenna");
-		importStageColumn.setPreferredWidth(300);
+		importStageColumn.setCellRenderer(centerRenderer);
+		importStageColumn.setPreferredWidth(200);
 
 		JComboBox<Object> importAsClassifierComboBox = new JComboBox<Object>();
 		ComboBoxCellRenderer renderer = new ComboBoxCellRenderer();
@@ -122,6 +136,7 @@ public class ImportResultsRightPane extends JPanel implements GUIDataEventListen
 		comboBoxCellEditorModel.addElement("Ei tallenneta");
 		comboBoxCellRendererModel.addElement("Ei tallenneta");
 		comboBoxCellRendererModel.addElement("Tallennettu");
+
 		for (ClassifierStage classifier : ClassifierStage.values()) {
 			comboBoxCellEditorModel.addElement(classifier);
 			comboBoxCellRendererModel.addElement(classifier);
@@ -142,7 +157,9 @@ public class ImportResultsRightPane extends JPanel implements GUIDataEventListen
 		});
 		importStageColumn.setCellEditor(new DefaultCellEditor(importAsClassifierComboBox));
 		renderer.setModel(comboBoxCellRendererModel);
+
 		importStageColumn.setCellRenderer(renderer);
+
 		return table;
 
 	}
@@ -169,7 +186,7 @@ public class ImportResultsRightPane extends JPanel implements GUIDataEventListen
 	public void updateDatabaseMatchInfoTable(List<Match> winMSSMatches) {
 		DefaultTableModel tableModel = (DefaultTableModel) databaseMatchInfoTable.getModel();
 		tableModel.setRowCount(0);
-		if (winMSSMatches == null) {
+		if (winMSSMatches == null || winMSSMatches.size() == 0) {
 			return;
 		}
 
@@ -177,7 +194,7 @@ public class ImportResultsRightPane extends JPanel implements GUIDataEventListen
 		int rowCounter = 0;
 		for (Match match : winMSSMatches) {
 			Object[] rowData = new Object[6];
-			rowData[0] = (matchCounter++) + ".";
+			rowData[0] = (matchCounter++) + ". ";
 			rowData[1] = match.getName();
 			rowData[2] = match.getDateString();
 			if (match.getStages() == null || match.getStages().size() == 0)
@@ -209,7 +226,7 @@ public class ImportResultsRightPane extends JPanel implements GUIDataEventListen
 		}
 		setEditableCells(tableModel, winMSSMatches);
 		tableModel.fireTableDataChanged();
-		cardLayout.show(this, ImportTableStatus.SHOW_WINMSS_DATA.toString());
+		cardLayout.show(cardLayoutPanel, ImportTableStatus.SHOW_WINMSS_DATA.toString());
 	}
 
 	private Object getImportCell(Stage stage) {
@@ -230,7 +247,7 @@ public class ImportResultsRightPane extends JPanel implements GUIDataEventListen
 				updateDatabaseMatchInfoTable(DataService.getImportResultsPanelMatchList());
 			}
 			if (event.getDataImportEvent().getImportStatus() == ImportStatus.SAVE_TO_HAUR_RANKING_DB_DONE) {
-				cardLayout.show(this, ImportTableStatus.IMPORT_RESULT.toString());
+				cardLayout.show(cardLayoutPanel, ImportTableStatus.IMPORT_RESULT.toString());
 			}
 		}
 		if (event.getEventType() == GUIDataEventType.GUI_DATA_UPDATE) {

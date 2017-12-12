@@ -1,10 +1,13 @@
 package haur_ranking.gui.importpanel;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.nio.file.Paths;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -17,10 +20,11 @@ import haur_ranking.event.DataImportEvent.ImportStatus;
 import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
+import haur_ranking.gui.MainWindow;
 import haur_ranking.gui.filter.WinMSSFileFilter;
 import haur_ranking.gui.service.DataService;
 
-public class ImportResultsControlPanel extends JPanel implements GUIDataEventListener {
+public class ControlsPanel extends JPanel implements GUIDataEventListener {
 
 	/**
 	 *
@@ -33,29 +37,43 @@ public class ImportResultsControlPanel extends JPanel implements GUIDataEventLis
 	private JFrame progressBarFrame;
 	ButtonClickListener buttonClickListener = new ButtonClickListener();
 
-	public ImportResultsControlPanel() {
-		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		add(Box.createRigidArea(new Dimension(0, 20)));
-		loadWinMSSDataButton = new JButton("Avaa WinMSS tiedosto");
+	public ControlsPanel() {
+
+		int verticalSpacingBetweenPanes = 60;
+
+		setPreferredSize(
+				new Dimension(MainWindow.LEFT_PANE_WIDTH, (MainWindow.HEIGHT - verticalSpacingBetweenPanes) / 2));
+		setLayout(new BorderLayout());
+		setBorder(BorderFactory.createEmptyBorder(60, 30, 30, 20));
+
+		JPanel buttonsPanel = new JPanel();
+		buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.Y_AXIS));
+		loadWinMSSDataButton = new JButton("Avaa WinMSS-tietokanta");
 		loadWinMSSDataButton.setActionCommand("loadWinMSSData");
 		loadWinMSSDataButton.addActionListener(buttonClickListener);
-		this.add(loadWinMSSDataButton);
+		loadWinMSSDataButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+		buttonsPanel.add(loadWinMSSDataButton);
 
-		add(Box.createRigidArea(new Dimension(0, 20)));
+		buttonsPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
-		clearImportAsClassifierSelectionsButton = new JButton("Poista tallennusvalinnat");
+		JPanel bottomButtonsRow = new JPanel(new BorderLayout());
+		bottomButtonsRow.setAlignmentX(Component.LEFT_ALIGNMENT);
+		clearImportAsClassifierSelectionsButton = new JButton("Poista valinnat");
 		clearImportAsClassifierSelectionsButton.setActionCommand("clearImportAsClassifierSelections");
 		clearImportAsClassifierSelectionsButton.addActionListener(buttonClickListener);
 		clearImportAsClassifierSelectionsButton.setEnabled(false);
-		this.add(clearImportAsClassifierSelectionsButton);
-
-		add(Box.createRigidArea(new Dimension(0, 20)));
+		bottomButtonsRow.add(clearImportAsClassifierSelectionsButton, BorderLayout.WEST);
 
 		importResultsButton = new JButton("Tuo tulokset");
 		importResultsButton.setActionCommand("importResults");
 		importResultsButton.addActionListener(buttonClickListener);
 		importResultsButton.setEnabled(false);
-		this.add(importResultsButton);
+		bottomButtonsRow.add(importResultsButton, BorderLayout.EAST);
+
+		buttonsPanel.add(bottomButtonsRow);
+
+		add(buttonsPanel, BorderLayout.NORTH);
+
 		progressBarFrame = new ImportProgressBarFrame();
 		progressBarFrame.setLocationRelativeTo(this);
 		DataService.addDataEventListener(this);

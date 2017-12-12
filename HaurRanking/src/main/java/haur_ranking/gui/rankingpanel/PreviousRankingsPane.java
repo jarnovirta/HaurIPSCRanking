@@ -20,7 +20,10 @@ public class PreviousRankingsPane extends JPanel {
 
 	PreviousRankingsPane() {
 		setLayout(new BorderLayout());
+		ControlsPanel controlsPanel = new ControlsPanel();
 		add(new ControlsPanel(), BorderLayout.WEST);
+		PreviousRankingsTable previousRankingsTable = new PreviousRankingsTable();
+		controlsPanel.addButtonClickListener(previousRankingsTable);
 		add(new PreviousRankingsTable());
 	}
 }

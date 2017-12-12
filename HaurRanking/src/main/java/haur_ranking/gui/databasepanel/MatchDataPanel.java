@@ -16,6 +16,7 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
@@ -26,9 +27,10 @@ import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
 import haur_ranking.gui.MainWindow;
 import haur_ranking.gui.service.DataService;
+import haur_ranking.gui.utils.JTableUtils;
 import haur_ranking.utils.DateFormatUtils;
 
-public class DatabaseMatchInfoTable extends JPanel implements GUIDataEventListener, ActionListener {
+public class MatchDataPanel extends JPanel implements GUIDataEventListener, ActionListener {
 	/**
 	 *
 	 */
@@ -40,7 +42,7 @@ public class DatabaseMatchInfoTable extends JPanel implements GUIDataEventListen
 		NO_DATA, HAS_DATA
 	};
 
-	public DatabaseMatchInfoTable() {
+	public MatchDataPanel() {
 		int verticalSpacingBetweenPanes = 60;
 		setPreferredSize(
 				new Dimension(MainWindow.LEFT_PANE_WIDTH, (MainWindow.HEIGHT - verticalSpacingBetweenPanes) / 2));
@@ -91,17 +93,25 @@ public class DatabaseMatchInfoTable extends JPanel implements GUIDataEventListen
 		TableColumn matchDateColumn = table.getColumnModel().getColumn(2);
 		TableColumn classifiersColumn = table.getColumnModel().getColumn(3);
 
+		DefaultTableCellRenderer centerRenderer = JTableUtils.getCenterRenderer();
+		DefaultTableCellRenderer rightRenderer = JTableUtils.getRightRenderer();
+		DefaultTableCellRenderer leftRenderer = JTableUtils.getLeftRenderer();
+
 		matchCountColumn.setHeaderValue("");
-		matchCountColumn.setPreferredWidth(50);
+		matchCountColumn.setCellRenderer(rightRenderer);
+		matchCountColumn.setPreferredWidth(150);
 
 		matchNameColumn.setHeaderValue("Kilpailu");
-		matchNameColumn.setPreferredWidth(400);
+		matchNameColumn.setCellRenderer(leftRenderer);
+		matchNameColumn.setPreferredWidth(700);
 
 		matchDateColumn.setHeaderValue("Pvm");
-		matchDateColumn.setPreferredWidth(100);
+		matchDateColumn.setCellRenderer(centerRenderer);
+		matchDateColumn.setPreferredWidth(250);
 
 		classifiersColumn.setHeaderValue("Luokitteluohj.");
-		classifiersColumn.setPreferredWidth(100);
+		classifiersColumn.setCellRenderer(centerRenderer);
+		classifiersColumn.setPreferredWidth(250);
 
 		return table;
 	}
@@ -117,7 +127,7 @@ public class DatabaseMatchInfoTable extends JPanel implements GUIDataEventListen
 		int rowCounter = 0;
 		for (Match match : databaseMatchTableData) {
 			String[] row = new String[4];
-			row[0] = rowCounter + 1 + ".";
+			row[0] = rowCounter + 1 + ". ";
 			row[1] = match.getName();
 			row[2] = DateFormatUtils.calendarToDateString(match.getDate());
 			if (match.getStages() != null) {

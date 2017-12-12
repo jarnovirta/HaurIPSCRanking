@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +16,7 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
@@ -24,8 +27,9 @@ import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
 import haur_ranking.gui.MainWindow;
 import haur_ranking.gui.service.DataService;
+import haur_ranking.gui.utils.JTableUtils;
 
-public class DatabaseCompetitorInfoTable extends JPanel implements GUIDataEventListener {
+public class CompetitorDataPanel extends JPanel implements ActionListener, GUIDataEventListener {
 	/**
 	 *
 	 */
@@ -38,7 +42,7 @@ public class DatabaseCompetitorInfoTable extends JPanel implements GUIDataEventL
 		NO_DATA, HAS_DATA
 	};
 
-	public DatabaseCompetitorInfoTable() {
+	public CompetitorDataPanel() {
 		int verticalSpacingBetweenPanes = 60;
 		setPreferredSize(
 				new Dimension(MainWindow.LEFT_PANE_WIDTH, (MainWindow.HEIGHT - verticalSpacingBetweenPanes) / 2));
@@ -50,7 +54,7 @@ public class DatabaseCompetitorInfoTable extends JPanel implements GUIDataEventL
 		add(getNoDataPanel(), DatabaseDataTableStatus.NO_DATA.toString());
 		cardLayout.show(this, DatabaseDataTableStatus.NO_DATA.toString());
 		DataService.addDataEventListener(this);
-		// ComponentService.getDatabaseControlsPanel().addButtonClickListener(this);
+
 	}
 
 	private JPanel getNoDataPanel() {
@@ -88,14 +92,21 @@ public class DatabaseCompetitorInfoTable extends JPanel implements GUIDataEventL
 		TableColumn competitorNameColumn = table.getColumnModel().getColumn(1);
 		TableColumn resultsCount = table.getColumnModel().getColumn(2);
 
+		DefaultTableCellRenderer leftRenderer = JTableUtils.getLeftRenderer();
+		DefaultTableCellRenderer rightRenderer = JTableUtils.getRightRenderer();
+		DefaultTableCellRenderer centerRenderer = JTableUtils.getCenterRenderer();
+
 		competitorCountColumn.setHeaderValue("");
-		competitorCountColumn.setPreferredWidth(50);
+		competitorCountColumn.setCellRenderer(rightRenderer);
+		competitorCountColumn.setPreferredWidth(150);
 
 		competitorNameColumn.setHeaderValue("Kilpailija");
-		competitorNameColumn.setPreferredWidth(400);
+		competitorNameColumn.setCellRenderer(leftRenderer);
+		competitorNameColumn.setPreferredWidth(800);
 
 		resultsCount.setHeaderValue("Tuloksia");
-		resultsCount.setPreferredWidth(100);
+		resultsCount.setCellRenderer(centerRenderer);
+		resultsCount.setPreferredWidth(200);
 
 		return table;
 	}
@@ -111,7 +122,7 @@ public class DatabaseCompetitorInfoTable extends JPanel implements GUIDataEventL
 		int rowCounter = 0;
 		for (Competitor competitor : databaseCompetitorTableData) {
 			String[] row = new String[3];
-			row[0] = rowCounter + 1 + ".";
+			row[0] = rowCounter + 1 + ". ";
 			String middleInitial = "";
 			if (competitor.getWinMSSComment() != null)
 				middleInitial = competitor.getWinMSSComment();
@@ -145,6 +156,11 @@ public class DatabaseCompetitorInfoTable extends JPanel implements GUIDataEventL
 				updateDatabaseCompetitorInfoTable(DataService.getDatabaseCompetitorInfoTableData());
 			}
 		}
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent event) {
+
 	}
 
 }
