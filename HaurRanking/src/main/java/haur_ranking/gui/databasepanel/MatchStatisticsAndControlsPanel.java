@@ -180,6 +180,12 @@ public class MatchStatisticsAndControlsPanel extends JPanel implements GUIDataEv
 		if (event.getEventType() == GUIDataEventType.GUI_DATA_UPDATE) {
 			if (DataService.getDatabaseStatistics() != null)
 				setStatisticsTableData(DataService.getDatabaseStatistics());
+			if (DataService.getDatabaseMatchInfoTableData() != null
+					&& DataService.getDatabaseMatchInfoTableData().size() > 0) {
+				chooseStagesToDeleteButton.setEnabled(true);
+			} else {
+				chooseStagesToDeleteButton.setEnabled(false);
+			}
 		}
 	}
 

@@ -54,4 +54,14 @@ public class CompetitorRepository {
 			return null;
 		}
 	}
+
+	public static void delete(Competitor competitor, EntityManager entityManager) {
+		try {
+			if (!entityManager.contains(competitor))
+				competitor = entityManager.merge(competitor);
+			entityManager.remove(competitor);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

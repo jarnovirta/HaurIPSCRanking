@@ -24,6 +24,6 @@ public class PreviousRankingsPane extends JPanel {
 		add(new ControlsPanel(), BorderLayout.WEST);
 		PreviousRankingsTable previousRankingsTable = new PreviousRankingsTable();
 		controlsPanel.addButtonClickListener(previousRankingsTable);
-		add(new PreviousRankingsTable());
+		add(previousRankingsTable);
 	}
 }

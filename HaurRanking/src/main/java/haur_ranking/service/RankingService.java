@@ -21,12 +21,12 @@ import haur_ranking.repository.haur_ranking_repository.RankingRepository;
 import haur_ranking.repository.haur_ranking_repository.StageScoreSheetRepository;
 
 public class RankingService {
-	private static DivisionRankingRow competitorTopScoresAverage(Competitor competitor,
+	private static DivisionRankingRow competitorTopScoresAverage(Competitor competitor, DivisionRanking divisionRanking,
 			List<StageScoreSheet> competitorLatestScoreSheets,
 			Map<ClassifierStage, Double> classifierStageTopResultAverages) {
 
 		if (competitorLatestScoreSheets.size() < 4)
-			return new DivisionRankingRow(competitor, false, competitorLatestScoreSheets.size());
+			return new DivisionRankingRow(competitor, divisionRanking, false, competitorLatestScoreSheets.size());
 		int resultCount = competitorLatestScoreSheets.size();
 		if (competitorLatestScoreSheets.size() > 8)
 			competitorLatestScoreSheets = competitorLatestScoreSheets.subList(0, 8);
@@ -62,7 +62,7 @@ public class RankingService {
 		}
 
 		competitorTopScoresAverage = scoreSum / 4;
-		DivisionRankingRow line = new DivisionRankingRow(competitor, true, competitorTopScoresAverage,
+		DivisionRankingRow line = new DivisionRankingRow(competitor, divisionRanking, true, competitorTopScoresAverage,
 				competitorHitFactorsAverage, resultCount);
 
 		return line;
@@ -102,7 +102,8 @@ public class RankingService {
 			List<StageScoreSheet> scoreSheets = StageScoreSheetRepository.find(competitor.getFirstName(),
 					competitor.getLastName(), division, classifierStageTopResultAverages.keySet(), entityManager);
 			if (scoreSheets.size() > 0)
-				resultList.add(competitorTopScoresAverage(competitor, scoreSheets, classifierStageTopResultAverages));
+				resultList.add(competitorTopScoresAverage(competitor, divisionRanking, scoreSheets,
+						classifierStageTopResultAverages));
 		}
 
 		Collections.sort(resultList);
@@ -206,4 +207,16 @@ public class RankingService {
 		entityManager.close();
 	}
 
+	public static void removeRankingDataForCompetitor(Competitor competitor) {
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		boolean commitTransaction = false;
+		if (!entityManager.getTransaction().isActive()) {
+			entityManager.getTransaction().begin();
+			commitTransaction = true;
+		}
+		RankingRepository.removeRankingRowsForCompetitor(competitor, entityManager);
+
+		if (commitTransaction)
+			entityManager.getTransaction().commit();
+	}
 }

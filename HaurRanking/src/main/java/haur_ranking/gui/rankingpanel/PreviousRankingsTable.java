@@ -7,7 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
-import javax.swing.DefaultListSelectionModel;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -25,7 +24,6 @@ import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
 import haur_ranking.gui.service.DataService;
-import haur_ranking.gui.utils.JTableUtils;
 import haur_ranking.utils.DateFormatUtils;
 
 public class PreviousRankingsTable extends JPanel implements ActionListener, GUIDataEventListener {
@@ -42,13 +40,16 @@ public class PreviousRankingsTable extends JPanel implements ActionListener, GUI
 	private CardLayout cardLayout;
 	private JTable previousRankingsTable;
 	private JTable rankingTable;
+	private JScrollPane scrollPane;
+
+	int test = 1;
 
 	public PreviousRankingsTable() {
 		cardLayout = new CardLayout();
 		setLayout(cardLayout);
 		previousRankingsTable = getPreviousRankingsTable();
 		setTableToSingeRowSelection();
-		JScrollPane scrollPane = new JScrollPane(previousRankingsTable);
+		scrollPane = new JScrollPane(previousRankingsTable);
 		add(scrollPane, PreviousRankingsTableStatus.HAS_DATA.toString());
 		add(getNoTableDataPanel(), PreviousRankingsTableStatus.NO_DATA.toString());
 		cardLayout.show(this, PreviousRankingsTableStatus.NO_DATA.toString());
@@ -85,8 +86,18 @@ public class PreviousRankingsTable extends JPanel implements ActionListener, GUI
 		TableColumn lastMatchColumn = rankingTable.getColumnModel().getColumn(1);
 		TableColumn lastMatchDateColumn = rankingTable.getColumnModel().getColumn(2);
 
-		DefaultTableCellRenderer leftRenderer = JTableUtils.getLeftRenderer();
-		DefaultTableCellRenderer centerRenderer = JTableUtils.getCenterRenderer();
+		DefaultTableCellRenderer leftRenderer;
+		DefaultTableCellRenderer rightRenderer;
+		DefaultTableCellRenderer centerRenderer;
+
+		leftRenderer = new DefaultTableCellRenderer();
+		leftRenderer.setHorizontalAlignment(SwingConstants.LEFT);
+
+		rightRenderer = new DefaultTableCellRenderer();
+		rightRenderer.setHorizontalAlignment(SwingConstants.RIGHT);
+
+		centerRenderer = new DefaultTableCellRenderer();
+		centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 
 		rankingDateColumn.setCellRenderer(centerRenderer);
 		rankingDateColumn.setHeaderValue("Rankingin pvm");
@@ -118,16 +129,20 @@ public class PreviousRankingsTable extends JPanel implements ActionListener, GUI
 			tableModel.addRow(rowData);
 		}
 		tableModel.fireTableDataChanged();
-		if (previousRankingsTable.getRowCount() > 0) {
-			previousRankingsTable.setRowSelectionInterval(0, 0);
+		if (rankingTable.getRowCount() > 0) {
+			rankingTable.setRowSelectionInterval(0, 0);
 		}
 		cardLayout.show(this, PreviousRankingsTableStatus.HAS_DATA.toString());
+
 	}
 
 	@Override
 	public void process(GUIDataEvent event) {
+
 		if (event.getEventType() == GUIDataEventType.GUI_DATA_UPDATE) {
 			updateDatabaseMatchInfoTable(DataService.getPreviousRankingsTableData());
+			setTableToSingeRowSelection();
+
 		}
 	}
 
@@ -135,71 +150,44 @@ public class PreviousRankingsTable extends JPanel implements ActionListener, GUI
 	public void actionPerformed(ActionEvent event) {
 		if (event.getActionCommand().equals(RankingPanelButtonCommands.CHOOSE_RANKINGS_TO_DELETE.toString())) {
 			setTableToMultiRowSelection();
-			if (previousRankingsTable.getRowCount() > 0) {
-				previousRankingsTable.setRowSelectionInterval(0, 0);
-			}
-			setRankingsToDelete();
 		}
 
-		if (event.getActionCommand().equals(RankingPanelButtonCommands.CANCEL_DELETE_RANKINGS.toString())
-				|| event.getActionCommand().equals(RankingPanelButtonCommands.DELETE_RANKINGS.toString())) {
+		if (event.getActionCommand().equals(RankingPanelButtonCommands.CANCEL_DELETE_RANKINGS.toString())) {
 			setTableToSingeRowSelection();
-			if (previousRankingsTable.getRowCount() > 0) {
-				previousRankingsTable.setRowSelectionInterval(0, 0);
-			}
 		}
-	}
-
-	private class SingleRowSelectionModel extends DefaultListSelectionModel {
-
-		/**
-		 *
-		 */
-		private static final long serialVersionUID = 1L;
-
-		public SingleRowSelectionModel() {
-			setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		}
-
-		@Override
-		public void clearSelection() {
-		}
-
-		@Override
-		public void removeSelectionInterval(int index0, int index1) {
-		}
-
 	}
 
 	private void setRankingsToDelete() {
 		DataService.getPreviousRankingsToDelete().clear();
 		int[] selectedRowIndexes = previousRankingsTable.getSelectedRows();
 		for (int index : selectedRowIndexes) {
-			DataService.getPreviousRankingsToDelete().add(DataService.getPreviousRankingsTableData().get(index));
+			DataService.addPreviousRankingToDelete(DataService.getPreviousRankingsTableData().get(index));
 		}
 	}
 
 	private void setTableToMultiRowSelection() {
-		previousRankingsTable.setSelectionModel(new DefaultListSelectionModel());
+		previousRankingsTable.getSelectionModel().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		previousRankingsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent event) {
 				setRankingsToDelete();
 			}
 		});
+		if (previousRankingsTable.getRowCount() > 0) {
+			previousRankingsTable.setRowSelectionInterval(0, 0);
+		}
 	}
 
 	private void setTableToSingeRowSelection() {
-		previousRankingsTable.setSelectionModel(new SingleRowSelectionModel());
+		previousRankingsTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		previousRankingsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent event) {
-				int selectedRowIndex = rankingTable.getSelectedRow();
-				if (selectedRowIndex >= 0) {
-					DataService.setPreviousRankingsTableSelectedRanking(
-							DataService.getPreviousRankingsTableData().get(selectedRowIndex));
-				}
+				setRankingsToDelete();
 			}
 		});
+		if (previousRankingsTable.getRowCount() > 0) {
+			previousRankingsTable.setRowSelectionInterval(0, 0);
+		}
 	}
 }

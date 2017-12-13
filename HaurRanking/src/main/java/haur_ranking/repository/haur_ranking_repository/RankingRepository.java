@@ -5,6 +5,8 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
+import haur_ranking.domain.Competitor;
+import haur_ranking.domain.DivisionRankingRow;
 import haur_ranking.domain.Ranking;
 
 public class RankingRepository {
@@ -70,6 +72,22 @@ public class RankingRepository {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
+		}
+	}
+
+	public static void removeRankingRowsForCompetitor(Competitor competitor, EntityManager entityManager) {
+		try {
+			String queryString = "SELECT dvrr FROM  DivisionRankingRow dvrr WHERE dvrr.competitor = :competitor";
+			TypedQuery<DivisionRankingRow> query = entityManager.createQuery(queryString, DivisionRankingRow.class);
+			query.setParameter("competitor", competitor);
+			List<DivisionRankingRow> divisionRankingRows = query.getResultList();
+			for (DivisionRankingRow row : divisionRankingRows) {
+				row.setCompetitor(null);
+				row.getDivisionRanking().getDivisionRankingRows().remove(row);
+				entityManager.remove(row);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 }

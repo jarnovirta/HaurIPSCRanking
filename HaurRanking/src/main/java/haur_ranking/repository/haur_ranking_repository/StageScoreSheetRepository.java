@@ -165,4 +165,19 @@ public class StageScoreSheetRepository {
 		}
 		return resultCount;
 	}
+
+	public static List<StageScoreSheet> findStageScoreSheetsForCompetitor(Competitor competitor,
+			EntityManager entityManager) {
+		List<StageScoreSheet> sheets = null;
+		try {
+			String queryString = "SELECT s from StageScoreSheet s WHERE s.competitor = :competitor";
+			TypedQuery<StageScoreSheet> query = entityManager.createQuery(queryString, StageScoreSheet.class);
+			query.setParameter("competitor", competitor);
+			sheets = query.getResultList();
+			return sheets;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return sheets;
+	}
 }

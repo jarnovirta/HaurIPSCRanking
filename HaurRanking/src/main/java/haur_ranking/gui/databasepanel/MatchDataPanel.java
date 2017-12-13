@@ -6,7 +6,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JLabel;
@@ -21,7 +20,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
 import haur_ranking.domain.Match;
-import haur_ranking.domain.Stage;
 import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
@@ -117,7 +115,8 @@ public class MatchDataPanel extends JPanel implements GUIDataEventListener, Acti
 	}
 
 	private void updateDatabaseMatchInfoTable(List<Match> databaseMatchTableData) {
-		if (databaseMatchTableData == null) {
+		if (databaseMatchTableData == null || databaseMatchTableData.size() == 0) {
+			cardLayout.show(this, DatabaseDataTableStatus.NO_DATA.toString());
 			return;
 		}
 
@@ -185,7 +184,7 @@ public class MatchDataPanel extends JPanel implements GUIDataEventListener, Acti
 	}
 
 	private void setSelectedStagesToDelete() {
-		DataService.setDatabaseMatchInfoTableStagesToDelete(new ArrayList<Stage>());
+		DataService.clearStagesToDelete();
 		int[] selectedRowIndexes = databaseMatchInfoTable.getSelectedRows();
 		for (int index : selectedRowIndexes) {
 			DataService.getDatabaseMatchInfoTableStagesToDelete()

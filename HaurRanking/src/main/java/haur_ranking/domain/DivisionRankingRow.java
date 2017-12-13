@@ -4,15 +4,20 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "DivisionRankingLine")
+@Table(name = "DivisionRankingRow")
 public class DivisionRankingRow implements Comparable<DivisionRankingRow> {
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE)
 	private Long id;
+
+	@ManyToOne
+	@JoinColumn
+	private DivisionRanking divisionRanking;
 
 	@ManyToOne
 	private Competitor competitor;
@@ -29,8 +34,9 @@ public class DivisionRankingRow implements Comparable<DivisionRankingRow> {
 	public DivisionRankingRow() {
 	}
 
-	public DivisionRankingRow(Competitor competitor, boolean rankedCompetitor, double bestResultsAverage,
-			double bestHitFactorsAverage, int resultsCount) {
+	public DivisionRankingRow(Competitor competitor, DivisionRanking divisionRanking, boolean rankedCompetitor,
+			double bestResultsAverage, double bestHitFactorsAverage, int resultsCount) {
+		this.divisionRanking = divisionRanking;
 		this.competitor = competitor;
 		this.rankedCompetitor = rankedCompetitor;
 		this.bestResultsAverage = bestResultsAverage;
@@ -38,14 +44,17 @@ public class DivisionRankingRow implements Comparable<DivisionRankingRow> {
 		this.resultsCount = resultsCount;
 	}
 
-	public DivisionRankingRow(Competitor competitor, boolean rankedCompetitor, int resultsCount) {
+	public DivisionRankingRow(Competitor competitor, DivisionRanking divisionRanking, boolean rankedCompetitor,
+			int resultsCount) {
+		this.divisionRanking = divisionRanking;
 		this.competitor = competitor;
 		this.rankedCompetitor = rankedCompetitor;
 		this.resultsCount = resultsCount;
 	}
 
-	public DivisionRankingRow(Competitor competitor, int resultPercentage, int resultsCount, Integer previousRank,
-			boolean improvedResult) {
+	public DivisionRankingRow(Competitor competitor, DivisionRanking divisionRanking, int resultPercentage,
+			int resultsCount, Integer previousRank, boolean improvedResult) {
+		this.divisionRanking = divisionRanking;
 		this.competitor = competitor;
 		this.resultsCount = resultsCount;
 		this.previousRank = previousRank;
@@ -139,6 +148,14 @@ public class DivisionRankingRow implements Comparable<DivisionRankingRow> {
 
 	public void setResultsCount(int resultsCount) {
 		this.resultsCount = resultsCount;
+	}
+
+	public DivisionRanking getDivisionRanking() {
+		return divisionRanking;
+	}
+
+	public void setDivisionRanking(DivisionRanking divisionRanking) {
+		this.divisionRanking = divisionRanking;
 	}
 
 }

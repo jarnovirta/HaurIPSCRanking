@@ -15,9 +15,13 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import haur_ranking.event.GUIDataEvent;
+import haur_ranking.event.GUIDataEvent.GUIDataEventType;
+import haur_ranking.event.GUIDataEventListener;
 import haur_ranking.gui.MainWindow;
+import haur_ranking.gui.service.DataService;
 
-public class CompetitorControlsPanel extends JPanel {
+public class CompetitorControlsPanel extends JPanel implements GUIDataEventListener {
 	/**
 	 *
 	 */
@@ -50,29 +54,31 @@ public class CompetitorControlsPanel extends JPanel {
 		buttonsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
 		chooseCompetitorsToDeleteButton = new JButton("Valitse");
-		chooseCompetitorsToDeleteButton.setActionCommand("chooseStagesToDelete");
+		chooseCompetitorsToDeleteButton
+				.setActionCommand(CompetitorDataPanelButtonCommands.CHOOSE_COMPETITORS_TO_DELETE.toString());
 		chooseCompetitorsToDeleteButton.addActionListener(buttonClickListener);
+		setChooseCompetitorsToDeleteButtonEnabled();
 		buttonsPanel.add(chooseCompetitorsToDeleteButton, BorderLayout.WEST);
 
 		JPanel deleteCancelButtonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
 		deleteCompetitorsButton = new JButton("Poista");
-		deleteCompetitorsButton.setActionCommand("deleteStages");
+		deleteCompetitorsButton.setActionCommand(CompetitorDataPanelButtonCommands.DELETE_COMPETITORS.toString());
 		deleteCompetitorsButton.addActionListener(buttonClickListener);
 		deleteCompetitorsButton.setEnabled(false);
 		deleteCancelButtonsPanel.add(deleteCompetitorsButton);
 
 		cancelDeleteButton = new JButton("Peruuta");
-		cancelDeleteButton.setActionCommand("cancelDelete");
+		cancelDeleteButton.setActionCommand(CompetitorDataPanelButtonCommands.CANCEL_DELETE_COMPETITORS.toString());
 		cancelDeleteButton.addActionListener(buttonClickListener);
 		cancelDeleteButton.setEnabled(false);
 		deleteCancelButtonsPanel.add(cancelDeleteButton);
 
 		buttonsPanel.add(deleteCancelButtonsPanel, BorderLayout.EAST);
-
 		controlsPanel.add(buttonsPanel);
-
 		add(controlsPanel, BorderLayout.SOUTH);
+
+		DataService.addDataEventListener(this);
 
 	}
 
@@ -80,34 +86,34 @@ public class CompetitorControlsPanel extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			String command = e.getActionCommand();
-			if (command.equals("chooseStagesToDelete")) {
-				chooseStagesToDeleteCommandHandler();
+			if (command.equals(CompetitorDataPanelButtonCommands.CHOOSE_COMPETITORS_TO_DELETE.toString())) {
+				chooseCompetitorsToDeleteCommandHandler();
 			}
-			if (command.equals("deleteStages")) {
-				deleteStagesCommandHandler();
+			if (command.equals(CompetitorDataPanelButtonCommands.DELETE_COMPETITORS.toString())) {
+				deleteCompetitorsCommandHandler();
 			}
-			if (command.equals("cancelDelete")) {
-				cancelDeleteCommandHandler();
+			if (command.equals(CompetitorDataPanelButtonCommands.CANCEL_DELETE_COMPETITORS.toString())) {
+				cancelDeleteCompetitorsCommandHandler();
 			}
 		}
 	}
 
-	private void chooseStagesToDeleteCommandHandler() {
+	private void chooseCompetitorsToDeleteCommandHandler() {
 		cancelDeleteButton.setEnabled(true);
 		deleteCompetitorsButton.setEnabled(true);
-		chooseCompetitorsToDeleteButton.setEnabled(false);
+		setChooseCompetitorsToDeleteButtonEnabled();
 	}
 
-	private void deleteStagesCommandHandler() {
-
-		chooseCompetitorsToDeleteButton.setEnabled(true);
+	private void deleteCompetitorsCommandHandler() {
+		DataService.deleteCompetitors();
+		setChooseCompetitorsToDeleteButtonEnabled();
 		cancelDeleteButton.setEnabled(false);
 		deleteCompetitorsButton.setEnabled(false);
 
 	}
 
-	private void cancelDeleteCommandHandler() {
-		chooseCompetitorsToDeleteButton.setEnabled(true);
+	private void cancelDeleteCompetitorsCommandHandler() {
+		setChooseCompetitorsToDeleteButtonEnabled();
 		cancelDeleteButton.setEnabled(false);
 		deleteCompetitorsButton.setEnabled(false);
 	}
@@ -116,5 +122,21 @@ public class CompetitorControlsPanel extends JPanel {
 		chooseCompetitorsToDeleteButton.addActionListener(listener);
 		deleteCompetitorsButton.addActionListener(listener);
 		cancelDeleteButton.addActionListener(listener);
+	}
+
+	@Override
+	public void process(GUIDataEvent event) {
+		if (event.getEventType() == GUIDataEventType.GUI_DATA_UPDATE) {
+			setChooseCompetitorsToDeleteButtonEnabled();
+		}
+	}
+
+	private void setChooseCompetitorsToDeleteButtonEnabled() {
+		if (DataService.getDatabaseCompetitorInfoTableData() != null
+				&& DataService.getDatabaseCompetitorInfoTableData().size() > 0) {
+			chooseCompetitorsToDeleteButton.setEnabled(true);
+		} else {
+			chooseCompetitorsToDeleteButton.setEnabled(false);
+		}
 	}
 }

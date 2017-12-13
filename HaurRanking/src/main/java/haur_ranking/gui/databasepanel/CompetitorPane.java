@@ -14,10 +14,10 @@ public class CompetitorPane extends JPanel {
 	public CompetitorPane() {
 		setLayout(new BorderLayout());
 		CompetitorControlsPanel controls = new CompetitorControlsPanel();
-		add(new CompetitorControlsPanel(), BorderLayout.WEST);
-
 		CompetitorDataPanel table = new CompetitorDataPanel();
+
+		add(controls, BorderLayout.WEST);
 		controls.addButtonClickListener(table);
-		add(new CompetitorDataPanel());
+		add(table);
 	}
 }

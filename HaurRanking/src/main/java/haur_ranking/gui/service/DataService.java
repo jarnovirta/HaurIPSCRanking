@@ -33,6 +33,7 @@ public class DataService {
 	private static List<Stage> databaseMatchInfoTableStagesToDelete = new ArrayList<Stage>();
 	private static List<Match> databaseMatchInfoTableData;
 	private static List<Competitor> databaseCompetitorInfoTableData;
+	private static List<Competitor> competitorsToDelete = new ArrayList<Competitor>();
 	private static DatabaseStatistics databaseStatistics;
 
 	// Older ranking chosen for comparison of competitor ranking positions.
@@ -122,6 +123,14 @@ public class DataService {
 		}
 	}
 
+	public static void addPreviousRankingToDelete(Ranking ranking) {
+		previousRankingsToDelete.add(ranking);
+	}
+
+	public static void clearPreviousRankingsToDelete() {
+		previousRankingsToDelete.clear();
+	}
+
 	public static void deletePreviousRankings() {
 		if (previousRankingsToDelete != null) {
 			RankingService.delete(previousRankingsToDelete);
@@ -157,10 +166,6 @@ public class DataService {
 		return databaseMatchInfoTableStagesToDelete;
 	}
 
-	public static void setDatabaseMatchInfoTableStagesToDelete(List<Stage> databaseMatchInfoTableStagesToDelete) {
-		DataService.databaseMatchInfoTableStagesToDelete = databaseMatchInfoTableStagesToDelete;
-	}
-
 	public static void clearStagesToDelete() {
 		databaseMatchInfoTableStagesToDelete.clear();
 	}
@@ -169,32 +174,30 @@ public class DataService {
 		return databaseStatistics;
 	}
 
-	public static void setDatabaseStatistics(DatabaseStatistics databaseStatistics) {
-		DataService.databaseStatistics = databaseStatistics;
-	}
-
 	public static List<Match> getDatabaseMatchInfoTableData() {
 		return databaseMatchInfoTableData;
 	}
 
-	public static void setDatabaseMatchInfoTableData(List<Match> databaseMatchInfoTableData) {
-		DataService.databaseMatchInfoTableData = databaseMatchInfoTableData;
+	public static void deleteCompetitors() {
+		if (competitorsToDelete.size() > 0)
+			CompetitorService.deleteAll(competitorsToDelete);
+		updateGUIData();
 	}
 
 	public static List<Competitor> getDatabaseCompetitorInfoTableData() {
 		return databaseCompetitorInfoTableData;
 	}
 
-	public static void setDatabaseCompetitorInfoTableData(List<Competitor> databaseCompetitorInfoTableData) {
-		DataService.databaseCompetitorInfoTableData = databaseCompetitorInfoTableData;
+	public static void addCompetitorToDelete(Competitor competitor) {
+		competitorsToDelete.add(competitor);
+	}
+
+	public static void clearCompetitorsToDelete() {
+		competitorsToDelete.clear();
 	}
 
 	public static List<Ranking> getPreviousRankingsToDelete() {
 		return previousRankingsToDelete;
-	}
-
-	public static void setPreviousRankingsToDelete(List<Ranking> previousRankingsToDelete) {
-		DataService.previousRankingsToDelete = previousRankingsToDelete;
 	}
 
 }

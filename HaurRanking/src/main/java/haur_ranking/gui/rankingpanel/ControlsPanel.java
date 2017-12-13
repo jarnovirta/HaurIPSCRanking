@@ -19,6 +19,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import haur_ranking.domain.DivisionRanking;
+import haur_ranking.domain.Ranking;
 import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
@@ -83,6 +85,7 @@ public class ControlsPanel extends JPanel implements GUIDataEventListener {
 		pdfButton.setActionCommand(RankingPanelButtonCommands.GENERATE_RANKING_PDF.toString());
 		pdfButton.addActionListener(buttonClickListener);
 		generatePdfPanel.add(pdfButton);
+		setPdfButtonEnabled();
 
 		return generatePdfPanel;
 	}
@@ -138,7 +141,7 @@ public class ControlsPanel extends JPanel implements GUIDataEventListener {
 		choosePreviousRankingsToDeleteButton.setEnabled(false);
 		deleteRankingsButton.setEnabled(true);
 		cancelDeleteButton.setEnabled(true);
-		pdfButton.setEnabled(false);
+		setPdfButtonEnabled();
 
 	}
 
@@ -148,18 +151,17 @@ public class ControlsPanel extends JPanel implements GUIDataEventListener {
 			choosePreviousRankingsToDeleteButton.setEnabled(true);
 		deleteRankingsButton.setEnabled(false);
 		cancelDeleteButton.setEnabled(false);
-		pdfButton.setEnabled(true);
+		setPdfButtonEnabled();
 	}
 
 	private void deleteRankingsCommandHandler() {
 		deleteRankingsButton.setEnabled(false);
 		cancelDeleteButton.setEnabled(false);
-
 		DataService.deletePreviousRankings();
 
 		if (DataService.getPreviousRankingsTableData() != null && DataService.getPreviousRankingsTableData().size() > 0)
 			choosePreviousRankingsToDeleteButton.setEnabled(true);
-		pdfButton.setEnabled(true);
+		setPdfButtonEnabled();
 	}
 
 	private void generatePdfCommandHandler() {
@@ -189,7 +191,7 @@ public class ControlsPanel extends JPanel implements GUIDataEventListener {
 			if (returnVal != JFileChooser.CANCEL_OPTION)
 				generatePdfCommandHandler();
 		}
-		pdfButton.setEnabled(true);
+		setPdfButtonEnabled();
 
 	}
 
@@ -226,6 +228,21 @@ public class ControlsPanel extends JPanel implements GUIDataEventListener {
 			if (DataService.getPreviousRankingsTableData() != null
 					&& DataService.getPreviousRankingsTableData().size() > 0)
 				choosePreviousRankingsToDeleteButton.setEnabled(true);
+			setPdfButtonEnabled();
 		}
+	}
+
+	private void setPdfButtonEnabled() {
+		Ranking ranking = DataService.getRanking();
+		boolean enabled = false;
+
+		if (ranking != null && ranking.getDivisionRankings() != null && ranking.getDivisionRankings().size() > 0) {
+			for (DivisionRanking divRanking : ranking.getDivisionRankings()) {
+				if (divRanking.getDivisionRankingRows() != null && divRanking.getDivisionRankingRows().size() > 0) {
+					enabled = true;
+				}
+			}
+		}
+		pdfButton.setEnabled(enabled);
 	}
 }

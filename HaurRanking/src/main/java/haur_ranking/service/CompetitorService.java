@@ -50,4 +50,16 @@ public class CompetitorService {
 		entityManager.close();
 		return competitors;
 	}
+
+	public static void deleteAll(List<Competitor> competitors) {
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		entityManager.getTransaction().begin();
+		for (Competitor competitor : competitors) {
+			StageScoreSheetService.removeStageScoreSheetsForCompetitor(competitor);
+			RankingService.removeRankingDataForCompetitor(competitor);
+			CompetitorRepository.delete(competitor, entityManager);
+		}
+		entityManager.getTransaction().commit();
+		RankingService.generateRanking();
+	}
 }

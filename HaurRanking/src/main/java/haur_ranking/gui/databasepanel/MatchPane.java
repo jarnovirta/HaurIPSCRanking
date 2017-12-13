@@ -13,7 +13,10 @@ public class MatchPane extends JPanel {
 
 	public MatchPane() {
 		setLayout(new BorderLayout());
-		add(new MatchStatisticsAndControlsPanel(), BorderLayout.WEST);
-		add(new MatchDataPanel());
+		MatchStatisticsAndControlsPanel controls = new MatchStatisticsAndControlsPanel();
+		MatchDataPanel dataPanel = new MatchDataPanel();
+		controls.addButtonClickListener(dataPanel);
+		add(controls, BorderLayout.WEST);
+		add(dataPanel);
 	}
 }
