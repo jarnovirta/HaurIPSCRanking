@@ -42,18 +42,14 @@ public class MatchService {
 	public static void delete(Match match) {
 		try {
 			EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
-			boolean commitTransaction = false;
-			if (!entityManager.getTransaction().isActive()) {
-				entityManager.getTransaction().begin();
-				commitTransaction = true;
-			}
+			entityManager.getTransaction().begin();
+
 			if (!entityManager.contains(match))
 				match = entityManager.merge(match);
 			MatchRepository.delete(match, entityManager);
-			if (commitTransaction) {
-				entityManager.getTransaction().commit();
-				entityManager.close();
-			}
+			entityManager.getTransaction().commit();
+			entityManager.close();
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -203,6 +199,7 @@ public class MatchService {
 						if (existingCompetitor != null) {
 							sheet.setCompetitor(existingCompetitor);
 						} else {
+							sheet.setCompetitor(CompetitorService.persist(sheet.getCompetitor(), entityManager));
 							newCompetitorsCount++;
 						}
 					}

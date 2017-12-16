@@ -50,16 +50,6 @@ public class Competitor {
 			return false;
 
 		final Competitor other = (Competitor) obj;
-		if (firstName.equals("Heli")) {
-			System.out.println(firstName + " " + lastName + " " + winMSSComment);
-			if (winMSSComment != null)
-				System.out.println(winMSSComment + winMSSComment.length());
-		}
-		if (other.getFirstName().equals("Heli")) {
-			System.out.println(other.getFirstName() + " " + other.getFirstName() + " " + other.getFirstName());
-			if (winMSSComment != null)
-				System.out.println(winMSSComment + winMSSComment.length());
-		}
 		boolean commentsEqual;
 		if (other.getWinMSSComment() != null && other.getWinMSSComment().equals(this.winMSSComment)) {
 			commentsEqual = true;

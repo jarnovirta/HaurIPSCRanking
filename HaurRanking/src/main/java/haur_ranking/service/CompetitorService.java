@@ -26,6 +26,10 @@ public class CompetitorService {
 
 	}
 
+	public static Competitor persist(Competitor competitor, EntityManager entityManager) {
+		return CompetitorRepository.persist(competitor, entityManager);
+	}
+
 	public static List<Competitor> findAll() {
 		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
 		List<Competitor> competitors = CompetitorRepository.findAll(entityManager);

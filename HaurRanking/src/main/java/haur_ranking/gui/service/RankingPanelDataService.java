@@ -56,8 +56,6 @@ public class RankingPanelDataService {
 
 	public static void deletePreviousRankings() {
 		if (previousRankingsToDelete != null) {
-			System.out.println("DELETING " + previousRankingsToDelete.size() + " - "
-					+ previousRankingsToDelete.get(0).getLatestIncludedMatchName());
 			RankingService.delete(previousRankingsToDelete);
 			loadPreviousRankingsTableData(1);
 			DataEventService.emit(new GUIDataEvent(GUIDataEventType.PREVIOUS_RANKINGS_TABLE_UPDATE));

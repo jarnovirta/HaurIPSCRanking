@@ -8,16 +8,11 @@ TODO:
 - Delete-napilla poistot
 - Oletko varma-dialogit
 
-- Importin eka progress bar ei toimi
-- Importin statistiikat kuntoon
-- muu statistiikka kuntoon: mik‰ on tulosm‰‰r‰ tietokantasivulla vs pdf?
+- mik‰ on tulosm‰‰r‰ tietokantasivulla vs pdf?
 
-- Tulostietojen sivutus
 - Tallennettaessa tyhj√§ stage ilman tuloslistoja menee aina uudelleen kantaan.
 
 - PDF:‰‰n maininta ett‰ lihavoidut ovat tulostaan parantaneita
 
 - Kaikenlainen testaaminen
 
-- Useammalla tuonnilla tulee kaksinkertaisia nimi‰. Import p‰‰tietokanta, poista jotain, 
-tuo se backup kanta ja nimi‰ on kahteen kertaan.

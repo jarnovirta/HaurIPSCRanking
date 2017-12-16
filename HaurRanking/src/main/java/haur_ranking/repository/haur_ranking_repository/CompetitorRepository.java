@@ -29,6 +29,22 @@ public class CompetitorRepository {
 		return null;
 	}
 
+	public static List<Competitor> findByLastName(String lastName, EntityManager entityManager) {
+		String queryString = "SELECT c FROM Competitor c WHERE c.lastName = :lastName";
+
+		try {
+			TypedQuery<Competitor> query = entityManager.createQuery(queryString, Competitor.class);
+			query.setParameter("lastName", lastName);
+			List<Competitor> existingCompetitors = query.getResultList();
+			if (existingCompetitors.size() > 0)
+				return existingCompetitors;
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
+		return null;
+	}
+
 	public static List<Competitor> getCompetitorListPage(int page, int pageSize, EntityManager entityManager) {
 		try {
 			String queryString = "SELECT c FROM Competitor c ORDER BY c.lastName";

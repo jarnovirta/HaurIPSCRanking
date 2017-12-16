@@ -177,7 +177,6 @@ public class RankingService {
 				Competitor competitor = row.getCompetitor();
 				for (DivisionRankingRow compareToRow : compareToDivisionRanking.getDivisionRankingRows()) {
 					if (compareToRow.getCompetitor().equals(competitor)) {
-						System.out.println("Comparing results for " + competitor.getLastName());
 						int newPosition = divisionRanking.getDivisionRankingRows().indexOf(row);
 						int oldPosition = compareToDivisionRanking.getDivisionRankingRows().indexOf(compareToRow);
 						if (newPosition > oldPosition || newPosition == oldPosition) {
