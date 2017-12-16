@@ -49,6 +49,10 @@ public class ImportPanelDataService {
 				importResultsPanelMatchList = importEvent.getWinMSSMatches();
 				DataEventService.emit(new GUIDataEvent(GUIDataEventType.IMPORT_RESULTS_TABLE_UPDATE));
 			}
+			if (importEvent.getDataImportEventType() == DataImportEventType.IMPORT_STATUS_CHANGE
+					&& importEvent.getImportStatus() == ImportStatus.SAVE_TO_HAUR_RANKING_DB_DONE) {
+				DataEventService.emit(new GUIDataEvent(GUIDataEventType.NEW_RANKING_GENERATED));
+			}
 		}
 	}
 

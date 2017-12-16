@@ -223,6 +223,9 @@ public class MatchDataPanel extends JPanel implements GUIDataEventListener, Acti
 		String command = event.getActionCommand();
 		if (command.equals(MatchDataPanelButtonCommands.CHOOSE_STAGES_TO_DELETE.toString())) {
 			databaseMatchInfoTable.setRowSelectionAllowed(true);
+			if (databaseMatchInfoTable.getRowCount() > 0) {
+				databaseMatchInfoTable.setRowSelectionInterval(0, 0);
+			}
 			setSelectedStagesToDelete();
 		}
 		if (command.equals(MatchDataPanelButtonCommands.DELETE_STAGES.toString())) {
