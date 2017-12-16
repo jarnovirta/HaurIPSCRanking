@@ -97,14 +97,17 @@ public class MatchService {
 			for (Stage stage : match.getStages()) {
 				stage.setMatch(match);
 				if (ClassifierStage.contains(stage.getName())) {
-					stage.setSaveAsClassifierStage(ClassifierStage.parseString(stage.getName()));
+					ClassifierStage classifier = ClassifierStage.parseString(stage.getName());
+					stage.setSaveAsClassifierStage(classifier);
+					stage.setClassifierStage(classifier);
 				}
-				if (stage.getWinMSSStandardStageSetupType() > 0) {
-					System.out.println(stage.getWinMSSStandardStageSetupType());
-					stage.setClassifierStage(ClassifierStage
-							.getClassifierStageByWinMSSStandardStageType(stage.getWinMSSStandardStageSetupType()));
-					System.out.println("Set stage to " + stage.getClassifierStage());
-				}
+				// if (stage.getWinMSSStandardStageSetupType() > 0) {
+				// System.out.println(stage.getWinMSSStandardStageSetupType());
+				// stage.setClassifierStage(ClassifierStage
+				// .getClassifierStageByWinMSSStandardStageType(stage.getWinMSSStandardStageSetupType()));
+				// System.out.println("Set stage to " +
+				// stage.getClassifierStage());
+				// }
 				if (StageService.find(stage, entityManager) == null) {
 					stage.setNewStage(true);
 				} else {

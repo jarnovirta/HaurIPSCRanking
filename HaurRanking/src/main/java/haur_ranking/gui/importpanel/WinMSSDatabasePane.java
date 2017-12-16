@@ -85,7 +85,7 @@ public class WinMSSDatabasePane extends JPanel implements GUIDataEventListener {
 	}
 
 	private JTable getDatabaseMatchInfoTable() {
-		JTable table = new JTable(0, 6) {
+		JTable table = new JTable(0, 5) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -104,8 +104,7 @@ public class WinMSSDatabasePane extends JPanel implements GUIDataEventListener {
 		TableColumn matchNameColumn = table.getColumnModel().getColumn(1);
 		TableColumn matchDateColumn = table.getColumnModel().getColumn(2);
 		TableColumn stageColumn = table.getColumnModel().getColumn(3);
-		TableColumn classifierColumn = table.getColumnModel().getColumn(4);
-		TableColumn importStageColumn = table.getColumnModel().getColumn(5);
+		TableColumn importStageColumn = table.getColumnModel().getColumn(4);
 
 		DefaultTableCellRenderer leftRenderer = JTableUtils.getLeftRenderer();
 		DefaultTableCellRenderer rightRenderer = JTableUtils.getRightRenderer();
@@ -117,7 +116,7 @@ public class WinMSSDatabasePane extends JPanel implements GUIDataEventListener {
 
 		matchNameColumn.setHeaderValue("Kilpailu");
 		matchNameColumn.setCellRenderer(leftRenderer);
-		matchNameColumn.setPreferredWidth(300);
+		matchNameColumn.setPreferredWidth(400);
 
 		matchDateColumn.setHeaderValue("Pvm");
 		matchDateColumn.setCellRenderer(centerRenderer);
@@ -125,11 +124,7 @@ public class WinMSSDatabasePane extends JPanel implements GUIDataEventListener {
 
 		stageColumn.setHeaderValue("Asema");
 		stageColumn.setCellRenderer(centerRenderer);
-		stageColumn.setPreferredWidth(200);
-
-		classifierColumn.setHeaderValue("Luokitteluohjelma");
-		classifierColumn.setCellRenderer(centerRenderer);
-		classifierColumn.setPreferredWidth(200);
+		stageColumn.setPreferredWidth(300);
 
 		importStageColumn.setHeaderValue("Tallenna");
 		importStageColumn.setCellRenderer(centerRenderer);
@@ -152,7 +147,7 @@ public class WinMSSDatabasePane extends JPanel implements GUIDataEventListener {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				for (int row = 0; row < databaseMatchInfoTable.getRowCount(); row++) {
-					Object importAsClassifierCellValue = databaseMatchInfoTable.getModel().getValueAt(row, 5);
+					Object importAsClassifierCellValue = databaseMatchInfoTable.getModel().getValueAt(row, 4);
 					Stage stage = TableRowToStageMap.get(row);
 					if (importAsClassifierCellValue instanceof ClassifierStage) {
 						stage.setSaveAsClassifierStage((ClassifierStage) importAsClassifierCellValue);
@@ -161,7 +156,7 @@ public class WinMSSDatabasePane extends JPanel implements GUIDataEventListener {
 				}
 			}
 		});
-		importStageColumn.setCellEditor(new TestTableCellEditor());
+		importStageColumn.setCellEditor(new ImportTableCellEditor());
 		renderer.setModel(comboBoxCellRendererModel);
 
 		importStageColumn.setCellRenderer(renderer);
@@ -175,7 +170,7 @@ public class WinMSSDatabasePane extends JPanel implements GUIDataEventListener {
 		int rowCount = 0;
 		for (Match match : matches) {
 			for (Stage stage : match.getStages()) {
-				for (int columnCount = 0; columnCount < 5; columnCount++) {
+				for (int columnCount = 0; columnCount < 4; columnCount++) {
 					editableCellsMap.put(rowCount + ":" + columnCount, false);
 				}
 				boolean importColumnEditable = stage.isNewStage();
@@ -183,7 +178,7 @@ public class WinMSSDatabasePane extends JPanel implements GUIDataEventListener {
 					importColumnEditable = true;
 				else
 					importColumnEditable = false;
-				editableCellsMap.put(rowCount + ":" + 5, importColumnEditable);
+				editableCellsMap.put(rowCount + ":" + 4, importColumnEditable);
 				rowCount++;
 			}
 		}
@@ -199,7 +194,7 @@ public class WinMSSDatabasePane extends JPanel implements GUIDataEventListener {
 		int matchCounter = 1;
 		int rowCounter = 0;
 		for (Match match : winMSSMatches) {
-			Object[] rowData = new Object[6];
+			Object[] rowData = new Object[5];
 			rowData[0] = (matchCounter++) + ". ";
 			rowData[1] = match.getName();
 			rowData[2] = match.getDateString();
@@ -207,9 +202,7 @@ public class WinMSSDatabasePane extends JPanel implements GUIDataEventListener {
 				continue;
 			Stage stage = match.getStages().get(0);
 			rowData[3] = stage.getName();
-			if (stage.getClassifierStage() != null)
-				rowData[4] = stage.getClassifierStage().toString();
-			rowData[5] = getImportCell(stage);
+			rowData[4] = getImportCell(stage);
 			tableModel.addRow(rowData);
 			TableRowToStageMap.put(rowCounter, stage);
 			rowCounter++;
@@ -222,9 +215,7 @@ public class WinMSSDatabasePane extends JPanel implements GUIDataEventListener {
 				rowData[1] = "";
 				rowData[2] = "";
 				rowData[3] = stage.getName();
-				if (stage.getClassifierStage() != null)
-					rowData[4] = stage.getClassifierStage();
-				rowData[5] = getImportCell(stage);
+				rowData[4] = getImportCell(stage);
 				tableModel.addRow(rowData);
 				TableRowToStageMap.put(rowCounter, stage);
 				rowCounter++;
@@ -261,7 +252,7 @@ public class WinMSSDatabasePane extends JPanel implements GUIDataEventListener {
 		}
 	}
 
-	private class TestTableCellEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
+	private class ImportTableCellEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
 		/**
 		 *
 		 */
@@ -283,9 +274,8 @@ public class WinMSSDatabasePane extends JPanel implements GUIDataEventListener {
 			comboBox.addItem(DO_NOT_SAVE_AS_CLASSIFIER);
 			Stage stage = ImportPanelDataService.getImportResultsPanelStageList().get(row);
 
-			if (stage.getWinMSSStandardStageSetupType() > 0) {
-				comboBox.addItem(ClassifierStage
-						.getClassifierStageByWinMSSStandardStageType(stage.getWinMSSStandardStageSetupType()));
+			if (ClassifierStage.contains(stage.getName())) {
+				comboBox.addItem(ClassifierStage.parseString(stage.getName()));
 			} else {
 				for (ClassifierStage classifier : ClassifierStage.values()) {
 					comboBox.addItem(classifier);
@@ -308,6 +298,14 @@ public class WinMSSDatabasePane extends JPanel implements GUIDataEventListener {
 
 			if (event.getActionCommand().equals("comboBoxChanged")) {
 				this.stopCellEditing();
+				for (int row = 0; row < databaseMatchInfoTable.getRowCount(); row++) {
+					Object importAsClassifierCellValue = databaseMatchInfoTable.getModel().getValueAt(row, 4);
+					Stage stage = TableRowToStageMap.get(row);
+					if (importAsClassifierCellValue instanceof ClassifierStage) {
+						stage.setSaveAsClassifierStage((ClassifierStage) importAsClassifierCellValue);
+					} else
+						stage.setSaveAsClassifierStage(null);
+				}
 			}
 		}
 	}
