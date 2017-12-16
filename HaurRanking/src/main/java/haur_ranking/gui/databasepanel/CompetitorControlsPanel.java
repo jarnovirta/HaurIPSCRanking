@@ -102,7 +102,7 @@ public class CompetitorControlsPanel extends JPanel implements GUIDataEventListe
 	private void chooseCompetitorsToDeleteCommandHandler() {
 		cancelDeleteButton.setEnabled(true);
 		deleteCompetitorsButton.setEnabled(true);
-		setChooseCompetitorsToDeleteButtonEnabled();
+		chooseCompetitorsToDeleteButton.setEnabled(false);
 	}
 
 	private void deleteCompetitorsCommandHandler() {

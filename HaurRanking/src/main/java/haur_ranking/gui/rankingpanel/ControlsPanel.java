@@ -115,6 +115,7 @@ public class ControlsPanel extends JPanel implements GUIDataEventListener {
 		choosePreviousRankingsToDeleteButton.addActionListener(buttonClickListener);
 		choosePreviousRankingsToDeleteButton.setEnabled(false);
 		buttonsPanel.add(choosePreviousRankingsToDeleteButton, BorderLayout.WEST);
+		setChoosePreviousRankingsToDeleteButtonEnabled();
 
 		JPanel deleteCancelButtonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
@@ -147,9 +148,7 @@ public class ControlsPanel extends JPanel implements GUIDataEventListener {
 	}
 
 	private void cancelDeleteCommandHandler() {
-		if (RankingPanelDataService.getPreviousRankingsTableData() != null
-				&& RankingPanelDataService.getPreviousRankingsTableData().size() > 0)
-			choosePreviousRankingsToDeleteButton.setEnabled(true);
+		setChoosePreviousRankingsToDeleteButtonEnabled();
 		deleteRankingsButton.setEnabled(false);
 		cancelDeleteButton.setEnabled(false);
 		setPdfButtonEnabled();
@@ -160,9 +159,7 @@ public class ControlsPanel extends JPanel implements GUIDataEventListener {
 		cancelDeleteButton.setEnabled(false);
 		RankingPanelDataService.deletePreviousRankings();
 
-		if (RankingPanelDataService.getPreviousRankingsTableData() != null
-				&& RankingPanelDataService.getPreviousRankingsTableData().size() > 0)
-			choosePreviousRankingsToDeleteButton.setEnabled(true);
+		setChoosePreviousRankingsToDeleteButtonEnabled();
 		setPdfButtonEnabled();
 	}
 
@@ -227,11 +224,20 @@ public class ControlsPanel extends JPanel implements GUIDataEventListener {
 	@Override
 	public void process(GUIDataEvent event) {
 		if (event.getEventType() == GUIDataEventType.PREVIOUS_RANKINGS_TABLE_UPDATE) {
-			if (RankingPanelDataService.getPreviousRankingsTableData() == null
-					|| RankingPanelDataService.getPreviousRankingsTableData().size() > 0)
-				choosePreviousRankingsToDeleteButton.setEnabled(true);
+			setChoosePreviousRankingsToDeleteButtonEnabled();
+		}
+		if (event.getEventType() == GUIDataEventType.PREVIOUS_RANKINGS_TABLE_UPDATE) {
 			setPdfButtonEnabled();
 		}
+	}
+
+	private void setChoosePreviousRankingsToDeleteButtonEnabled() {
+		if (RankingPanelDataService.getPreviousRankingsTableData() != null
+				&& RankingPanelDataService.getPreviousRankingsTableData().size() > 0) {
+			choosePreviousRankingsToDeleteButton.setEnabled(true);
+		} else
+			choosePreviousRankingsToDeleteButton.setEnabled(false);
+
 	}
 
 	private void setPdfButtonEnabled() {

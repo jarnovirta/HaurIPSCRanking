@@ -110,7 +110,7 @@ public class MatchStatisticsAndControlsPanel extends JPanel implements GUIDataEv
 		chooseStagesToDeleteButton.setActionCommand(MatchDataPanelButtonCommands.CHOOSE_STAGES_TO_DELETE.toString());
 		chooseStagesToDeleteButton.addActionListener(buttonClickListener);
 		buttonsPanel.add(chooseStagesToDeleteButton, BorderLayout.WEST);
-
+		setChooseStagesToDeleteButtonEnabled();
 		JPanel deleteCancelButtonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
 		deleteStagesButton = new JButton("Poista");
@@ -157,14 +157,14 @@ public class MatchStatisticsAndControlsPanel extends JPanel implements GUIDataEv
 
 	private void deleteStagesCommandHandler() {
 		DatabasePanelDataService.deleteStages();
-		chooseStagesToDeleteButton.setEnabled(true);
+		setChooseStagesToDeleteButtonEnabled();
 		cancelDeleteButton.setEnabled(false);
 		deleteStagesButton.setEnabled(false);
 
 	}
 
 	private void cancelDeleteCommandHandler() {
-		chooseStagesToDeleteButton.setEnabled(true);
+		setChooseStagesToDeleteButtonEnabled();
 		cancelDeleteButton.setEnabled(false);
 		deleteStagesButton.setEnabled(false);
 	}
@@ -180,13 +180,15 @@ public class MatchStatisticsAndControlsPanel extends JPanel implements GUIDataEv
 		if (event.getEventType() == GUIDataEventType.DATABASE_STATISTICS_TABLE_UPDATE) {
 			if (DatabasePanelDataService.getDatabaseStatistics() != null)
 				setStatisticsTableData(DatabasePanelDataService.getDatabaseStatistics());
-			if (DatabasePanelDataService.getDatabaseMatchInfoTableData() != null
-					&& DatabasePanelDataService.getDatabaseMatchInfoTableData().size() > 0) {
-				chooseStagesToDeleteButton.setEnabled(true);
-			} else {
-				chooseStagesToDeleteButton.setEnabled(false);
-			}
+			setChooseStagesToDeleteButtonEnabled();
 		}
 	}
 
+	private void setChooseStagesToDeleteButtonEnabled() {
+		if (DatabasePanelDataService.getDatabaseMatchInfoTableData() != null
+				&& DatabasePanelDataService.getDatabaseMatchInfoTableData().size() > 0) {
+			chooseStagesToDeleteButton.setEnabled(true);
+		} else
+			chooseStagesToDeleteButton.setEnabled(false);
+	}
 }
