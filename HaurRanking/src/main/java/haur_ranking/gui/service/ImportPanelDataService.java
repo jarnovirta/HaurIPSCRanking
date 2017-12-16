@@ -1,5 +1,6 @@
 package haur_ranking.gui.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import haur_ranking.domain.Match;
@@ -14,11 +15,13 @@ import haur_ranking.service.SaveSelectedResultsToHaurRankingDbTask;
 
 public class ImportPanelDataService {
 	private static List<Match> importResultsPanelMatchList;
+	private static List<Stage> importResultsPanelStageList;
 
 	public static void clearImportAsClassifierSelections() {
 		for (Match match : importResultsPanelMatchList) {
 			for (Stage stage : match.getStages()) {
 				stage.setSaveAsClassifierStage(null);
+
 			}
 		}
 		DataEventService.emit(new GUIDataEvent(GUIDataEventType.IMPORT_RESULTS_TABLE_UPDATE));
@@ -47,6 +50,10 @@ public class ImportPanelDataService {
 			if (importEvent.getDataImportEventType() == DataImportEventType.IMPORT_STATUS_CHANGE
 					&& importEvent.getImportStatus() == ImportStatus.LOAD_FROM_WINMSS_DONE) {
 				importResultsPanelMatchList = importEvent.getWinMSSMatches();
+				importResultsPanelStageList = new ArrayList<Stage>();
+				for (Match match : importResultsPanelMatchList) {
+					importResultsPanelStageList.addAll(match.getStages());
+				}
 				DataEventService.emit(new GUIDataEvent(GUIDataEventType.IMPORT_RESULTS_TABLE_UPDATE));
 			}
 			if (importEvent.getDataImportEventType() == DataImportEventType.IMPORT_STATUS_CHANGE
@@ -54,6 +61,10 @@ public class ImportPanelDataService {
 				DataEventService.emit(new GUIDataEvent(GUIDataEventType.NEW_RANKING_GENERATED));
 			}
 		}
+	}
+
+	public static List<Stage> getImportResultsPanelStageList() {
+		return importResultsPanelStageList;
 	}
 
 }

@@ -97,8 +97,13 @@ public class MatchService {
 			for (Stage stage : match.getStages()) {
 				stage.setMatch(match);
 				if (ClassifierStage.contains(stage.getName())) {
-					stage.setClassifierStage(ClassifierStage.parseString(stage.getName()));
-					stage.setSaveAsClassifierStage(stage.getClassifierStage());
+					stage.setSaveAsClassifierStage(ClassifierStage.parseString(stage.getName()));
+				}
+				if (stage.getWinMSSStandardStageSetupType() > 0) {
+					System.out.println(stage.getWinMSSStandardStageSetupType());
+					stage.setClassifierStage(ClassifierStage
+							.getClassifierStageByWinMSSStandardStageType(stage.getWinMSSStandardStageSetupType()));
+					System.out.println("Set stage to " + stage.getClassifierStage());
 				}
 				if (StageService.find(stage, entityManager) == null) {
 					stage.setNewStage(true);
@@ -107,6 +112,7 @@ public class MatchService {
 				}
 			}
 		}
+
 		DataImportEvent loadFromWinMSSDoneEvent = new DataImportEvent(DataImportEventType.IMPORT_STATUS_CHANGE);
 		loadFromWinMSSDoneEvent.setImportStatus(ImportStatus.LOAD_FROM_WINMSS_DONE);
 		loadFromWinMSSDoneEvent.setWinMSSMatches(winMSSMatches);

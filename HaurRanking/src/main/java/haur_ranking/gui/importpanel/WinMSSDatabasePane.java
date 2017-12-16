@@ -3,6 +3,7 @@ package haur_ranking.gui.importpanel;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,9 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.AbstractCellEditor;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -22,6 +23,7 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
 
 import haur_ranking.domain.ClassifierStage;
@@ -48,6 +50,9 @@ public class WinMSSDatabasePane extends JPanel implements GUIDataEventListener {
 	private Map<String, Boolean> editableCellsMap = new HashMap<String, Boolean>();
 	private Map<Integer, Stage> TableRowToStageMap = new HashMap<Integer, Stage>();
 	private CardLayout cardLayout;
+
+	private final String DO_NOT_SAVE_AS_CLASSIFIER = "Ei tallenneta";
+	private final String ALREADY_IN_DATABASE = "Tallennettu";
 
 	private enum ImportTableStatus {
 		NO_WINMSS_DB_SELECTED, SHOW_WINMSS_DATA, IMPORT_RESULT
@@ -134,9 +139,9 @@ public class WinMSSDatabasePane extends JPanel implements GUIDataEventListener {
 		ComboBoxCellRenderer renderer = new ComboBoxCellRenderer();
 		DefaultComboBoxModel<Object> comboBoxCellEditorModel = new DefaultComboBoxModel<Object>();
 		DefaultComboBoxModel<Object> comboBoxCellRendererModel = new DefaultComboBoxModel<Object>();
-		comboBoxCellEditorModel.addElement("Ei tallenneta");
-		comboBoxCellRendererModel.addElement("Ei tallenneta");
-		comboBoxCellRendererModel.addElement("Tallennettu");
+		comboBoxCellEditorModel.addElement(DO_NOT_SAVE_AS_CLASSIFIER);
+		comboBoxCellRendererModel.addElement(DO_NOT_SAVE_AS_CLASSIFIER);
+		comboBoxCellRendererModel.addElement(ALREADY_IN_DATABASE);
 
 		for (ClassifierStage classifier : ClassifierStage.values()) {
 			comboBoxCellEditorModel.addElement(classifier);
@@ -156,7 +161,7 @@ public class WinMSSDatabasePane extends JPanel implements GUIDataEventListener {
 				}
 			}
 		});
-		importStageColumn.setCellEditor(new DefaultCellEditor(importAsClassifierComboBox));
+		importStageColumn.setCellEditor(new TestTableCellEditor());
 		renderer.setModel(comboBoxCellRendererModel);
 
 		importStageColumn.setCellRenderer(renderer);
@@ -232,12 +237,12 @@ public class WinMSSDatabasePane extends JPanel implements GUIDataEventListener {
 
 	private Object getImportCell(Stage stage) {
 		if (!stage.isNewStage()) {
-			return "Tallennettu";
+			return ALREADY_IN_DATABASE;
 		} else {
 			if (stage.getSaveAsClassifierStage() != null)
 				return stage.getSaveAsClassifierStage();
 		}
-		return "Ei tallenneta";
+		return DO_NOT_SAVE_AS_CLASSIFIER;
 	}
 
 	@Override
@@ -253,6 +258,57 @@ public class WinMSSDatabasePane extends JPanel implements GUIDataEventListener {
 		}
 		if (event.getEventType() == GUIDataEventType.IMPORT_RESULTS_TABLE_UPDATE) {
 			updateDatabaseMatchInfoTable(ImportPanelDataService.getImportResultsPanelMatchList());
+		}
+	}
+
+	private class TestTableCellEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
+		/**
+		 *
+		 */
+		private static final long serialVersionUID = 1L;
+		private Object saveAsClassifierValue;
+
+		@Override
+		public Object getCellEditorValue() {
+			return this.saveAsClassifierValue;
+		}
+
+		@Override
+		public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row,
+				int column) {
+			this.saveAsClassifierValue = value;
+
+			JComboBox<Object> comboBox = new JComboBox<Object>();
+
+			comboBox.addItem(DO_NOT_SAVE_AS_CLASSIFIER);
+			Stage stage = ImportPanelDataService.getImportResultsPanelStageList().get(row);
+
+			if (stage.getWinMSSStandardStageSetupType() > 0) {
+				comboBox.addItem(ClassifierStage
+						.getClassifierStageByWinMSSStandardStageType(stage.getWinMSSStandardStageSetupType()));
+			} else {
+				for (ClassifierStage classifier : ClassifierStage.values()) {
+					comboBox.addItem(classifier);
+				}
+			}
+
+			comboBox.setSelectedItem(saveAsClassifierValue);
+			comboBox.addActionListener(this);
+			if (!isSelected) {
+				comboBox.setBackground(table.getSelectionBackground());
+			}
+			return comboBox;
+
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent event) {
+			JComboBox<String> comboBox = (JComboBox<String>) event.getSource();
+			this.saveAsClassifierValue = comboBox.getSelectedItem();
+
+			if (event.getActionCommand().equals("comboBoxChanged")) {
+				this.stopCellEditing();
+			}
 		}
 	}
 }
