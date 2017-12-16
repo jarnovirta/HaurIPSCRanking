@@ -44,13 +44,22 @@ public class MatchStatisticsAndControlsPanel extends JPanel implements GUIDataEv
 		setPreferredSize(
 				new Dimension(MainWindow.LEFT_PANE_WIDTH, (MainWindow.HEIGHT - verticalSpacingBetweenPanes) / 2));
 		setLayout(new BorderLayout());
-		setBorder(BorderFactory.createEmptyBorder(40, 30, 0, 20));
-		statisticsTable = getStatisticsTable();
-		statisticsTable.setAlignmentX(Component.LEFT_ALIGNMENT);
-		add(statisticsTable, BorderLayout.NORTH);
+		setBorder(BorderFactory.createEmptyBorder(20, 30, 0, 20));
+		add(getStatisticsPanel(), BorderLayout.NORTH);
 		add(getControlsPanel(), BorderLayout.SOUTH);
 		DataEventService.addDataEventListener(this);
 
+	}
+
+	private JPanel getStatisticsPanel() {
+		JPanel statisticsPanel = new JPanel();
+		statisticsPanel.setLayout(new BoxLayout(statisticsPanel, BoxLayout.Y_AXIS));
+		statisticsPanel.add(new JLabel("Luokitteluammunnat:"));
+		statisticsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+		statisticsTable = getStatisticsTable();
+		statisticsTable.setAlignmentX(Component.LEFT_ALIGNMENT);
+		statisticsPanel.add(statisticsTable);
+		return statisticsPanel;
 	}
 
 	private JTable getStatisticsTable() {
@@ -149,7 +158,6 @@ public class MatchStatisticsAndControlsPanel extends JPanel implements GUIDataEv
 	}
 
 	private void chooseStagesToDeleteCommandHandler() {
-
 		cancelDeleteButton.setEnabled(true);
 		deleteStagesButton.setEnabled(true);
 		chooseStagesToDeleteButton.setEnabled(false);
@@ -180,7 +188,11 @@ public class MatchStatisticsAndControlsPanel extends JPanel implements GUIDataEv
 		if (event.getEventType() == GUIDataEventType.DATABASE_STATISTICS_TABLE_UPDATE) {
 			if (DatabasePanelDataService.getDatabaseStatistics() != null)
 				setStatisticsTableData(DatabasePanelDataService.getDatabaseStatistics());
+		}
+		if (event.getEventType() == GUIDataEventType.DATABASE_MATCH_TABLE_UPDATE) {
 			setChooseStagesToDeleteButtonEnabled();
+			cancelDeleteButton.setEnabled(false);
+			deleteStagesButton.setEnabled(false);
 		}
 	}
 

@@ -20,19 +20,36 @@ public class DatabasePanelDataService {
 	private static List<Stage> databaseMatchInfoTableStagesToDelete = new ArrayList<Stage>();
 	private static List<Match> databaseMatchInfoTableData;
 	private static List<Competitor> databaseCompetitorInfoTableData;
+	private static int databaseCompetitorCount;
 	private static List<Competitor> competitorsToDelete = new ArrayList<Competitor>();
 	private static DatabaseStatistics databaseStatistics;
 
+	private static int currentCompetitorListPage;
+	private static int totalCompetitorListPages;
+
+	private static int currentMatchListPage;
+	private static int totalMatchListPages;
+
+	private final static int competitorListPageSize = 50;
+	private final static int matchListPageSize = 50;
+
 	public static void init() {
-		loadMatchTableData();
-		loadCompetitorTableData();
+		loadMatchTableData(1);
+		loadCompetitorTableData(1);
 		loadStatisticsTableData();
 
 	}
 
-	private static void loadMatchTableData() {
+	public static void loadMatchTableData(int page) {
+		databaseMatchInfoTableData = MatchService.getMatchTableData(page, matchListPageSize);
+		currentMatchListPage = page;
+		int totalMatchCount = MatchService.getTotalMatchCount();
+
+		totalMatchListPages = totalMatchCount / matchListPageSize;
+		if (totalMatchCount > totalMatchListPages * matchListPageSize) {
+			totalMatchListPages++;
+		}
 		databaseMatchInfoTableStages.clear();
-		databaseMatchInfoTableData = MatchService.findAll();
 		for (Match match : databaseMatchInfoTableData) {
 			if (match.getStages() != null)
 				databaseMatchInfoTableStages.addAll(match.getStages());
@@ -40,9 +57,16 @@ public class DatabasePanelDataService {
 		DataEventService.emit(new GUIDataEvent(GUIDataEventType.DATABASE_MATCH_TABLE_UPDATE));
 	}
 
-	private static void loadCompetitorTableData() {
-		databaseCompetitorInfoTableData = CompetitorService.findCompetitorInfoTableData();
+	public static void loadCompetitorTableData(int page) {
+		databaseCompetitorInfoTableData = CompetitorService.getCompetitorTableDataPage(page, competitorListPageSize);
+		currentCompetitorListPage = page;
+		databaseCompetitorCount = CompetitorService.getTotalCompetitorCount();
+		totalCompetitorListPages = databaseCompetitorCount / competitorListPageSize;
+		if (databaseCompetitorCount > totalCompetitorListPages * competitorListPageSize) {
+			totalCompetitorListPages++;
+		}
 		DataEventService.emit(new GUIDataEvent(GUIDataEventType.DATABASE_COMPETITOR_TABLE_UPDATE));
+
 	}
 
 	private static void loadStatisticsTableData() {
@@ -100,4 +124,33 @@ public class DatabasePanelDataService {
 			init();
 		}
 	}
+
+	public static int getCurrentCompetitorListPage() {
+		return currentCompetitorListPage;
+	}
+
+	public static int getTotalCompetitorListPages() {
+		return totalCompetitorListPages;
+	}
+
+	public static int getCurrentMatchListPage() {
+		return currentMatchListPage;
+	}
+
+	public static int getTotalMatchListPages() {
+		return totalMatchListPages;
+	}
+
+	public static int getCompetitorlistpagesize() {
+		return competitorListPageSize;
+	}
+
+	public static int getMatchlistpagesize() {
+		return matchListPageSize;
+	}
+
+	public static int getDatabaseCompetitorCount() {
+		return databaseCompetitorCount;
+	}
+
 }

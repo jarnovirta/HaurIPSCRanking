@@ -31,6 +31,9 @@ public class CompetitorControlsPanel extends JPanel implements GUIDataEventListe
 	JButton chooseCompetitorsToDeleteButton;
 	JButton deleteCompetitorsButton;
 	JButton cancelDeleteButton;
+
+	JLabel competitorCountLabel;
+
 	ButtonClickListener buttonClickListener = new ButtonClickListener();
 
 	public CompetitorControlsPanel() {
@@ -41,9 +44,33 @@ public class CompetitorControlsPanel extends JPanel implements GUIDataEventListe
 		setAlignmentX(Component.LEFT_ALIGNMENT);
 		setBorder(BorderFactory.createEmptyBorder(40, 30, 0, 20));
 
+		add(getCompetitorStatisticsPanel(), BorderLayout.NORTH);
+		add(getControlButtonsPanel(), BorderLayout.SOUTH);
+
+		DataEventService.addDataEventListener(this);
+
+	}
+
+	private JPanel getCompetitorStatisticsPanel() {
+		JPanel statisticsPanel = new JPanel();
+		statisticsPanel.setLayout(new BoxLayout(statisticsPanel, BoxLayout.Y_AXIS));
+		JPanel labelPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		JLabel statisticsLabel = new JLabel("Ampujia:");
+		competitorCountLabel = new JLabel();
+		labelPanel.add(statisticsLabel);
+		labelPanel.add(competitorCountLabel);
+		competitorCountLabel.setFont(new Font(competitorCountLabel.getFont().getName(), Font.PLAIN,
+				competitorCountLabel.getFont().getSize()));
+		statisticsPanel.add(labelPanel);
+		statisticsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+
+		return statisticsPanel;
+	}
+
+	private JPanel getControlButtonsPanel() {
 		JPanel controlsPanel = new JPanel();
 		controlsPanel.setLayout(new BoxLayout(controlsPanel, BoxLayout.Y_AXIS));
-		JLabel instructionLine = new JLabel("Poista kilpailijoita");
+		JLabel instructionLine = new JLabel("Poista ampujia");
 		instructionLine.setAlignmentX(Component.LEFT_ALIGNMENT);
 		instructionLine
 				.setFont(new Font(instructionLine.getFont().getName(), Font.BOLD, instructionLine.getFont().getSize()));
@@ -77,10 +104,8 @@ public class CompetitorControlsPanel extends JPanel implements GUIDataEventListe
 
 		buttonsPanel.add(deleteCancelButtonsPanel, BorderLayout.EAST);
 		controlsPanel.add(buttonsPanel);
-		add(controlsPanel, BorderLayout.SOUTH);
 
-		DataEventService.addDataEventListener(this);
-
+		return controlsPanel;
 	}
 
 	private class ButtonClickListener implements ActionListener {
@@ -129,6 +154,9 @@ public class CompetitorControlsPanel extends JPanel implements GUIDataEventListe
 	public void process(GUIDataEvent event) {
 		if (event.getEventType() == GUIDataEventType.DATABASE_COMPETITOR_TABLE_UPDATE) {
 			setChooseCompetitorsToDeleteButtonEnabled();
+			cancelDeleteButton.setEnabled(false);
+			deleteCompetitorsButton.setEnabled(false);
+			competitorCountLabel.setText(String.valueOf(DatabasePanelDataService.getDatabaseCompetitorCount()));
 		}
 	}
 

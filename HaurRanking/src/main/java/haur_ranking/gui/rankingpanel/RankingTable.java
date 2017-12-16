@@ -3,6 +3,7 @@ package haur_ranking.gui.rankingpanel;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,7 @@ import haur_ranking.domain.Ranking;
 import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
+import haur_ranking.gui.MainWindow;
 import haur_ranking.gui.service.DataEventService;
 import haur_ranking.gui.service.RankingPanelDataService;
 import haur_ranking.gui.utils.JTableUtils;
@@ -44,6 +46,10 @@ public class RankingTable extends JPanel implements GUIDataEventListener {
 	};
 
 	public RankingTable() {
+		int verticalSpacingBetweenPanes = 60;
+		setPreferredSize(
+				new Dimension(MainWindow.RIGHT_PANE_WIDTH, (MainWindow.HEIGHT - verticalSpacingBetweenPanes) / 2));
+		setLayout(new BorderLayout());
 		this.setLayout(new BorderLayout());
 		divisionRankingTables = new HashMap<IPSCDivision, JTable>();
 		rankingTablePanes = new ArrayList<JPanel>();

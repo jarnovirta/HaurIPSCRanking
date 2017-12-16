@@ -22,7 +22,9 @@ public class StageService {
 
 	public static int getTotalStageCount() {
 		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
-		return StageRepository.getTotalStageCount(entityManager);
+		int count = StageRepository.getTotalStageCount(entityManager);
+		entityManager.close();
+		return count;
 
 	}
 
@@ -62,5 +64,6 @@ public class StageService {
 				MatchService.delete(match);
 		}
 		entityManager.getTransaction().commit();
+		entityManager.close();
 	}
 }

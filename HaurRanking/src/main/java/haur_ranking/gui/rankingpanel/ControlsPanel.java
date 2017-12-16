@@ -53,7 +53,7 @@ public class ControlsPanel extends JPanel implements GUIDataEventListener {
 		setPreferredSize(
 				new Dimension(MainWindow.LEFT_PANE_WIDTH, (MainWindow.HEIGHT - verticalSpacingBetweenPanes) / 2));
 		setLayout(new BorderLayout());
-		setBorder(BorderFactory.createEmptyBorder(40, 30, 0, 20));
+		setBorder(BorderFactory.createEmptyBorder(0, 30, 0, 20));
 		add(getGeneratePdfPanel(), BorderLayout.NORTH);
 		add(getDeleteOldRankingsInstructionPanel(), BorderLayout.SOUTH);
 		DataEventService.addDataEventListener(this);
@@ -64,22 +64,17 @@ public class ControlsPanel extends JPanel implements GUIDataEventListener {
 		JPanel generatePdfPanel = new JPanel();
 		generatePdfPanel.setLayout(new BoxLayout(generatePdfPanel, BoxLayout.Y_AXIS));
 
-		JLabel firstLine = new JLabel("Valitse vertailu-ranking");
+		JLabel firstLine = new JLabel("Muodosta pdf");
 		firstLine.setAlignmentX(Component.LEFT_ALIGNMENT);
 		generatePdfPanel.add(firstLine);
-		firstLine.setFont(new Font(firstLine.getFont().getName(), Font.BOLD, firstLine.getFont().getSize()));
 		generatePdfPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
-		JLabel secondLine = new JLabel("Tulosparannukset näkyvät pdf:ssä");
+		JLabel secondLine = new JLabel(
+				"<html>Valitse vertailu-ranking.\nTulosparannukset näkyvät lihavoituina.</html>");
 		secondLine.setAlignmentX(Component.LEFT_ALIGNMENT);
 		secondLine.setBorder(BorderFactory.createEmptyBorder(15, 0, 0, 0));
 		secondLine.setFont(new Font(secondLine.getFont().getName(), Font.PLAIN, secondLine.getFont().getSize()));
 		generatePdfPanel.add(secondLine);
-
-		JLabel thirdLine = new JLabel("lihavoituina.");
-		thirdLine.setAlignmentX(Component.LEFT_ALIGNMENT);
-		thirdLine.setFont(new Font(thirdLine.getFont().getName(), Font.PLAIN, thirdLine.getFont().getSize()));
-		generatePdfPanel.add(thirdLine);
 
 		generatePdfPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 		pdfButton = new JButton("Tallenna Pdf");
@@ -95,15 +90,10 @@ public class ControlsPanel extends JPanel implements GUIDataEventListener {
 		JPanel deleteOldRankingsPanel = new JPanel();
 		deleteOldRankingsPanel.setLayout(new BoxLayout(deleteOldRankingsPanel, BoxLayout.Y_AXIS));
 
-		JLabel firstLine = new JLabel("Poista vanhoja ranking-");
+		JLabel firstLine = new JLabel("<html>Poista vanhoja ranking-\ntietoja</html>");
 		firstLine.setAlignmentX(Component.LEFT_ALIGNMENT);
 		deleteOldRankingsPanel.add(firstLine);
 		firstLine.setFont(new Font(firstLine.getFont().getName(), Font.BOLD, firstLine.getFont().getSize()));
-
-		JLabel secondLine = new JLabel("tietoja");
-		secondLine.setAlignmentX(Component.LEFT_ALIGNMENT);
-		secondLine.setFont(new Font(secondLine.getFont().getName(), Font.BOLD, secondLine.getFont().getSize()));
-		deleteOldRankingsPanel.add(secondLine);
 
 		deleteOldRankingsPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
@@ -225,8 +215,11 @@ public class ControlsPanel extends JPanel implements GUIDataEventListener {
 	public void process(GUIDataEvent event) {
 		if (event.getEventType() == GUIDataEventType.PREVIOUS_RANKINGS_TABLE_UPDATE) {
 			setChoosePreviousRankingsToDeleteButtonEnabled();
+			deleteRankingsButton.setEnabled(false);
+			cancelDeleteButton.setEnabled(false);
+
 		}
-		if (event.getEventType() == GUIDataEventType.PREVIOUS_RANKINGS_TABLE_UPDATE) {
+		if (event.getEventType() == GUIDataEventType.RANKING_TABLE_UPDATE) {
 			setPdfButtonEnabled();
 		}
 	}

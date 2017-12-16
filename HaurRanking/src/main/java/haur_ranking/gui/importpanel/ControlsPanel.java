@@ -12,7 +12,6 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import haur_ranking.event.DataImportEvent.DataImportEventType;
@@ -35,7 +34,7 @@ public class ControlsPanel extends JPanel implements GUIDataEventListener {
 	private JButton importResultsButton;
 	private JButton loadWinMSSDataButton;
 	private JButton clearImportAsClassifierSelectionsButton;
-	private JFrame progressBarFrame;
+	private ImportProgressBar progressBar;
 	ButtonClickListener buttonClickListener = new ButtonClickListener();
 
 	public ControlsPanel() {
@@ -75,8 +74,8 @@ public class ControlsPanel extends JPanel implements GUIDataEventListener {
 
 		add(buttonsPanel, BorderLayout.NORTH);
 
-		progressBarFrame = new ImportProgressBarFrame();
-		progressBarFrame.setLocationRelativeTo(this);
+		progressBar = new ImportProgressBar();
+		progressBar.setLocationRelativeTo(this);
 		DataEventService.addDataEventListener(this);
 
 	}
@@ -94,13 +93,18 @@ public class ControlsPanel extends JPanel implements GUIDataEventListener {
 			String absoluteFilePath = fileChooser.getSelectedFile().getAbsolutePath();
 			lastMSSDbFileLocation = Paths.get(absoluteFilePath).getParent().toString();
 			loadWinMSSDataButton.setEnabled(false);
-			progressBarFrame.setVisible(true);
+			progressBar.setIndeterminate(true);
+			progressBar.setStringPainted(false);
+			progressBar.setVisible(true);
 			ImportPanelDataService.loadDataFromWinMSS(absoluteFilePath);
 		}
 	}
 
 	private void importResultsCommandHandler() {
-		progressBarFrame.setVisible(true);
+		progressBar.setIndeterminate(false);
+		progressBar.setStringPainted(true);
+		progressBar.setValue(0);
+		progressBar.setVisible(true);
 		ImportPanelDataService.saveResultsToHaurRankingDatabase();
 	}
 
@@ -112,13 +116,13 @@ public class ControlsPanel extends JPanel implements GUIDataEventListener {
 				loadWinMSSDataButton.setEnabled(true);
 				clearImportAsClassifierSelectionsButton.setEnabled(false);
 				importResultsButton.setEnabled(false);
-				progressBarFrame.setVisible(false);
+				progressBar.setVisible(false);
 			}
 			if (event.getDataImportEvent().getImportStatus() == ImportStatus.LOAD_FROM_WINMSS_DONE) {
 				loadWinMSSDataButton.setEnabled(true);
 				importResultsButton.setEnabled(true);
 				clearImportAsClassifierSelectionsButton.setEnabled(true);
-				progressBarFrame.setVisible(false);
+				progressBar.setVisible(false);
 			}
 		}
 

@@ -26,6 +26,19 @@ public class MatchRepository {
 		}
 	}
 
+	public static List<Match> getMatchListPage(int page, int pageSize, EntityManager entityManager) {
+		try {
+			String queryString = "SELECT m FROM Match m ORDER BY m.date DESC";
+			final TypedQuery<Match> query = entityManager.createQuery(queryString, Match.class);
+			query.setFirstResult((page - 1) * pageSize);
+			query.setMaxResults(pageSize);
+			return query.getResultList();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	public static void delete(Match match, EntityManager entityManager) {
 		try {
 			entityManager.remove(match);
@@ -60,7 +73,7 @@ public class MatchRepository {
 		}
 	}
 
-	public static int getTotalMatchCount(EntityManager entityManager) {
+	public static int getMatchCount(EntityManager entityManager) {
 		int matchCount;
 		try {
 			matchCount = ((Long) entityManager.createQuery("SELECT COUNT(m) from Match m").getSingleResult())

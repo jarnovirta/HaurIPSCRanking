@@ -85,8 +85,8 @@ public class StageScoreSheetService {
 			}
 
 		}
-		entityManager.close();
 		removeInBatch(sheetsToBeRemoved);
+		entityManager.close();
 		return sheetsToBeRemoved.size();
 	}
 
@@ -115,11 +115,12 @@ public class StageScoreSheetService {
 			StageScoreSheetRepository.removeInBatch(idList, entityManager);
 		entityManager.getTransaction().commit();
 		entityManager.close();
+
 	}
 
 	public static void removeStageScoreSheetsForCompetitor(Competitor competitor) {
 		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
-
+		entityManager.getTransaction().begin();
 		List<StageScoreSheet> sheets = StageScoreSheetRepository.findStageScoreSheetsForCompetitor(competitor,
 				entityManager);
 		List<Long> sheetIds = new ArrayList<Long>();
@@ -127,5 +128,7 @@ public class StageScoreSheetService {
 			sheetIds.add(sheet.getId());
 		}
 		removeInBatch(sheetIds);
+		entityManager.getTransaction().commit();
+		entityManager.close();
 	}
 }

@@ -16,9 +16,14 @@ public class RankingPanelDataService {
 	private static List<Ranking> previousRankingsTableData = new ArrayList<Ranking>();
 	private static List<Ranking> previousRankingsToDelete = new ArrayList<Ranking>();
 
+	private static int currentPreviousRankingsListPage;
+	private static int totalPreviousRankingsListPages;
+
+	private static final int previousRankingsListPageSize = 50;
+
 	public static void init() {
 		loadRankingTableData();
-		loadPreviousRankingsTableData();
+		loadPreviousRankingsTableData(1);
 	}
 
 	public static void loadRankingTableData() {
@@ -26,9 +31,19 @@ public class RankingPanelDataService {
 		DataEventService.emit(new GUIDataEvent(GUIDataEventType.RANKING_TABLE_UPDATE));
 	}
 
-	public static void loadPreviousRankingsTableData() {
-		previousRankingsTableData = RankingService.findOldRankings();
+	public static void loadPreviousRankingsTableData(int page) {
+		previousRankingsTableData = RankingService.getPreviousRankingsTableData(page, previousRankingsListPageSize);
+
+		currentPreviousRankingsListPage = page;
+		int totalPreviousRankingsCount = RankingService.getRankingsCount() - 1;
+
+		totalPreviousRankingsListPages = totalPreviousRankingsCount / previousRankingsListPageSize;
+		if (totalPreviousRankingsCount > totalPreviousRankingsListPages * previousRankingsListPageSize) {
+			totalPreviousRankingsListPages++;
+		}
+
 		DataEventService.emit(new GUIDataEvent(GUIDataEventType.PREVIOUS_RANKINGS_TABLE_UPDATE));
+
 	}
 
 	public static void addPreviousRankingToDelete(Ranking ranking) {
@@ -41,8 +56,10 @@ public class RankingPanelDataService {
 
 	public static void deletePreviousRankings() {
 		if (previousRankingsToDelete != null) {
+			System.out.println("DELETING " + previousRankingsToDelete.size() + " - "
+					+ previousRankingsToDelete.get(0).getLatestIncludedMatchName());
 			RankingService.delete(previousRankingsToDelete);
-			previousRankingsTableData = RankingService.findOldRankings();
+			loadPreviousRankingsTableData(1);
 			DataEventService.emit(new GUIDataEvent(GUIDataEventType.PREVIOUS_RANKINGS_TABLE_UPDATE));
 		}
 	}
@@ -69,9 +86,20 @@ public class RankingPanelDataService {
 
 	public static void process(GUIDataEvent event) {
 		if (event.getEventType() == GUIDataEventType.NEW_RANKING_GENERATED) {
-			loadRankingTableData();
-			loadPreviousRankingsTableData();
+			init();
 		}
+	}
+
+	public static int getCurrentPreviousRankingsListPage() {
+		return currentPreviousRankingsListPage;
+	}
+
+	public static int getTotalPreviousRankingsListPages() {
+		return totalPreviousRankingsListPages;
+	}
+
+	public static int getPreviousrankingslistpagesize() {
+		return previousRankingsListPageSize;
 	}
 
 }

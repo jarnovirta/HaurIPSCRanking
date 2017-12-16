@@ -49,8 +49,11 @@ public class CurrentRankingInfoPanel extends JPanel implements GUIDataEventListe
 	@Override
 	public void process(GUIDataEvent event) {
 		if (event.getEventType() == GUIDataEventType.RANKING_TABLE_UPDATE) {
-			infoLabel.setText("Haur Ranking "
-					+ DateFormatUtils.calendarToDateString(RankingPanelDataService.getRanking().getDate()));
+			String labelText = "Haur Ranking ";
+			if (RankingPanelDataService.getRanking() != null) {
+				labelText += DateFormatUtils.calendarToDateString(RankingPanelDataService.getRanking().getDate());
+			}
+			infoLabel.setText(labelText);
 		}
 	}
 }

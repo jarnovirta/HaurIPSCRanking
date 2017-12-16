@@ -50,11 +50,21 @@ public class MatchService {
 			if (!entityManager.contains(match))
 				match = entityManager.merge(match);
 			MatchRepository.delete(match, entityManager);
-			if (commitTransaction)
+			if (commitTransaction) {
 				entityManager.getTransaction().commit();
+				entityManager.close();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static List<Match> getMatchTableData(int page, int pageSize) {
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		List<Match> matches = MatchRepository.getMatchListPage(page, pageSize, entityManager);
+		entityManager.close();
+		return matches;
+
 	}
 
 	public static List<Match> findAll() {
@@ -74,7 +84,7 @@ public class MatchService {
 
 	public static int getTotalMatchCount() {
 		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
-		int count = MatchRepository.getTotalMatchCount(entityManager);
+		int count = MatchRepository.getMatchCount(entityManager);
 		entityManager.close();
 		return count;
 	}
@@ -105,6 +115,7 @@ public class MatchService {
 		loadFromWinMSSDoneEvent.setImportStatus(ImportStatus.LOAD_FROM_WINMSS_DONE);
 		loadFromWinMSSDoneEvent.setWinMSSMatches(winMSSMatches);
 		emitDataImportEvent(loadFromWinMSSDoneEvent);
+		entityManager.close();
 		return winMSSMatches;
 	}
 

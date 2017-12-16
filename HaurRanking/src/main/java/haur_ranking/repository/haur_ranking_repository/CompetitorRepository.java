@@ -29,6 +29,19 @@ public class CompetitorRepository {
 		return null;
 	}
 
+	public static List<Competitor> getCompetitorListPage(int page, int pageSize, EntityManager entityManager) {
+		try {
+			String queryString = "SELECT c FROM Competitor c ORDER BY c.lastName";
+			final TypedQuery<Competitor> query = entityManager.createQuery(queryString, Competitor.class);
+			query.setFirstResult((page - 1) * pageSize);
+			query.setMaxResults(pageSize);
+			return query.getResultList();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	public static List<Competitor> findAll(EntityManager entityManager) {
 
 		try {

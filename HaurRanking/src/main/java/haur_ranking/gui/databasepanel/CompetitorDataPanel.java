@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -23,33 +25,39 @@ import haur_ranking.domain.Competitor;
 import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
+import haur_ranking.event.PaginationEventListener;
 import haur_ranking.gui.MainWindow;
+import haur_ranking.gui.paginationpanel.PaginationPanel;
 import haur_ranking.gui.service.DataEventService;
 import haur_ranking.gui.service.DatabasePanelDataService;
 import haur_ranking.gui.utils.JTableUtils;
 
-public class CompetitorDataPanel extends JPanel implements ActionListener, GUIDataEventListener {
+public class CompetitorDataPanel extends JPanel
+		implements ActionListener, GUIDataEventListener, PaginationEventListener {
 	/**
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
 	private JTable databaseCompetitorInfoTable;
+	private PaginationPanel paginationPanel;
 	private CardLayout cardLayout;
+	private JScrollPane competitorDataTableScrollPane;
 
 	private enum DatabaseDataTableStatus {
 		NO_DATA, HAS_DATA
 	};
 
 	public CompetitorDataPanel() {
+
 		int verticalSpacingBetweenPanes = 60;
 		setPreferredSize(
-				new Dimension(MainWindow.LEFT_PANE_WIDTH, (MainWindow.HEIGHT - verticalSpacingBetweenPanes) / 2));
+				new Dimension(MainWindow.RIGHT_PANE_WIDTH, (MainWindow.HEIGHT - verticalSpacingBetweenPanes) / 2));
 		cardLayout = new CardLayout();
 		setLayout(cardLayout);
-		databaseCompetitorInfoTable = getDatabaseMatchInfoTable();
-		JScrollPane scrollPane = new JScrollPane(databaseCompetitorInfoTable);
-		add(scrollPane, DatabaseDataTableStatus.HAS_DATA.toString());
+		databaseCompetitorInfoTable = getCompetitorInfoTable();
+		JPanel databaseMatchInfoPanel = getCompetitorInfoPanel(databaseCompetitorInfoTable);
+		add(databaseMatchInfoPanel, DatabaseDataTableStatus.HAS_DATA.toString());
 		add(getNoDataPanel(), DatabaseDataTableStatus.NO_DATA.toString());
 		cardLayout.show(this, DatabaseDataTableStatus.NO_DATA.toString());
 		DataEventService.addDataEventListener(this);
@@ -64,7 +72,19 @@ public class CompetitorDataPanel extends JPanel implements ActionListener, GUIDa
 		return noResultsPanel;
 	}
 
-	private JTable getDatabaseMatchInfoTable() {
+	private JPanel getCompetitorInfoPanel(JTable competitorInfoTable) {
+		JPanel tablePanel = new JPanel();
+		tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
+
+		competitorDataTableScrollPane = new JScrollPane(competitorInfoTable);
+		competitorDataTableScrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
+		tablePanel.add(competitorDataTableScrollPane);
+		paginationPanel = new PaginationPanel(this);
+		tablePanel.add(paginationPanel);
+		return tablePanel;
+	}
+
+	private JTable getCompetitorInfoTable() {
 		JTable table = new JTable(0, 3) {
 			private static final long serialVersionUID = 1L;
 
@@ -99,7 +119,7 @@ public class CompetitorDataPanel extends JPanel implements ActionListener, GUIDa
 		competitorCountColumn.setCellRenderer(rightRenderer);
 		competitorCountColumn.setPreferredWidth(150);
 
-		competitorNameColumn.setHeaderValue("Kilpailija");
+		competitorNameColumn.setHeaderValue("Nimi");
 		competitorNameColumn.setCellRenderer(leftRenderer);
 		competitorNameColumn.setPreferredWidth(800);
 
@@ -120,9 +140,11 @@ public class CompetitorDataPanel extends JPanel implements ActionListener, GUIDa
 		tableModel.setRowCount(0);
 
 		int rowCounter = 0;
+		int firstRowOrderNumber = (DatabasePanelDataService.getCurrentCompetitorListPage() - 1)
+				* DatabasePanelDataService.getCompetitorlistpagesize() + 1;
 		for (Competitor competitor : databaseCompetitorTableData) {
 			String[] row = new String[3];
-			row[0] = rowCounter + 1 + ". ";
+			row[0] = firstRowOrderNumber + rowCounter + ". ";
 			String middleInitial = "";
 			if (competitor.getWinMSSComment() != null)
 				middleInitial = competitor.getWinMSSComment();
@@ -138,6 +160,7 @@ public class CompetitorDataPanel extends JPanel implements ActionListener, GUIDa
 
 		}
 		cardLayout.show(this, DatabaseDataTableStatus.HAS_DATA.toString());
+		competitorDataTableScrollPane.getVerticalScrollBar().setValue(0);
 	}
 
 	private void setSelectedCompetitorsToDelete() {
@@ -158,6 +181,8 @@ public class CompetitorDataPanel extends JPanel implements ActionListener, GUIDa
 			if (DatabasePanelDataService.getDatabaseCompetitorInfoTableData() != null) {
 				updateDatabaseCompetitorInfoTable(DatabasePanelDataService.getDatabaseCompetitorInfoTableData());
 				databaseCompetitorInfoTable.setRowSelectionAllowed(false);
+				paginationPanel.setCurrentPage(DatabasePanelDataService.getCurrentCompetitorListPage());
+				paginationPanel.setTotalPages(DatabasePanelDataService.getTotalCompetitorListPages());
 			}
 		}
 	}
@@ -175,6 +200,12 @@ public class CompetitorDataPanel extends JPanel implements ActionListener, GUIDa
 		if (event.getActionCommand().equals(CompetitorDataPanelButtonCommands.CANCEL_DELETE_COMPETITORS.toString())) {
 			databaseCompetitorInfoTable.setRowSelectionAllowed(false);
 		}
+	}
+
+	@Override
+	public void changePage(int newPage) {
+		DatabasePanelDataService.loadCompetitorTableData(newPage);
+		paginationPanel.setCurrentPage(newPage);
 	}
 
 }

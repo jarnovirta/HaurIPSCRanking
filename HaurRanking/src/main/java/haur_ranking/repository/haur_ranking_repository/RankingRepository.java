@@ -18,23 +18,31 @@ public class RankingRepository {
 		}
 	}
 
-	public static List<Ranking> findOldRankings(EntityManager entityManager) {
+	public static List<Ranking> getRankingsListPage(int page, int pageSize, EntityManager entityManager) {
 		List<Ranking> rankings = null;
 		try {
 			String queryString = "SELECT r FROM Ranking r ORDER BY r.date DESC";
 			TypedQuery<Ranking> query = entityManager.createQuery(queryString, Ranking.class);
+			int firstResult = (page - 1) * pageSize + 1;
+			query.setFirstResult(firstResult);
+			query.setMaxResults(pageSize);
 			rankings = query.getResultList();
-			if (rankings != null) {
-				if (rankings.size() == 0 || rankings.size() == 1)
-					rankings = null;
-				else
-					rankings = rankings.subList(1, rankings.size());
-			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return rankings;
+	}
+
+	public static int getRankingsCount(EntityManager entityManager) {
+		int count;
+		try {
+			count = ((Long) entityManager.createQuery("SELECT COUNT(r) from Ranking r").getSingleResult()).intValue();
+			return count;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return -1;
+		}
 	}
 
 	public static void deleteAll(EntityManager entityManager) {

@@ -18,7 +18,6 @@ public class CompetitorService {
 		entityManager.getTransaction().commit();
 		entityManager.close();
 		return competitor;
-
 	}
 
 	public static Competitor find(String firstName, String lastName, String winMSSComment,
@@ -41,9 +40,9 @@ public class CompetitorService {
 		return count;
 	}
 
-	public static List<Competitor> findCompetitorInfoTableData() {
+	public static List<Competitor> getCompetitorTableDataPage(int page, int pageSize) {
 		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
-		List<Competitor> competitors = CompetitorRepository.findAll(entityManager);
+		List<Competitor> competitors = CompetitorRepository.getCompetitorListPage(page, pageSize, entityManager);
 		for (Competitor competitor : competitors) {
 			competitor.setResultCount(
 					StageScoreSheetRepository.getCompetitorStageScoreSheetCount(competitor, entityManager));
@@ -61,6 +60,7 @@ public class CompetitorService {
 			CompetitorRepository.delete(competitor, entityManager);
 		}
 		entityManager.getTransaction().commit();
+		entityManager.close();
 		RankingService.generateRanking();
 	}
 }

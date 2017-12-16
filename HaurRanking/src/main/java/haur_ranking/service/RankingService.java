@@ -21,6 +21,20 @@ import haur_ranking.repository.haur_ranking_repository.RankingRepository;
 import haur_ranking.repository.haur_ranking_repository.StageScoreSheetRepository;
 
 public class RankingService {
+	public static List<Ranking> getPreviousRankingsTableData(int page, int pageSize) {
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		List<Ranking> rankings = RankingRepository.getRankingsListPage(page, pageSize, entityManager);
+		entityManager.close();
+		return rankings;
+	}
+
+	public static int getRankingsCount() {
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		int count = RankingRepository.getRankingsCount(entityManager);
+		entityManager.close();
+		return count;
+	}
+
 	private static DivisionRankingRow competitorTopScoresAverage(Competitor competitor, DivisionRanking divisionRanking,
 			List<StageScoreSheet> competitorLatestScoreSheets,
 			Map<ClassifierStage, Double> classifierStageTopResultAverages) {
@@ -176,13 +190,6 @@ public class RankingService {
 		}
 	}
 
-	public static List<Ranking> findOldRankings() {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
-		List<Ranking> rankings = RankingRepository.findOldRankings(entityManager);
-		entityManager.close();
-		return rankings;
-	}
-
 	public static Ranking findCurrentRanking() {
 		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
 		Ranking ranking = RankingRepository.findCurrentRanking(entityManager);
@@ -196,6 +203,7 @@ public class RankingService {
 		RankingRepository.save(ranking, entityManager);
 		entityManager.getTransaction().commit();
 		entityManager.close();
+
 	}
 
 	public static void delete(List<Ranking> rankings) {
@@ -206,6 +214,7 @@ public class RankingService {
 		}
 		entityManager.getTransaction().commit();
 		entityManager.close();
+
 	}
 
 	public static void removeRankingDataForCompetitor(Competitor competitor) {
@@ -217,7 +226,9 @@ public class RankingService {
 		}
 		RankingRepository.removeRankingRowsForCompetitor(competitor, entityManager);
 
-		if (commitTransaction)
+		if (commitTransaction) {
 			entityManager.getTransaction().commit();
+			entityManager.close();
+		}
 	}
 }
