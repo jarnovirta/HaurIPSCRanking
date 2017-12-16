@@ -20,6 +20,12 @@ public class StageService {
 		return StageRepository.find(stage, entityManager);
 	}
 
+	public static int getTotalStageCount() {
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		return StageRepository.getTotalStageCount(entityManager);
+
+	}
+
 	public static Map<ClassifierStage, Double> getClassifierStagesWithTwoOrMoreResults(IPSCDivision division) {
 		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
 		Map<ClassifierStage, Double> classifierStages = StageRepository

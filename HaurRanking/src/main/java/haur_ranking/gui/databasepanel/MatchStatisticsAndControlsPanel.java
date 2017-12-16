@@ -24,7 +24,8 @@ import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
 import haur_ranking.gui.MainWindow;
-import haur_ranking.gui.service.DataService;
+import haur_ranking.gui.service.DataEventService;
+import haur_ranking.gui.service.DatabasePanelDataService;
 
 public class MatchStatisticsAndControlsPanel extends JPanel implements GUIDataEventListener {
 	/**
@@ -48,7 +49,7 @@ public class MatchStatisticsAndControlsPanel extends JPanel implements GUIDataEv
 		statisticsTable.setAlignmentX(Component.LEFT_ALIGNMENT);
 		add(statisticsTable, BorderLayout.NORTH);
 		add(getControlsPanel(), BorderLayout.SOUTH);
-		DataService.addDataEventListener(this);
+		DataEventService.addDataEventListener(this);
 
 	}
 
@@ -71,7 +72,7 @@ public class MatchStatisticsAndControlsPanel extends JPanel implements GUIDataEv
 		cellRenderer.setOpaque(false);
 
 		TableColumn leftColumn = statisticsTable.getColumnModel().getColumn(0);
-		leftColumn.setPreferredWidth(200);
+		leftColumn.setPreferredWidth(300);
 		TableColumn rightColumn = statisticsTable.getColumnModel().getColumn(1);
 		rightColumn.setPreferredWidth(130);
 		return statisticsTable;
@@ -81,13 +82,12 @@ public class MatchStatisticsAndControlsPanel extends JPanel implements GUIDataEv
 		DefaultTableModel statisticsTableModel = (DefaultTableModel) statisticsTable.getModel();
 		statisticsTableModel.setValueAt("Kilpailuja:", 0, 0);
 		statisticsTableModel.setValueAt(statistics.getMatchCount(), 0, 1);
-		statisticsTableModel.setValueAt("Tuloksia:", 1, 0);
-		statisticsTableModel.setValueAt(statistics.getStageScoreSheetCount(), 1, 1);
-		statisticsTableModel.setValueAt("Kilpailijoita:", 2, 0);
-		statisticsTableModel.setValueAt(statistics.getCompetitorCount(), 2, 1);
+		statisticsTableModel.setValueAt("Luokitteluammuntoja:", 1, 0);
+		statisticsTableModel.setValueAt(statistics.getStageCount(), 1, 1);
+		statisticsTableModel.setValueAt("Tuloksia:", 2, 0);
+		statisticsTableModel.setValueAt(statistics.getStageScoreSheetCount(), 2, 1);
 		statisticsTableModel.setValueAt("Luokitteluohjelmia", 3, 0);
 		statisticsTableModel.setValueAt("joissa väh. 2 tulosta:", 4, 0);
-
 		statisticsTableModel.setValueAt(statistics.getValidClassifiersCount(), 4, 1);
 	}
 
@@ -107,20 +107,20 @@ public class MatchStatisticsAndControlsPanel extends JPanel implements GUIDataEv
 		buttonsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
 		chooseStagesToDeleteButton = new JButton("Valitse");
-		chooseStagesToDeleteButton.setActionCommand("chooseStagesToDelete");
+		chooseStagesToDeleteButton.setActionCommand(MatchDataPanelButtonCommands.CHOOSE_STAGES_TO_DELETE.toString());
 		chooseStagesToDeleteButton.addActionListener(buttonClickListener);
 		buttonsPanel.add(chooseStagesToDeleteButton, BorderLayout.WEST);
 
 		JPanel deleteCancelButtonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
 		deleteStagesButton = new JButton("Poista");
-		deleteStagesButton.setActionCommand("deleteStages");
+		deleteStagesButton.setActionCommand(MatchDataPanelButtonCommands.DELETE_STAGES.toString());
 		deleteStagesButton.addActionListener(buttonClickListener);
 		deleteStagesButton.setEnabled(false);
 		deleteCancelButtonsPanel.add(deleteStagesButton);
 
 		cancelDeleteButton = new JButton("Peruuta");
-		cancelDeleteButton.setActionCommand("cancelDelete");
+		cancelDeleteButton.setActionCommand(MatchDataPanelButtonCommands.CANCEL_STAGE_DELETE.toString());
 		cancelDeleteButton.addActionListener(buttonClickListener);
 		cancelDeleteButton.setEnabled(false);
 		deleteCancelButtonsPanel.add(cancelDeleteButton);
@@ -136,26 +136,27 @@ public class MatchStatisticsAndControlsPanel extends JPanel implements GUIDataEv
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			String command = e.getActionCommand();
-			if (command.equals("chooseStagesToDelete")) {
+			if (command.equals(MatchDataPanelButtonCommands.CHOOSE_STAGES_TO_DELETE.toString())) {
 				chooseStagesToDeleteCommandHandler();
 			}
-			if (command.equals("deleteStages")) {
+			if (command.equals(MatchDataPanelButtonCommands.DELETE_STAGES.toString())) {
 				deleteStagesCommandHandler();
 			}
-			if (command.equals("cancelDelete")) {
+			if (command.equals(MatchDataPanelButtonCommands.CANCEL_STAGE_DELETE.toString())) {
 				cancelDeleteCommandHandler();
 			}
 		}
 	}
 
 	private void chooseStagesToDeleteCommandHandler() {
+
 		cancelDeleteButton.setEnabled(true);
 		deleteStagesButton.setEnabled(true);
 		chooseStagesToDeleteButton.setEnabled(false);
 	}
 
 	private void deleteStagesCommandHandler() {
-		DataService.deleteStages();
+		DatabasePanelDataService.deleteStages();
 		chooseStagesToDeleteButton.setEnabled(true);
 		cancelDeleteButton.setEnabled(false);
 		deleteStagesButton.setEnabled(false);
@@ -163,7 +164,6 @@ public class MatchStatisticsAndControlsPanel extends JPanel implements GUIDataEv
 	}
 
 	private void cancelDeleteCommandHandler() {
-		DataService.clearStagesToDelete();
 		chooseStagesToDeleteButton.setEnabled(true);
 		cancelDeleteButton.setEnabled(false);
 		deleteStagesButton.setEnabled(false);
@@ -177,11 +177,11 @@ public class MatchStatisticsAndControlsPanel extends JPanel implements GUIDataEv
 
 	@Override
 	public void process(GUIDataEvent event) {
-		if (event.getEventType() == GUIDataEventType.GUI_DATA_UPDATE) {
-			if (DataService.getDatabaseStatistics() != null)
-				setStatisticsTableData(DataService.getDatabaseStatistics());
-			if (DataService.getDatabaseMatchInfoTableData() != null
-					&& DataService.getDatabaseMatchInfoTableData().size() > 0) {
+		if (event.getEventType() == GUIDataEventType.DATABASE_STATISTICS_TABLE_UPDATE) {
+			if (DatabasePanelDataService.getDatabaseStatistics() != null)
+				setStatisticsTableData(DatabasePanelDataService.getDatabaseStatistics());
+			if (DatabasePanelDataService.getDatabaseMatchInfoTableData() != null
+					&& DatabasePanelDataService.getDatabaseMatchInfoTableData().size() > 0) {
 				chooseStagesToDeleteButton.setEnabled(true);
 			} else {
 				chooseStagesToDeleteButton.setEnabled(false);

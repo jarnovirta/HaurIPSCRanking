@@ -114,9 +114,10 @@ public class PdfGenerator {
 			int position = 1;
 			for (DivisionRankingRow row : divisionRanking.getDivisionRankingRows()) {
 				Font rowFont;
-				if (row.isImprovedResult())
+				if (row.isImprovedResult()) {
 					rowFont = boldFont;
-				else
+
+				} else
 					rowFont = defaultFont;
 				String positionString = "--";
 				if (row.isRankedCompetitor())

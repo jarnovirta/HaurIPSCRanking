@@ -26,7 +26,8 @@ import haur_ranking.domain.Ranking;
 import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
-import haur_ranking.gui.service.DataService;
+import haur_ranking.gui.service.DataEventService;
+import haur_ranking.gui.service.RankingPanelDataService;
 import haur_ranking.gui.utils.JTableUtils;
 import haur_ranking.utils.DataFormatUtils;
 
@@ -69,7 +70,7 @@ public class RankingTable extends JPanel implements GUIDataEventListener {
 		rankingTabViewPanel.add(tabbedRankingTablesPane);
 
 		this.add(rankingTabViewPanel);
-		DataService.addDataEventListener(this);
+		DataEventService.addDataEventListener(this);
 	}
 
 	private JTable getDivisionRankingTable() {
@@ -194,8 +195,8 @@ public class RankingTable extends JPanel implements GUIDataEventListener {
 
 	@Override
 	public void process(GUIDataEvent event) {
-		if (event.getEventType() == GUIDataEventType.GUI_DATA_UPDATE && DataService.getRanking() != null) {
-			updateRankingTablesData(DataService.getRanking());
+		if (event.getEventType() == GUIDataEventType.RANKING_TABLE_UPDATE) {
+			updateRankingTablesData(RankingPanelDataService.getRanking());
 		}
 	}
 

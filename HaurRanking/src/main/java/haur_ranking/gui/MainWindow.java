@@ -20,7 +20,9 @@ import javax.swing.plaf.FontUIResource;
 import haur_ranking.gui.databasepanel.DatabasePanel;
 import haur_ranking.gui.importpanel.ImportPanel;
 import haur_ranking.gui.rankingpanel.RankingPanel;
-import haur_ranking.gui.service.DataService;
+import haur_ranking.gui.service.DataEventService;
+import haur_ranking.gui.service.DatabasePanelDataService;
+import haur_ranking.gui.service.RankingPanelDataService;
 import haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
 import haur_ranking.repository.winmss_repository.WinMSSDatabaseUtil;
 
@@ -54,7 +56,6 @@ public class MainWindow {
 	}
 
 	public void prepareGUI() {
-		DataService.init();
 		initializeFonts();
 		mainFrame = new JFrame("HAUR Ranking");
 		mainFrame.setLocationRelativeTo(null);
@@ -90,7 +91,9 @@ public class MainWindow {
 	}
 
 	public void showHaurRankingGui() {
-		DataService.updateGUIData();
+		DatabasePanelDataService.init();
+		DataEventService.init();
+		RankingPanelDataService.init();
 		mainFrame.setVisible(true);
 	}
 

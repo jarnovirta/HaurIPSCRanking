@@ -22,7 +22,8 @@ import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
 import haur_ranking.gui.MainWindow;
 import haur_ranking.gui.filter.WinMSSFileFilter;
-import haur_ranking.gui.service.DataService;
+import haur_ranking.gui.service.DataEventService;
+import haur_ranking.gui.service.ImportPanelDataService;
 
 public class ControlsPanel extends JPanel implements GUIDataEventListener {
 
@@ -76,7 +77,7 @@ public class ControlsPanel extends JPanel implements GUIDataEventListener {
 
 		progressBarFrame = new ImportProgressBarFrame();
 		progressBarFrame.setLocationRelativeTo(this);
-		DataService.addDataEventListener(this);
+		DataEventService.addDataEventListener(this);
 
 	}
 
@@ -94,13 +95,13 @@ public class ControlsPanel extends JPanel implements GUIDataEventListener {
 			lastMSSDbFileLocation = Paths.get(absoluteFilePath).getParent().toString();
 			loadWinMSSDataButton.setEnabled(false);
 			progressBarFrame.setVisible(true);
-			DataService.loadDataFromWinMSS(absoluteFilePath);
+			ImportPanelDataService.loadDataFromWinMSS(absoluteFilePath);
 		}
 	}
 
 	private void importResultsCommandHandler() {
 		progressBarFrame.setVisible(true);
-		DataService.saveResultsToHaurRankingDatabase();
+		ImportPanelDataService.saveResultsToHaurRankingDatabase();
 	}
 
 	@Override
@@ -134,7 +135,7 @@ public class ControlsPanel extends JPanel implements GUIDataEventListener {
 				importResultsCommandHandler();
 			}
 			if (command.equals("clearImportAsClassifierSelections")) {
-				DataService.clearImportAsClassifierSelections();
+				ImportPanelDataService.clearImportAsClassifierSelections();
 			}
 		}
 	}

@@ -213,11 +213,11 @@ public class TestUtils {
 		Ranking ranking = new Ranking();
 		DivisionRanking divisionRanking = new DivisionRanking(IPSCDivision.PRODUCTION);
 		List<DivisionRankingRow> rows = new ArrayList<DivisionRankingRow>();
-		rows.add(new DivisionRankingRow(jarno, true, 1));
-		rows.add(new DivisionRankingRow(jerry, true, 1));
-		rows.add(new DivisionRankingRow(ben, true, 1));
-		rows.add(new DivisionRankingRow(clint, false, 1));
-		rows.add(new DivisionRankingRow(rob, true, 1));
+		rows.add(new DivisionRankingRow(jarno, divisionRanking, true, 1));
+		rows.add(new DivisionRankingRow(jerry, divisionRanking, true, 1));
+		rows.add(new DivisionRankingRow(ben, divisionRanking, true, 1));
+		rows.add(new DivisionRankingRow(clint, divisionRanking, false, 1));
+		rows.add(new DivisionRankingRow(rob, divisionRanking, true, 1));
 
 		divisionRanking.setDivisionRankingRows(rows);
 		List<DivisionRanking> divisionRankings = new ArrayList<DivisionRanking>();
@@ -231,11 +231,11 @@ public class TestUtils {
 		DivisionRanking compareToDivisionRanking = new DivisionRanking(IPSCDivision.PRODUCTION);
 
 		List<DivisionRankingRow> compareToRows = new ArrayList<DivisionRankingRow>();
-		compareToRows.add(new DivisionRankingRow(jerry, true, 4));
-		compareToRows.add(new DivisionRankingRow(jarno, true, 4));
-		compareToRows.add(new DivisionRankingRow(ben, true, 4));
-		compareToRows.add(new DivisionRankingRow(rob, true, 4));
-		compareToRows.add(new DivisionRankingRow(clint, false, 4));
+		compareToRows.add(new DivisionRankingRow(jerry, compareToDivisionRanking, true, 4));
+		compareToRows.add(new DivisionRankingRow(jarno, compareToDivisionRanking, true, 4));
+		compareToRows.add(new DivisionRankingRow(ben, compareToDivisionRanking, true, 4));
+		compareToRows.add(new DivisionRankingRow(rob, compareToDivisionRanking, true, 4));
+		compareToRows.add(new DivisionRankingRow(clint, compareToDivisionRanking, false, 4));
 
 		compareToDivisionRanking.setDivisionRankingRows(compareToRows);
 		List<DivisionRanking> compareToDivisionRankings = new ArrayList<DivisionRanking>();

@@ -30,6 +30,7 @@ public class MatchService {
 	private static List<DataImportEventListener> importProgressEventListeners = new ArrayList<DataImportEventListener>();
 
 	private static int newScoreSheetsCount;
+	private static int oldScoreSheetsRemovedCount;
 	private static int newStagesCount;
 	private static int newMatchesCount;
 	private static int newCompetitorsCount;
@@ -69,10 +70,6 @@ public class MatchService {
 		for (StageScoreSheet sheet : stage.getStageScoreSheets())
 			sheet.setStage(stage);
 
-		// Handle new stage score sheets
-		if (stage.getStageScoreSheets().size() > 0) {
-			StageScoreSheetService.setCompetitorsToStageScoreSheets(stage.getStageScoreSheets(), entityManager);
-		}
 	}
 
 	public static int getTotalMatchCount() {
@@ -114,16 +111,12 @@ public class MatchService {
 	// Fetch stage score sheets for stages selected by user and save to Ranking
 	// Database
 	public static void importSelectedResults(List<Match> matches) {
-		newScoreSheetsCount = 0;
-		newStagesCount = 0;
-		newMatchesCount = 0;
-		newCompetitorsCount = 0;
 
 		List<Stage> invalidClassifiers = new ArrayList<Stage>();
 		setImportProgressStatus(ImportStatus.SAVING_TO_HAUR_RANKING_DB);
 		// Initialize progress counter variables to be queried by GUI for
 		// progress bar
-		initializeProgressCounterVariables(matches);
+		initializeImportVariables(matches);
 		entityManager = HaurRankingDatabaseUtils.getEntityManager();
 		entityManager.getTransaction().begin();
 		List<IPSCDivision> divisionsWithNewResults = new ArrayList<IPSCDivision>();
@@ -171,12 +164,12 @@ public class MatchService {
 		event.setNewCompetitorsCount(newCompetitorsCount);
 		event.setNewMatchesCount(newMatchesCount);
 		event.setNewStagesCount(newStagesCount);
+		event.setOldScoreSheetsRemovedCount(oldScoreSheetsRemovedCount);
 		emitDataImportEvent(event);
 
 	}
 
 	public static void save(List<Match> matches) {
-
 		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
 		entityManager.getTransaction().begin();
 		List<StageScoreSheet> newStageScoreSheets = new ArrayList<StageScoreSheet>();
@@ -190,14 +183,16 @@ public class MatchService {
 			int stageScoreSheetCount = 0;
 			for (Stage stage : newMatch.getStages()) {
 				if (stage.getStageScoreSheets() != null) {
-					newScoreSheetsCount += stage.getStageScoreSheets().size();
+					newStagesCount++;
 					newStageScoreSheets.addAll(stage.getStageScoreSheets());
 					for (StageScoreSheet sheet : stage.getStageScoreSheets()) {
 						Competitor existingCompetitor = CompetitorService.find(sheet.getCompetitor().getFirstName(),
-								sheet.getCompetitor().getLastName(), entityManager);
+								sheet.getCompetitor().getLastName(), sheet.getCompetitor().getWinMSSComment(),
+								entityManager);
 						if (existingCompetitor != null) {
-							newCompetitorsCount++;
 							sheet.setCompetitor(existingCompetitor);
+						} else {
+							newCompetitorsCount++;
 						}
 					}
 					stageScoreSheetCount += stage.getStageScoreSheets().size();
@@ -205,9 +200,9 @@ public class MatchService {
 						addImportProgress(stage.getStageScoreSheets().size() / 2.0);
 				}
 			}
+			newScoreSheetsCount += stageScoreSheetCount;
 			Match existingMatch = find(newMatch, entityManager);
 			if (existingMatch != null) {
-				newMatchesCount++;
 				for (Stage stage : newMatch.getStages()) {
 					stage.setMatch(existingMatch);
 				}
@@ -220,9 +215,10 @@ public class MatchService {
 			addImportProgress(stageScoreSheetCount / 2.0);
 
 		}
+
 		entityManager.getTransaction().commit();
 		entityManager.close();
-		StageScoreSheetService.removeExtraStageScoreSheets(newStageScoreSheets);
+		oldScoreSheetsRemovedCount = StageScoreSheetService.removeExtraStageScoreSheets(newStageScoreSheets);
 
 	}
 
@@ -263,7 +259,13 @@ public class MatchService {
 		return tableRows;
 	}
 
-	private static void initializeProgressCounterVariables(List<Match> matches) {
+	private static void initializeImportVariables(List<Match> matches) {
+
+		newScoreSheetsCount = 0;
+		newStagesCount = 0;
+		newMatchesCount = 0;
+		newCompetitorsCount = 0;
+
 		setImportProgressStatus(ImportStatus.LOADING_FROM_WINMSS);
 		progressCounterCompletedSteps = 0;
 		progressCounterTotalSteps = 0;

@@ -19,7 +19,8 @@ import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
 import haur_ranking.gui.MainWindow;
-import haur_ranking.gui.service.DataService;
+import haur_ranking.gui.service.DataEventService;
+import haur_ranking.gui.service.DatabasePanelDataService;
 
 public class CompetitorControlsPanel extends JPanel implements GUIDataEventListener {
 	/**
@@ -78,7 +79,7 @@ public class CompetitorControlsPanel extends JPanel implements GUIDataEventListe
 		controlsPanel.add(buttonsPanel);
 		add(controlsPanel, BorderLayout.SOUTH);
 
-		DataService.addDataEventListener(this);
+		DataEventService.addDataEventListener(this);
 
 	}
 
@@ -105,7 +106,7 @@ public class CompetitorControlsPanel extends JPanel implements GUIDataEventListe
 	}
 
 	private void deleteCompetitorsCommandHandler() {
-		DataService.deleteCompetitors();
+		DatabasePanelDataService.deleteCompetitors();
 		setChooseCompetitorsToDeleteButtonEnabled();
 		cancelDeleteButton.setEnabled(false);
 		deleteCompetitorsButton.setEnabled(false);
@@ -126,14 +127,14 @@ public class CompetitorControlsPanel extends JPanel implements GUIDataEventListe
 
 	@Override
 	public void process(GUIDataEvent event) {
-		if (event.getEventType() == GUIDataEventType.GUI_DATA_UPDATE) {
+		if (event.getEventType() == GUIDataEventType.DATABASE_COMPETITOR_TABLE_UPDATE) {
 			setChooseCompetitorsToDeleteButtonEnabled();
 		}
 	}
 
 	private void setChooseCompetitorsToDeleteButtonEnabled() {
-		if (DataService.getDatabaseCompetitorInfoTableData() != null
-				&& DataService.getDatabaseCompetitorInfoTableData().size() > 0) {
+		if (DatabasePanelDataService.getDatabaseCompetitorInfoTableData() != null
+				&& DatabasePanelDataService.getDatabaseCompetitorInfoTableData().size() > 0) {
 			chooseCompetitorsToDeleteButton.setEnabled(true);
 		} else {
 			chooseCompetitorsToDeleteButton.setEnabled(false);

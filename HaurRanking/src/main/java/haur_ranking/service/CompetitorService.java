@@ -11,18 +11,19 @@ import haur_ranking.repository.haur_ranking_repository.StageScoreSheetRepository
 
 public class CompetitorService {
 
-	public static Competitor find(String firstName, String lastName) {
+	public static Competitor find(String firstName, String lastName, String winMSSComment) {
 		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
 		entityManager.getTransaction().begin();
-		Competitor competitor = find(firstName, lastName, entityManager);
+		Competitor competitor = find(firstName, lastName, winMSSComment, entityManager);
 		entityManager.getTransaction().commit();
 		entityManager.close();
 		return competitor;
 
 	}
 
-	public static Competitor find(String firstName, String lastName, EntityManager entityManager) {
-		return CompetitorRepository.find(firstName, lastName, entityManager);
+	public static Competitor find(String firstName, String lastName, String winMSSComment,
+			EntityManager entityManager) {
+		return CompetitorRepository.find(firstName, lastName, winMSSComment, entityManager);
 
 	}
 

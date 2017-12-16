@@ -14,7 +14,8 @@ import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
 import haur_ranking.gui.MainWindow;
-import haur_ranking.gui.service.DataService;
+import haur_ranking.gui.service.DataEventService;
+import haur_ranking.gui.service.RankingPanelDataService;
 import haur_ranking.utils.DateFormatUtils;
 
 public class CurrentRankingInfoPanel extends JPanel implements GUIDataEventListener {
@@ -41,16 +42,15 @@ public class CurrentRankingInfoPanel extends JPanel implements GUIDataEventListe
 		rankingInfoPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 		add(rankingInfoPanel, BorderLayout.NORTH);
 
-		DataService.addDataEventListener(this);
+		DataEventService.addDataEventListener(this);
 
 	}
 
 	@Override
 	public void process(GUIDataEvent event) {
-		if (event.getEventType() == GUIDataEventType.GUI_DATA_UPDATE && DataService.getRanking() != null
-				&& DataService.getRanking().getDate() != null) {
-			infoLabel.setText(
-					"Haur Ranking " + DateFormatUtils.calendarToDateString(DataService.getRanking().getDate()));
+		if (event.getEventType() == GUIDataEventType.RANKING_TABLE_UPDATE) {
+			infoLabel.setText("Haur Ranking "
+					+ DateFormatUtils.calendarToDateString(RankingPanelDataService.getRanking().getDate()));
 		}
 	}
 }

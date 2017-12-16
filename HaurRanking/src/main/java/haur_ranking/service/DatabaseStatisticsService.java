@@ -13,6 +13,7 @@ public class DatabaseStatisticsService {
 	public static DatabaseStatistics getDatabaseStatistics() {
 		DatabaseStatistics stats = new DatabaseStatistics();
 		stats.setMatchCount(MatchService.getTotalMatchCount());
+		stats.setStageCount(StageService.getTotalStageCount());
 		stats.setCompetitorCount(CompetitorService.getTotalCompetitorCount());
 		stats.setStageScoreSheetCount(StageScoreSheetService.getTotalStageScoreSheetCount());
 		List<ClassifierStage> validClassifiers = new ArrayList<ClassifierStage>();

@@ -145,6 +145,7 @@ public class RankingService {
 		// Check for improved positions in the ranking compared to an older
 		// ranking. Those having improved their position
 		// are shown in bold in the ranking pdf.
+		System.out.println("CompareToRanking not null");
 		for (DivisionRanking divisionRanking : ranking.getDivisionRankings()) {
 			DivisionRanking compareToDivisionRanking = null;
 			for (DivisionRanking compare : compareToRanking.getDivisionRankings()) {
@@ -163,6 +164,7 @@ public class RankingService {
 				Competitor competitor = row.getCompetitor();
 				for (DivisionRankingRow compareToRow : compareToDivisionRanking.getDivisionRankingRows()) {
 					if (compareToRow.getCompetitor().equals(competitor)) {
+						System.out.println("Comparing results for " + competitor.getLastName());
 						int newPosition = divisionRanking.getDivisionRankingRows().indexOf(row);
 						int oldPosition = compareToDivisionRanking.getDivisionRankingRows().indexOf(compareToRow);
 						if (newPosition > oldPosition || newPosition == oldPosition) {

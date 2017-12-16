@@ -23,6 +23,18 @@ public class StageRepository {
 		}
 	}
 
+	public static int getTotalStageCount(EntityManager entityManager) {
+		int stageCount;
+		try {
+			stageCount = ((Long) entityManager.createQuery("SELECT COUNT(s) from Stage s").getSingleResult())
+					.intValue();
+			return stageCount;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return -1;
+		}
+	}
+
 	public static void delete(Stage stage, EntityManager entityManager) {
 		try {
 			entityManager.remove(stage);

@@ -10,7 +10,7 @@ import haur_ranking.event.DataImportEvent.DataImportEventType;
 import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
-import haur_ranking.gui.service.DataService;
+import haur_ranking.gui.service.DataEventService;
 
 public class ImportProgressBarFrame extends JFrame implements GUIDataEventListener {
 	/**
@@ -33,7 +33,7 @@ public class ImportProgressBarFrame extends JFrame implements GUIDataEventListen
 		progressBarPanel.setOpaque(true);
 		setContentPane(progressBarPanel);
 		pack();
-		DataService.addDataEventListener(this);
+		DataEventService.addDataEventListener(this);
 
 	}
 

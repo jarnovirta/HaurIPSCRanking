@@ -22,6 +22,7 @@ public class DataImportEvent {
 	private int newStagesCount;
 	private int newMatchesCount;
 	private int newCompetitorsCount;
+	private int oldScoreSheetsRemovedCount;
 
 	public DataImportEvent(DataImportEventType eventType) {
 		this.dataImportEventType = eventType;
@@ -89,6 +90,14 @@ public class DataImportEvent {
 
 	public void setNewCompetitorsCount(int newCompetitorsCount) {
 		this.newCompetitorsCount = newCompetitorsCount;
+	}
+
+	public int getOldScoreSheetsRemovedCount() {
+		return oldScoreSheetsRemovedCount;
+	}
+
+	public void setOldScoreSheetsRemovedCount(int oldScoreSheetsRemovedCount) {
+		this.oldScoreSheetsRemovedCount = oldScoreSheetsRemovedCount;
 	}
 
 }

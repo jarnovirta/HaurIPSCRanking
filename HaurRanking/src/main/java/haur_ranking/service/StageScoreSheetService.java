@@ -11,7 +11,6 @@ import haur_ranking.domain.Competitor;
 import haur_ranking.domain.IPSCDivision;
 import haur_ranking.domain.Stage;
 import haur_ranking.domain.StageScoreSheet;
-import haur_ranking.repository.haur_ranking_repository.CompetitorRepository;
 import haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
 import haur_ranking.repository.haur_ranking_repository.StageRepository;
 import haur_ranking.repository.haur_ranking_repository.StageScoreSheetRepository;
@@ -59,7 +58,7 @@ public class StageScoreSheetService {
 		return sheetCount;
 	}
 
-	public static void removeExtraStageScoreSheets(List<StageScoreSheet> newlyAddedScoreSheets) {
+	public static int removeExtraStageScoreSheets(List<StageScoreSheet> newlyAddedScoreSheets) {
 		List<Long> sheetsToBeRemoved = new ArrayList<Long>();
 		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
 
@@ -88,6 +87,7 @@ public class StageScoreSheetService {
 		}
 		entityManager.close();
 		removeInBatch(sheetsToBeRemoved);
+		return sheetsToBeRemoved.size();
 	}
 
 	public static void removeInBatch(List<Long> idLIst) {
@@ -115,18 +115,6 @@ public class StageScoreSheetService {
 			StageScoreSheetRepository.removeInBatch(idList, entityManager);
 		entityManager.getTransaction().commit();
 		entityManager.close();
-	}
-
-	public static void setCompetitorsToStageScoreSheets(List<StageScoreSheet> sheets, EntityManager entityManager) {
-		for (StageScoreSheet sheet : sheets) {
-			// Check if competitor exists in database.
-			Competitor existingCompetitor = CompetitorRepository.find(sheet.getCompetitor().getFirstName(),
-					sheet.getCompetitor().getLastName(), entityManager);
-			if (existingCompetitor != null)
-				sheet.setCompetitor(existingCompetitor);
-			else
-				sheet.setCompetitor(CompetitorRepository.persist(sheet.getCompetitor(), entityManager));
-		}
 	}
 
 	public static void removeStageScoreSheetsForCompetitor(Competitor competitor) {

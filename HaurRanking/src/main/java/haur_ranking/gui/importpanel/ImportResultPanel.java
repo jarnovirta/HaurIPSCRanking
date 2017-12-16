@@ -13,7 +13,7 @@ import haur_ranking.event.DataImportEvent.ImportStatus;
 import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
-import haur_ranking.gui.service.DataService;
+import haur_ranking.gui.service.DataEventService;
 
 public class ImportResultPanel extends JPanel implements GUIDataEventListener {
 	/**
@@ -23,6 +23,7 @@ public class ImportResultPanel extends JPanel implements GUIDataEventListener {
 	JLabel newCompetitorsLabel = new JLabel();
 	JLabel newStagesLabel = new JLabel();
 	JLabel newScoreSheetsLabel = new JLabel();
+	JLabel oldScoreSheetsRemovedLabel = new JLabel();
 
 	public ImportResultPanel() {
 
@@ -35,11 +36,12 @@ public class ImportResultPanel extends JPanel implements GUIDataEventListener {
 		importStatisticsPanel.add(noResultsLabel);
 		importStatisticsPanel.add(newStagesLabel);
 		importStatisticsPanel.add(newScoreSheetsLabel);
+		importStatisticsPanel.add(oldScoreSheetsRemovedLabel);
 		importStatisticsPanel.add(newCompetitorsLabel);
 
 		add(importStatisticsPanel);
 
-		DataService.addDataEventListener(this);
+		DataEventService.addDataEventListener(this);
 
 	}
 
@@ -51,6 +53,8 @@ public class ImportResultPanel extends JPanel implements GUIDataEventListener {
 			DataImportEvent importEvent = event.getDataImportEvent();
 			newStagesLabel.setText("Luokitteluammuntoja: " + importEvent.getNewStagesCount());
 			newScoreSheetsLabel.setText("Tuloksia: " + importEvent.getNewScoreSheetsCount());
+			oldScoreSheetsRemovedLabel.setText("(vanhoja tuloksia samoihin luokitteluohjelmiin poistettu: "
+					+ importEvent.getOldScoreSheetsRemovedCount() + ")");
 			newCompetitorsLabel.setText("Uusia kilpailijoita: " + importEvent.getNewCompetitorsCount());
 		}
 	}

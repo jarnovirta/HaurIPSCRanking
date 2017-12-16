@@ -24,7 +24,8 @@ import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
 import haur_ranking.gui.MainWindow;
-import haur_ranking.gui.service.DataService;
+import haur_ranking.gui.service.DataEventService;
+import haur_ranking.gui.service.DatabasePanelDataService;
 import haur_ranking.gui.utils.JTableUtils;
 
 public class CompetitorDataPanel extends JPanel implements ActionListener, GUIDataEventListener {
@@ -51,7 +52,7 @@ public class CompetitorDataPanel extends JPanel implements ActionListener, GUIDa
 		add(scrollPane, DatabaseDataTableStatus.HAS_DATA.toString());
 		add(getNoDataPanel(), DatabaseDataTableStatus.NO_DATA.toString());
 		cardLayout.show(this, DatabaseDataTableStatus.NO_DATA.toString());
-		DataService.addDataEventListener(this);
+		DataEventService.addDataEventListener(this);
 
 	}
 
@@ -140,21 +141,22 @@ public class CompetitorDataPanel extends JPanel implements ActionListener, GUIDa
 	}
 
 	private void setSelectedCompetitorsToDelete() {
-		DataService.clearCompetitorsToDelete();
+		DatabasePanelDataService.clearCompetitorsToDelete();
 		int[] selectedRowIndexes = databaseCompetitorInfoTable.getSelectedRows();
 		for (int index : selectedRowIndexes) {
-			if (DataService.getDatabaseCompetitorInfoTableData() != null
-					&& DataService.getDatabaseCompetitorInfoTableData().size() > 0) {
-				DataService.addCompetitorToDelete(DataService.getDatabaseCompetitorInfoTableData().get(index));
+			if (DatabasePanelDataService.getDatabaseCompetitorInfoTableData() != null
+					&& DatabasePanelDataService.getDatabaseCompetitorInfoTableData().size() > 0) {
+				DatabasePanelDataService.addCompetitorToDelete(
+						DatabasePanelDataService.getDatabaseCompetitorInfoTableData().get(index));
 			}
 		}
 	}
 
 	@Override
 	public void process(GUIDataEvent event) {
-		if (event.getEventType() == GUIDataEventType.GUI_DATA_UPDATE) {
-			if (DataService.getDatabaseCompetitorInfoTableData() != null) {
-				updateDatabaseCompetitorInfoTable(DataService.getDatabaseCompetitorInfoTableData());
+		if (event.getEventType() == GUIDataEventType.DATABASE_COMPETITOR_TABLE_UPDATE) {
+			if (DatabasePanelDataService.getDatabaseCompetitorInfoTableData() != null) {
+				updateDatabaseCompetitorInfoTable(DatabasePanelDataService.getDatabaseCompetitorInfoTableData());
 				databaseCompetitorInfoTable.setRowSelectionAllowed(false);
 			}
 		}

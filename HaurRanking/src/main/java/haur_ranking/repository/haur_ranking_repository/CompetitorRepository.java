@@ -8,12 +8,17 @@ import javax.persistence.TypedQuery;
 import haur_ranking.domain.Competitor;
 
 public class CompetitorRepository {
-	public static Competitor find(String firstName, String lastName, EntityManager entityManager) {
+	public static Competitor find(String firstName, String lastName, String winMSSComment,
+			EntityManager entityManager) {
 		String queryString = "SELECT c FROM Competitor c WHERE c.firstName = :firstName AND c.lastName = :lastName";
+		if (winMSSComment != null)
+			queryString += " AND c.winMSSComment = :winMSSComment";
 		try {
 			TypedQuery<Competitor> query = entityManager.createQuery(queryString, Competitor.class);
 			query.setParameter("firstName", firstName);
 			query.setParameter("lastName", lastName);
+			if (winMSSComment != null)
+				query.setParameter("winMSSComment", winMSSComment);
 			List<Competitor> existingCompetitors = query.getResultList();
 			if (existingCompetitors.size() > 0)
 				return existingCompetitors.get(0);
@@ -48,7 +53,8 @@ public class CompetitorRepository {
 	public static Competitor persist(Competitor competitor, EntityManager entityManager) {
 		try {
 			entityManager.persist(competitor);
-			return find(competitor.getFirstName(), competitor.getLastName(), entityManager);
+			return find(competitor.getFirstName(), competitor.getLastName(), competitor.getWinMSSComment(),
+					entityManager);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

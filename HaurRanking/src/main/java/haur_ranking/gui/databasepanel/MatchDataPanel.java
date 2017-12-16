@@ -4,10 +4,17 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.NumberFormat;
 import java.util.List;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -18,13 +25,15 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+import javax.swing.text.NumberFormatter;
 
 import haur_ranking.domain.Match;
 import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
 import haur_ranking.gui.MainWindow;
-import haur_ranking.gui.service.DataService;
+import haur_ranking.gui.service.DataEventService;
+import haur_ranking.gui.service.DatabasePanelDataService;
 import haur_ranking.gui.utils.JTableUtils;
 import haur_ranking.utils.DateFormatUtils;
 
@@ -47,11 +56,11 @@ public class MatchDataPanel extends JPanel implements GUIDataEventListener, Acti
 		cardLayout = new CardLayout();
 		setLayout(cardLayout);
 		databaseMatchInfoTable = getDatabaseMatchInfoTable();
-		JScrollPane scrollPane = new JScrollPane(databaseMatchInfoTable);
-		add(scrollPane, DatabaseDataTableStatus.HAS_DATA.toString());
+		JPanel databaseMatchInfoPanel = getDatabaseMatchInfoPanel(databaseMatchInfoTable);
+		add(databaseMatchInfoPanel, DatabaseDataTableStatus.HAS_DATA.toString());
 		add(getNoDataPanel(), DatabaseDataTableStatus.NO_DATA.toString());
 		cardLayout.show(this, DatabaseDataTableStatus.NO_DATA.toString());
-		DataService.addDataEventListener(this);
+		DataEventService.addDataEventListener(this);
 
 	}
 
@@ -61,6 +70,51 @@ public class MatchDataPanel extends JPanel implements GUIDataEventListener, Acti
 		JLabel noResultsLabel = new JLabel("Ei tulostietoja", SwingConstants.CENTER);
 		noResultsPanel.add(noResultsLabel);
 		return noResultsPanel;
+	}
+
+	private JPanel getDatabaseMatchInfoPanel(JTable databaseMatchInfoTable) {
+		JPanel tablePanel = new JPanel();
+		tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
+
+		JScrollPane scrollPane = new JScrollPane(databaseMatchInfoTable);
+		tablePanel.add(scrollPane);
+
+		JPanel paginationPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		paginationPanel.setPreferredSize(new Dimension(300, 50));
+
+		JButton previousPageButton = new JButton("Edellinen");
+		previousPageButton.addActionListener(this);
+		previousPageButton.setActionCommand(MatchDataPanelButtonCommands.PREVIOUS_MATCH_LIST_PAGE.toString());
+		paginationPanel.add(previousPageButton);
+		paginationPanel.add(Box.createRigidArea(new Dimension(15, 0)));
+
+		NumberFormat format = NumberFormat.getInstance();
+		NumberFormatter integerFormatter = new NumberFormatter(format);
+		integerFormatter.setValueClass(Integer.class);
+		integerFormatter.setMinimum(1);
+		// SWITCH TO TOTAL PAGES : ////////
+		integerFormatter.setMaximum(2);
+		integerFormatter.setAllowsInvalid(true);
+		JFormattedTextField pageNumberInputField = new JFormattedTextField(integerFormatter);
+		pageNumberInputField.setText("1");
+		pageNumberInputField.setColumns(2);
+
+		pageNumberInputField.addActionListener(new TextInputListener());
+		paginationPanel.add(pageNumberInputField);
+
+		JLabel totalPages = new JLabel(" / 4");
+		paginationPanel.add(totalPages);
+		totalPages.setFont(new Font(totalPages.getFont().getName(), Font.PLAIN, totalPages.getFont().getSize()));
+		paginationPanel.add(Box.createRigidArea(new Dimension(15, 0)));
+
+		JButton nextPageButton = new JButton("Seuraava");
+		nextPageButton.addActionListener(this);
+		nextPageButton.setActionCommand(MatchDataPanelButtonCommands.NEXT_MATCH_LIST_PAGE.toString());
+		paginationPanel.add(nextPageButton);
+
+		tablePanel.add(paginationPanel);
+		return tablePanel;
+
 	}
 
 	private JTable getDatabaseMatchInfoTable() {
@@ -159,36 +213,57 @@ public class MatchDataPanel extends JPanel implements GUIDataEventListener, Acti
 
 	@Override
 	public void process(GUIDataEvent event) {
-		if (event.getEventType() == GUIDataEventType.GUI_DATA_UPDATE) {
-			if (DataService.getDatabaseMatchInfoTableData() != null) {
-				updateDatabaseMatchInfoTable(DataService.getDatabaseMatchInfoTableData());
-			}
+		if (event.getEventType() == GUIDataEventType.DATABASE_MATCH_TABLE_UPDATE) {
+			updateDatabaseMatchInfoTable(DatabasePanelDataService.getDatabaseMatchInfoTableData());
 		}
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent event) {
-		switch (event.getActionCommand()) {
-		case "chooseStagesToDelete":
+		String command = event.getActionCommand();
+		if (command.equals(MatchDataPanelButtonCommands.CHOOSE_STAGES_TO_DELETE.toString())) {
 			databaseMatchInfoTable.setRowSelectionAllowed(true);
 			setSelectedStagesToDelete();
-			break;
-		case "deleteStages":
+		}
+		if (command.equals(MatchDataPanelButtonCommands.DELETE_STAGES.toString())) {
 			databaseMatchInfoTable.setRowSelectionAllowed(false);
-			break;
-		case "cancelDelete":
+		}
+
+		if (command.equals(MatchDataPanelButtonCommands.CANCEL_STAGE_DELETE.toString())) {
 			databaseMatchInfoTable.setRowSelectionAllowed(false);
-			break;
+		}
+		if (command.equals(MatchDataPanelButtonCommands.PREVIOUS_MATCH_LIST_PAGE.toString())) {
+			previousPageCommandHandler();
+		}
+		if (command.equals(MatchDataPanelButtonCommands.NEXT_MATCH_LIST_PAGE.toString())) {
+			nextPageCommandHandler();
 		}
 
 	}
 
 	private void setSelectedStagesToDelete() {
-		DataService.clearStagesToDelete();
+		DatabasePanelDataService.clearStagesToDelete();
 		int[] selectedRowIndexes = databaseMatchInfoTable.getSelectedRows();
 		for (int index : selectedRowIndexes) {
-			DataService.getDatabaseMatchInfoTableStagesToDelete()
-					.add(DataService.getDatabaseMatchInfoTableStages().get(index));
+			DatabasePanelDataService.getDatabaseMatchInfoTableStagesToDelete()
+					.add(DatabasePanelDataService.getDatabaseMatchInfoTableStages().get(index));
 		}
 	}
+
+	private class TextInputListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent event) {
+			String input = event.getActionCommand();
+			System.out.println(input);
+		}
+	}
+
+	private void previousPageCommandHandler() {
+		System.out.println("Previous page");
+	}
+
+	private void nextPageCommandHandler() {
+		System.out.println("Next page");
+	}
+
 }

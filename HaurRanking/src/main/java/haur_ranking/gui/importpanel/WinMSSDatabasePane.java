@@ -32,7 +32,8 @@ import haur_ranking.event.DataImportEvent.ImportStatus;
 import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
-import haur_ranking.gui.service.DataService;
+import haur_ranking.gui.service.DataEventService;
+import haur_ranking.gui.service.ImportPanelDataService;
 import haur_ranking.gui.utils.JTableUtils;
 
 public class WinMSSDatabasePane extends JPanel implements GUIDataEventListener {
@@ -67,7 +68,7 @@ public class WinMSSDatabasePane extends JPanel implements GUIDataEventListener {
 		add(cardLayoutPanel);
 		add(Box.createRigidArea(new Dimension(0, 30)));
 		cardLayout.show(cardLayoutPanel, ImportTableStatus.NO_WINMSS_DB_SELECTED.toString());
-		DataService.addDataEventListener(this);
+		DataEventService.addDataEventListener(this);
 	}
 
 	private JPanel getNoTableDataPanel() {
@@ -244,14 +245,14 @@ public class WinMSSDatabasePane extends JPanel implements GUIDataEventListener {
 		if (event.getEventType() == GUIDataEventType.WINMSS_DATA_IMPORT_EVENT
 				&& event.getDataImportEvent().getDataImportEventType() == DataImportEventType.IMPORT_STATUS_CHANGE) {
 			if (event.getDataImportEvent().getImportStatus() == ImportStatus.LOAD_FROM_WINMSS_DONE) {
-				updateDatabaseMatchInfoTable(DataService.getImportResultsPanelMatchList());
+				updateDatabaseMatchInfoTable(ImportPanelDataService.getImportResultsPanelMatchList());
 			}
 			if (event.getDataImportEvent().getImportStatus() == ImportStatus.SAVE_TO_HAUR_RANKING_DB_DONE) {
 				cardLayout.show(cardLayoutPanel, ImportTableStatus.IMPORT_RESULT.toString());
 			}
 		}
-		if (event.getEventType() == GUIDataEventType.GUI_DATA_UPDATE) {
-			updateDatabaseMatchInfoTable(DataService.getImportResultsPanelMatchList());
+		if (event.getEventType() == GUIDataEventType.IMPORT_RESULTS_TABLE_UPDATE) {
+			updateDatabaseMatchInfoTable(ImportPanelDataService.getImportResultsPanelMatchList());
 		}
 	}
 }

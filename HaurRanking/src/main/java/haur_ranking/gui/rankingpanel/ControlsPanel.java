@@ -27,7 +27,8 @@ import haur_ranking.event.GUIDataEventListener;
 import haur_ranking.gui.MainWindow;
 import haur_ranking.gui.filter.FileFilterUtils;
 import haur_ranking.gui.filter.PdfFileFilter;
-import haur_ranking.gui.service.DataService;
+import haur_ranking.gui.service.DataEventService;
+import haur_ranking.gui.service.RankingPanelDataService;
 import haur_ranking.service.RankingService;
 import haur_ranking.utils.DateFormatUtils;
 
@@ -55,7 +56,7 @@ public class ControlsPanel extends JPanel implements GUIDataEventListener {
 		setBorder(BorderFactory.createEmptyBorder(40, 30, 0, 20));
 		add(getGeneratePdfPanel(), BorderLayout.NORTH);
 		add(getDeleteOldRankingsInstructionPanel(), BorderLayout.SOUTH);
-		DataService.addDataEventListener(this);
+		DataEventService.addDataEventListener(this);
 
 	}
 
@@ -146,8 +147,8 @@ public class ControlsPanel extends JPanel implements GUIDataEventListener {
 	}
 
 	private void cancelDeleteCommandHandler() {
-		if (DataService.getDatabaseMatchInfoTableData() != null
-				&& DataService.getPreviousRankingsTableData().size() > 0)
+		if (RankingPanelDataService.getPreviousRankingsTableData() != null
+				&& RankingPanelDataService.getPreviousRankingsTableData().size() > 0)
 			choosePreviousRankingsToDeleteButton.setEnabled(true);
 		deleteRankingsButton.setEnabled(false);
 		cancelDeleteButton.setEnabled(false);
@@ -157,9 +158,10 @@ public class ControlsPanel extends JPanel implements GUIDataEventListener {
 	private void deleteRankingsCommandHandler() {
 		deleteRankingsButton.setEnabled(false);
 		cancelDeleteButton.setEnabled(false);
-		DataService.deletePreviousRankings();
+		RankingPanelDataService.deletePreviousRankings();
 
-		if (DataService.getPreviousRankingsTableData() != null && DataService.getPreviousRankingsTableData().size() > 0)
+		if (RankingPanelDataService.getPreviousRankingsTableData() != null
+				&& RankingPanelDataService.getPreviousRankingsTableData().size() > 0)
 			choosePreviousRankingsToDeleteButton.setEnabled(true);
 		setPdfButtonEnabled();
 	}
@@ -185,8 +187,8 @@ public class ControlsPanel extends JPanel implements GUIDataEventListener {
 				absoluteFilePath += ".pdf";
 
 			lastRankingPdfFileLocation = Paths.get(absoluteFilePath).getParent().toString();
-			RankingService.createPdfRankingFile(DataService.getRanking(),
-					DataService.getPreviousRankingsTableSelectedRanking(), absoluteFilePath);
+			RankingService.createPdfRankingFile(RankingPanelDataService.getRanking(),
+					RankingPanelDataService.getPreviousRankingsTableSelectedRanking(), absoluteFilePath);
 		} else {
 			if (returnVal != JFileChooser.CANCEL_OPTION)
 				generatePdfCommandHandler();
@@ -224,16 +226,16 @@ public class ControlsPanel extends JPanel implements GUIDataEventListener {
 
 	@Override
 	public void process(GUIDataEvent event) {
-		if (event.getEventType() == GUIDataEventType.GUI_DATA_UPDATE) {
-			if (DataService.getPreviousRankingsTableData() != null
-					&& DataService.getPreviousRankingsTableData().size() > 0)
+		if (event.getEventType() == GUIDataEventType.PREVIOUS_RANKINGS_TABLE_UPDATE) {
+			if (RankingPanelDataService.getPreviousRankingsTableData() == null
+					|| RankingPanelDataService.getPreviousRankingsTableData().size() > 0)
 				choosePreviousRankingsToDeleteButton.setEnabled(true);
 			setPdfButtonEnabled();
 		}
 	}
 
 	private void setPdfButtonEnabled() {
-		Ranking ranking = DataService.getRanking();
+		Ranking ranking = RankingPanelDataService.getRanking();
 		boolean enabled = false;
 
 		if (ranking != null && ranking.getDivisionRankings() != null && ranking.getDivisionRankings().size() > 0) {

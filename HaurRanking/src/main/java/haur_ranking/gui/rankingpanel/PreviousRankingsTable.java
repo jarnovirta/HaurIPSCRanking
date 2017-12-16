@@ -23,7 +23,8 @@ import haur_ranking.domain.Ranking;
 import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
-import haur_ranking.gui.service.DataService;
+import haur_ranking.gui.service.DataEventService;
+import haur_ranking.gui.service.RankingPanelDataService;
 import haur_ranking.utils.DateFormatUtils;
 
 public class PreviousRankingsTable extends JPanel implements ActionListener, GUIDataEventListener {
@@ -53,7 +54,7 @@ public class PreviousRankingsTable extends JPanel implements ActionListener, GUI
 		add(scrollPane, PreviousRankingsTableStatus.HAS_DATA.toString());
 		add(getNoTableDataPanel(), PreviousRankingsTableStatus.NO_DATA.toString());
 		cardLayout.show(this, PreviousRankingsTableStatus.NO_DATA.toString());
-		DataService.addDataEventListener(this);
+		DataEventService.addDataEventListener(this);
 
 	}
 
@@ -117,7 +118,7 @@ public class PreviousRankingsTable extends JPanel implements ActionListener, GUI
 	public void updateDatabaseMatchInfoTable(List<Ranking> previousRankings) {
 		DefaultTableModel tableModel = (DefaultTableModel) previousRankingsTable.getModel();
 		tableModel.setRowCount(0);
-		if (previousRankings == null) {
+		if (previousRankings == null || previousRankings.size() == 0) {
 			cardLayout.show(this, PreviousRankingsTableStatus.NO_DATA.toString());
 			return;
 		}
@@ -139,8 +140,8 @@ public class PreviousRankingsTable extends JPanel implements ActionListener, GUI
 	@Override
 	public void process(GUIDataEvent event) {
 
-		if (event.getEventType() == GUIDataEventType.GUI_DATA_UPDATE) {
-			updateDatabaseMatchInfoTable(DataService.getPreviousRankingsTableData());
+		if (event.getEventType() == GUIDataEventType.PREVIOUS_RANKINGS_TABLE_UPDATE) {
+			updateDatabaseMatchInfoTable(RankingPanelDataService.getPreviousRankingsTableData());
 			setTableToSingeRowSelection();
 
 		}
@@ -158,10 +159,15 @@ public class PreviousRankingsTable extends JPanel implements ActionListener, GUI
 	}
 
 	private void setRankingsToDelete() {
-		DataService.getPreviousRankingsToDelete().clear();
+		RankingPanelDataService.clearPreviousRankingsToDelete();
 		int[] selectedRowIndexes = previousRankingsTable.getSelectedRows();
+		if (selectedRowIndexes.length > 0 && RankingPanelDataService.getPreviousRankingsTableData() != null
+				&& RankingPanelDataService.getPreviousRankingsTableData().size() > 0)
+			RankingPanelDataService.setPreviousRankingsTableSelectedRanking(
+					RankingPanelDataService.getPreviousRankingsTableData().get(selectedRowIndexes[0]));
 		for (int index : selectedRowIndexes) {
-			DataService.addPreviousRankingToDelete(DataService.getPreviousRankingsTableData().get(index));
+			RankingPanelDataService
+					.addPreviousRankingToDelete(RankingPanelDataService.getPreviousRankingsTableData().get(index));
 		}
 	}
 
