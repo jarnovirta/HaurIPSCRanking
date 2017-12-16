@@ -14,26 +14,6 @@ public class DataEventService {
 		MatchService.addImportProgressEventListener(new DataImportEventHelper());
 	}
 
-	// public static void processData(DataImportEvent event) {
-	// if (event.getDataImportEventType() ==
-	// DataImportEventType.IMPORT_STATUS_CHANGE
-	// && event.getImportStatus() == ImportStatus.LOAD_FROM_WINMSS_DONE) {
-	// importResultsPanelMatchList = event.getWinMSSMatches();
-	// }
-	//
-	// GUIDataEvent guiEvent = new
-	// GUIDataEvent(GUIDataEventType.WINMSS_DATA_IMPORT_EVENT);
-	// guiEvent.setDataImportEvent(event);
-	// emitEvent(guiEvent);
-	// if (event.getDataImportEventType() ==
-	// DataImportEventType.IMPORT_STATUS_CHANGE
-	// && event.getImportStatus() == ImportStatus.SAVE_TO_HAUR_RANKING_DB_DONE)
-	// {
-	// importResultsPanelMatchList = null;
-	// updateGUIData();
-	// }
-	// }
-
 	public static void addDataEventListener(GUIDataEventListener listener) {
 
 		dataEventListeners.add(listener);
