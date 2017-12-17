@@ -5,6 +5,7 @@ public class LoadResultDataFromWinMSSTask implements Runnable {
 
 	public LoadResultDataFromWinMSSTask(String winMSSFilePath) {
 		this.winMSSFilePath = winMSSFilePath;
+
 	}
 
 	@Override

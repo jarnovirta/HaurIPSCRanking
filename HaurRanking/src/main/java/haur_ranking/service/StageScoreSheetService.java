@@ -11,23 +11,24 @@ import haur_ranking.domain.Competitor;
 import haur_ranking.domain.IPSCDivision;
 import haur_ranking.domain.Stage;
 import haur_ranking.domain.StageScoreSheet;
-import haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
-import haur_ranking.repository.haur_ranking_repository.StageRepository;
 import haur_ranking.repository.haur_ranking_repository.StageScoreSheetRepository;
+import haur_ranking.repository.haur_ranking_repository.implementation.HaurRankingDatabaseUtils;
 
 public class StageScoreSheetService {
 
+	private static StageScoreSheetRepository sheetRepository;
+
+	public static void init(StageScoreSheetRepository stageScoreSheetRepository) {
+		sheetRepository = stageScoreSheetRepository;
+	}
+
 	public static List<StageScoreSheet> find(String firstName, String lastName, IPSCDivision division) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
-		List<StageScoreSheet> sheets = StageScoreSheetRepository.find(firstName, lastName, division, entityManager);
-		entityManager.close();
+		List<StageScoreSheet> sheets = sheetRepository.find(firstName, lastName, division);
 		return sheets;
 	}
 
 	public static List<StageScoreSheet> findAll() {
-		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
-		List<StageScoreSheet> sheets = StageScoreSheetRepository.findAll(entityManager);
-		entityManager.close();
+		List<StageScoreSheet> sheets = sheetRepository.findAll();
 		return sheets;
 	}
 
@@ -36,37 +37,31 @@ public class StageScoreSheetService {
 
 	public static List<StageScoreSheet> findCompetitorScoreSheetsForValidClassifiers(String firstName, String lastName,
 			IPSCDivision division) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
 		List<StageScoreSheet> sheets = null;
 		try {
 			Set<ClassifierStage> classifiersWithTwoOrMoreResults = StageService
 					.getClassifierStagesWithTwoOrMoreResults(division).keySet();
-			sheets = StageScoreSheetRepository.find(firstName, lastName, division, classifiersWithTwoOrMoreResults,
-					entityManager);
+			sheets = sheetRepository.find(firstName, lastName, division, classifiersWithTwoOrMoreResults);
 		} catch (Exception e) {
 			e.printStackTrace();
 
 		}
-		entityManager.close();
 		return sheets;
 	}
 
 	public static int getTotalStageScoreSheetCount() {
-		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
-		int sheetCount = StageScoreSheetRepository.getTotalStageScoreSheetCount(entityManager);
-		entityManager.close();
+		int sheetCount = sheetRepository.getCount();
 		return sheetCount;
 	}
 
 	public static int removeExtraStageScoreSheets(List<StageScoreSheet> newlyAddedScoreSheets) {
 		List<Long> sheetsToBeRemoved = new ArrayList<Long>();
-		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
 
 		// Remove old score sheets for same competitor, division and classifier
 		for (StageScoreSheet sheet : newlyAddedScoreSheets) {
-			List<StageScoreSheet> databaseScoreSheets = StageScoreSheetRepository.find(
-					sheet.getCompetitor().getFirstName(), sheet.getCompetitor().getLastName(), sheet.getIpscDivision(),
-					sheet.getStage().getClassifierStage(), entityManager);
+			List<StageScoreSheet> databaseScoreSheets = sheetRepository.find(sheet.getCompetitor().getFirstName(),
+					sheet.getCompetitor().getLastName(), sheet.getIpscDivision(),
+					sheet.getStage().getClassifierStage());
 			// Remove scores for same classifier where match date is older
 			// (StageScoreSheetRepository returns list in descending order by
 			// match date)
@@ -86,19 +81,17 @@ public class StageScoreSheetService {
 
 		}
 		removeInBatch(sheetsToBeRemoved);
-		entityManager.close();
 		return sheetsToBeRemoved.size();
 	}
 
 	public static void removeInBatch(List<Long> idLIst) {
 		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
-		entityManager.getTransaction().begin();
 		List<Long> idList = new ArrayList<Long>();
 
 		// Remove reference from stage to score sheet in database
 		for (Long id : idLIst) {
-			StageScoreSheet sheet = StageScoreSheetRepository.find(id, entityManager);
-			Stage stage = StageRepository.find(sheet.getStage().getId(), entityManager);
+			StageScoreSheet sheet = sheetRepository.find(id);
+			Stage stage = StageService.find(sheet.getStage().getId());
 			StageScoreSheet sheetToRemoveFromStage = null;
 			for (StageScoreSheet s : stage.getStageScoreSheets()) {
 				if (s.getId().equals(sheet.getId()))
@@ -112,17 +105,14 @@ public class StageScoreSheetService {
 		// Remove score sheet from database
 
 		if (idList.size() > 0)
-			StageScoreSheetRepository.removeInBatch(idList, entityManager);
-		entityManager.getTransaction().commit();
-		entityManager.close();
+			sheetRepository.removeInBatch(idList);
 
 	}
 
 	public static void removeStageScoreSheetsForCompetitor(Competitor competitor) {
 		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
 		entityManager.getTransaction().begin();
-		List<StageScoreSheet> sheets = StageScoreSheetRepository.findStageScoreSheetsForCompetitor(competitor,
-				entityManager);
+		List<StageScoreSheet> sheets = sheetRepository.find(competitor);
 		List<Long> sheetIds = new ArrayList<Long>();
 		for (StageScoreSheet sheet : sheets) {
 			sheetIds.add(sheet.getId());
@@ -130,5 +120,14 @@ public class StageScoreSheetService {
 		removeInBatch(sheetIds);
 		entityManager.getTransaction().commit();
 		entityManager.close();
+	}
+
+	public static int getCompetitorStageScoreSheetCount(Competitor competitor) {
+		return sheetRepository.getCompetitorStageScoreSheetCount(competitor);
+	}
+
+	public static List<StageScoreSheet> find(String firstName, String lastName, IPSCDivision division,
+			Set<ClassifierStage> classifierSet) {
+		return sheetRepository.find(firstName, lastName, division, classifierSet);
 	}
 }

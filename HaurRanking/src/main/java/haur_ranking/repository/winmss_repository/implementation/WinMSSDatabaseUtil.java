@@ -1,4 +1,4 @@
-package haur_ranking.repository.winmss_repository;
+package haur_ranking.repository.winmss_repository.implementation;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -30,6 +30,10 @@ public class WinMSSDatabaseUtil {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static void setFileLocation(String location) {
+		fileLocation = location;
 	}
 
 	public static Connection createConnection(String newFileLocation) {

@@ -9,10 +9,15 @@ import haur_ranking.domain.Match;
 import haur_ranking.domain.Stage;
 import haur_ranking.domain.StageScoreSheet;
 import haur_ranking.repository.haur_ranking_repository.CompetitorRepository;
-import haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
-import haur_ranking.repository.haur_ranking_repository.StageScoreSheetRepository;
+import haur_ranking.repository.haur_ranking_repository.implementation.HaurRankingDatabaseUtils;
 
 public class CompetitorService {
+
+	private static CompetitorRepository competitorRepository;
+
+	public static void init(CompetitorRepository competitorRepo) {
+		competitorRepository = competitorRepo;
+	}
 
 	public static Competitor find(String firstName, String lastName, String winMSSComment) {
 		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
@@ -25,34 +30,33 @@ public class CompetitorService {
 
 	public static Competitor find(String firstName, String lastName, String winMSSComment,
 			EntityManager entityManager) {
-		return CompetitorRepository.find(firstName, lastName, winMSSComment, entityManager);
+		return competitorRepository.find(firstName, lastName, winMSSComment, entityManager);
 
 	}
 
 	public static Competitor persist(Competitor competitor) {
-		return CompetitorRepository.persist(competitor);
+		return competitorRepository.persist(competitor);
 	}
 
 	public static List<Competitor> findAll() {
 		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
-		List<Competitor> competitors = CompetitorRepository.findAll(entityManager);
+		List<Competitor> competitors = competitorRepository.findAll(entityManager);
 		entityManager.close();
 		return competitors;
 	}
 
 	public static int getTotalCompetitorCount() {
 		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
-		int count = CompetitorRepository.getTotalCompetitorCount(entityManager);
+		int count = competitorRepository.getTotalCompetitorCount(entityManager);
 		entityManager.close();
 		return count;
 	}
 
 	public static List<Competitor> getCompetitorTableDataPage(int page, int pageSize) {
 		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
-		List<Competitor> competitors = CompetitorRepository.getCompetitorListPage(page, pageSize, entityManager);
+		List<Competitor> competitors = competitorRepository.getCompetitorListPage(page, pageSize, entityManager);
 		for (Competitor competitor : competitors) {
-			competitor.setResultCount(
-					StageScoreSheetRepository.getCompetitorStageScoreSheetCount(competitor, entityManager));
+			competitor.setResultCount(StageScoreSheetService.getCompetitorStageScoreSheetCount(competitor));
 		}
 		entityManager.close();
 		return competitors;
@@ -64,7 +68,7 @@ public class CompetitorService {
 		for (Competitor competitor : competitors) {
 			StageScoreSheetService.removeStageScoreSheetsForCompetitor(competitor);
 			RankingService.removeRankingDataForCompetitor(competitor);
-			CompetitorRepository.delete(competitor, entityManager);
+			competitorRepository.delete(competitor, entityManager);
 		}
 		entityManager.getTransaction().commit();
 		entityManager.close();

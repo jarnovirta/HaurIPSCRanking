@@ -2,124 +2,21 @@ package haur_ranking.repository.haur_ranking_repository;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-
 import haur_ranking.domain.Match;
 
-public class MatchRepository {
-	public static Match find(Match match) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
-		List<Match> resultList = null;
-		Match resultMatch = null;
-		try {
+public interface MatchRepository {
+	public Match find(Match match);
 
-			String queryString = "SELECT m FROM Match m WHERE m.name = :name AND m.date = :matchDate";
-			TypedQuery<Match> query = entityManager.createQuery(queryString, Match.class);
-			query.setParameter("name", match.getName());
-			query.setParameter("matchDate", match.getDate());
-			resultList = query.getResultList();
-			if (resultList.size() > 0) {
-				resultMatch = resultList.get(0);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+	public List<Match> getMatchListPage(int page, int pageSize);
 
-		}
-		entityManager.close();
-		return resultMatch;
-	}
+	public void delete(Match match);
 
-	public static List<Match> getMatchListPage(int page, int pageSize) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
-		List<Match> resultList = null;
-		try {
-			String queryString = "SELECT m FROM Match m ORDER BY m.date DESC";
-			final TypedQuery<Match> query = entityManager.createQuery(queryString, Match.class);
-			query.setFirstResult((page - 1) * pageSize);
-			query.setMaxResults(pageSize);
-			resultList = query.getResultList();
-		} catch (Exception e) {
-			e.printStackTrace();
+	public Match findNewestMatch();
 
-		}
-		entityManager.close();
-		return resultList;
-	}
+	public List<Match> findAll();
 
-	public static void delete(Match match) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
-		entityManager.getTransaction().begin();
-		try {
-			entityManager.remove(match);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		entityManager.getTransaction().commit();
-		entityManager.close();
-	}
+	public int getMatchCount();
 
-	public static Match findLatestMatch() {
-		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
-		Match match = null;
-		try {
-			String queryString = "SELECT m FROM Match m ORDER BY m.date DESC";
-			TypedQuery<Match> query = entityManager.createQuery(queryString, Match.class);
-			query.setMaxResults(1);
-			List<Match> matches = query.getResultList();
-			if (matches != null && matches.size() > 0)
-				match = matches.get(0);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-
-		}
-		entityManager.close();
-		return match;
-	}
-
-	public static List<Match> findAll() {
-		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
-		List<Match> matches = null;
-		try {
-			String queryString = "SELECT m FROM Match m ORDER BY m.date DESC";
-			TypedQuery<Match> query = entityManager.createQuery(queryString, Match.class);
-			matches = query.getResultList();
-		} catch (Exception e) {
-			e.printStackTrace();
-
-		}
-		entityManager.close();
-		return matches;
-	}
-
-	public static int getMatchCount() {
-		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
-		int count = -1;
-		try {
-			count = ((Long) entityManager.createQuery("SELECT COUNT(m) from Match m").getSingleResult()).intValue();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-
-		}
-		entityManager.close();
-		return count;
-
-	}
-
-	public static Match merge(Match match) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
-		entityManager.getTransaction().begin();
-		try {
-			match = entityManager.merge(match);
-		} catch (Exception e) {
-			e.printStackTrace();
-
-		}
-		entityManager.getTransaction().commit();
-		entityManager.close();
-		return match;
-	}
+	public Match merge(Match match);
 
 }

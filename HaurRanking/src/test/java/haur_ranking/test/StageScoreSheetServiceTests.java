@@ -10,7 +10,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import haur_ranking.domain.IPSCDivision;
-import haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
+import haur_ranking.repository.haur_ranking_repository.implementation.HaurRankingDatabaseUtils;
 import haur_ranking.service.StageScoreSheetService;
 
 public class StageScoreSheetServiceTests {

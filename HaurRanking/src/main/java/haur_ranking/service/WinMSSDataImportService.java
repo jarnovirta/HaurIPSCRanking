@@ -21,15 +21,34 @@ public class WinMSSDataImportService {
 
 	private static int progressCounterTotalSteps;
 	private static double progressCounterCompletedSteps;
-	private static int progressPercentage = 0;
+	private static int progressPercentage;
+
+	private static WinMSSMatchRepository winMSSMatchRepository;
+	private static WinMSSStageRepository winMSSStageRepository;
+	private static WinMSSStageScoreSheetRepository winMSSStageScoreSheetRepository;
+
+	private static int oldScoreSheetsRemovedCount;
+	private static int newMatchesCount;
+	private static int newScoreSheetsCount;
+	private static int newStagesCount;
+	private static int newCompetitorsCount;
+
+	private static List<StageScoreSheet> newStageScoreSheets;
+
+	public static void init(WinMSSMatchRepository winMSSMatchRepo, WinMSSStageRepository WinMSSStageRepo,
+			WinMSSStageScoreSheetRepository winMSSStageScoreSheetRepo) {
+		winMSSMatchRepository = winMSSMatchRepo;
+		winMSSStageRepository = WinMSSStageRepo;
+		winMSSStageScoreSheetRepository = winMSSStageScoreSheetRepo;
+	}
 
 	// Find stages with new results, from which user selects stage results to
 	// be imported
 	public static List<Match> findNewResultsInWinMSSDatabase(String winMssDbLocation) {
 		setImportProgressStatus(ImportStatus.LOADING_FROM_WINMSS);
-		List<Match> winMSSMatches = WinMSSMatchRepository.findAll(winMssDbLocation);
+		List<Match> winMSSMatches = winMSSMatchRepository.findAll(winMssDbLocation);
 		for (Match match : winMSSMatches) {
-			match.setStages(WinMSSStageRepository.findStagesForMatch(match));
+			match.setStages(winMSSStageRepository.findStagesForMatch(match));
 			for (Stage stage : match.getStages()) {
 				stage.setMatch(match);
 				if (ClassifierStage.contains(stage.getName())) {
@@ -37,8 +56,6 @@ public class WinMSSDataImportService {
 					stage.setSaveAsClassifierStage(classifier);
 					stage.setClassifierStage(classifier);
 				}
-
-				stage.setNewStage(true);
 
 				if (StageService.find(stage) == null) {
 					stage.setNewStage(true);
@@ -58,33 +75,22 @@ public class WinMSSDataImportService {
 	// Fetch stage score sheets for stages selected by user and save to Ranking
 	// Database
 	public static void importSelectedResults(List<Match> matches) {
-		int oldScoreSheetsRemovedCount = 0;
-		int newMatchesCount = 0;
-		int newScoreSheetsCount = 0;
-		int newStagesCount = 0;
-		int newCompetitorsCount = 0;
 
-		List<StageScoreSheet> newStageScoreSheets = new ArrayList<StageScoreSheet>();
 		initializeImportProgressVariables(matches);
 
 		// List<Stage> invalidClassifiers = new ArrayList<Stage>();
 		setImportProgressStatus(ImportStatus.SAVING_TO_HAUR_RANKING_DB);
-
 		for (Match match : matches) {
 			setStageScoreSheetsFromWinMSS(match);
-			newCompetitorsCount += CompetitorService.mergeCompetitorsInMatch(match);
 			int scoreSheetsCount = getScoreSheetsCount(match);
-			filterOutStagesWithNoNewResults(match);
-			newStagesCount += match.getStages().size();
-			if (match.getStages().size() == 0)
-				continue;
-			for (Stage stage : match.getStages()) {
-				newStageScoreSheets.addAll(stage.getStageScoreSheets());
+			prepareMatchForSave(match);
+			if (match.getStages().size() > 0) {
+				MatchService.save(match);
 			}
-			MatchService.save(match);
 			addImportProgress(scoreSheetsCount);
 			newScoreSheetsCount += getScoreSheetsCount(match);
 		}
+
 		oldScoreSheetsRemovedCount = StageScoreSheetService.removeExtraStageScoreSheets(newStageScoreSheets);
 
 		setImportProgressStatus(ImportStatus.GENERATING_RANKING);
@@ -97,11 +103,24 @@ public class WinMSSDataImportService {
 		event.setNewStagesCount(newStagesCount);
 		event.setOldScoreSheetsRemovedCount(oldScoreSheetsRemovedCount);
 		emitDataImportEvent(event);
+
+	}
+
+	private static void prepareMatchForSave(Match match) {
+		newCompetitorsCount += CompetitorService.mergeCompetitorsInMatch(match);
+		filterOutStagesWithNoNewResults(match);
+		newStagesCount += match.getStages().size();
+		for (Stage stage : match.getStages()) {
+			newStageScoreSheets.addAll(stage.getStageScoreSheets());
+		}
 	}
 
 	private static void setStageScoreSheetsFromWinMSS(Match match) {
 		for (Stage stage : match.getStages()) {
-			stage.setStageScoreSheets(WinMSSStageScoreSheetRepository.find(stage.getMatch(), stage));
+			List<StageScoreSheet> sheets = winMSSStageScoreSheetRepository.find(stage.getMatch(), stage);
+			if (sheets == null)
+				return;
+			stage.setStageScoreSheets(sheets);
 			for (StageScoreSheet sheet : stage.getStageScoreSheets())
 				sheet.setStage(stage);
 		}
@@ -139,11 +158,20 @@ public class WinMSSDataImportService {
 	}
 
 	private static void initializeImportProgressVariables(List<Match> matches) {
-		progressCounterCompletedSteps = 0;
 		progressCounterTotalSteps = 0;
+		progressCounterCompletedSteps = 0;
+		progressPercentage = 0;
+		oldScoreSheetsRemovedCount = 0;
+		newMatchesCount = 0;
+		newScoreSheetsCount = 0;
+		newStagesCount = 0;
+		newCompetitorsCount = 0;
+
+		newStageScoreSheets = new ArrayList<StageScoreSheet>();
+
 		for (Match match : matches) {
 			for (Stage stage : match.getStages()) {
-				progressCounterTotalSteps += WinMSSStageScoreSheetRepository.getScoreSheetCountForStage(match, stage);
+				progressCounterTotalSteps += winMSSStageScoreSheetRepository.getScoreSheetCountForStage(match, stage);
 			}
 		}
 	}

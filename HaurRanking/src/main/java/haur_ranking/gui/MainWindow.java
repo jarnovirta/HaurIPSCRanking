@@ -23,8 +23,8 @@ import haur_ranking.gui.rankingpanel.RankingPanel;
 import haur_ranking.gui.service.DataEventService;
 import haur_ranking.gui.service.DatabasePanelDataService;
 import haur_ranking.gui.service.RankingPanelDataService;
-import haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
-import haur_ranking.repository.winmss_repository.WinMSSDatabaseUtil;
+import haur_ranking.repository.haur_ranking_repository.implementation.HaurRankingDatabaseUtils;
+import haur_ranking.repository.winmss_repository.implementation.WinMSSDatabaseUtil;
 
 public class MainWindow {
 

@@ -3,110 +3,22 @@ package haur_ranking.repository.haur_ranking_repository;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
 
 import haur_ranking.domain.Competitor;
 
-public class CompetitorRepository {
-	public static Competitor find(String firstName, String lastName, String winMSSComment,
-			EntityManager entityManager) {
-		String queryString = "SELECT c FROM Competitor c WHERE c.firstName = :firstName AND c.lastName = :lastName";
-		if (winMSSComment != null)
-			queryString += " AND c.winMSSComment = :winMSSComment";
-		try {
-			TypedQuery<Competitor> query = entityManager.createQuery(queryString, Competitor.class);
-			query.setParameter("firstName", firstName);
-			query.setParameter("lastName", lastName);
-			if (winMSSComment != null)
-				query.setParameter("winMSSComment", winMSSComment);
-			List<Competitor> existingCompetitors = query.getResultList();
-			if (existingCompetitors.size() > 0)
-				return existingCompetitors.get(0);
-		} catch (Exception e) {
-			e.printStackTrace();
+public interface CompetitorRepository {
+	public Competitor find(String firstName, String lastName, String winMSSComment, EntityManager entityManager);
 
-		}
-		return null;
-	}
+	public List<Competitor> findByLastName(String lastName, EntityManager entityManager);
 
-	public static List<Competitor> findByLastName(String lastName, EntityManager entityManager) {
-		String queryString = "SELECT c FROM Competitor c WHERE c.lastName = :lastName";
+	public List<Competitor> getCompetitorListPage(int page, int pageSize, EntityManager entityManager);
 
-		try {
-			TypedQuery<Competitor> query = entityManager.createQuery(queryString, Competitor.class);
-			query.setParameter("lastName", lastName);
-			List<Competitor> existingCompetitors = query.getResultList();
-			if (existingCompetitors.size() > 0)
-				return existingCompetitors;
-		} catch (Exception e) {
-			e.printStackTrace();
+	public List<Competitor> findAll(EntityManager entityManager);
 
-		}
-		return null;
-	}
+	public int getTotalCompetitorCount(EntityManager entityManager);
 
-	public static List<Competitor> getCompetitorListPage(int page, int pageSize, EntityManager entityManager) {
-		try {
-			String queryString = "SELECT c FROM Competitor c ORDER BY c.lastName";
-			final TypedQuery<Competitor> query = entityManager.createQuery(queryString, Competitor.class);
-			query.setFirstResult((page - 1) * pageSize);
-			query.setMaxResults(pageSize);
-			return query.getResultList();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
+	public Competitor persist(Competitor competitor);
 
-	public static List<Competitor> findAll(EntityManager entityManager) {
+	public void delete(Competitor competitor, EntityManager entityManager);
 
-		try {
-			String queryString = "SELECT c FROM Competitor c ORDER BY c.lastName";
-			final TypedQuery<Competitor> query = entityManager.createQuery(queryString, Competitor.class);
-			return query.getResultList();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	public static int getTotalCompetitorCount(EntityManager entityManager) {
-		try {
-			return ((Long) entityManager.createQuery("SELECT COUNT(c) from Competitor c").getSingleResult()).intValue();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return -1;
-		}
-	}
-
-	public static Competitor persist(Competitor competitor) {
-		Competitor persistedCompetitor = null;
-
-		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
-		entityManager.getTransaction().begin();
-
-		try {
-			entityManager.persist(competitor);
-
-			persistedCompetitor = find(competitor.getFirstName(), competitor.getLastName(),
-					competitor.getWinMSSComment(), entityManager);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-
-		}
-		entityManager.getTransaction().commit();
-		entityManager.close();
-		return persistedCompetitor;
-	}
-
-	public static void delete(Competitor competitor, EntityManager entityManager) {
-		try {
-			if (!entityManager.contains(competitor))
-				competitor = entityManager.merge(competitor);
-			entityManager.remove(competitor);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 }

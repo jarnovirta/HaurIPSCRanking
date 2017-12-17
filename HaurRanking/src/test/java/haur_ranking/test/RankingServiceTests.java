@@ -64,21 +64,30 @@ public class RankingServiceTests {
 		DivisionRankingRow secondLine = productionRanking.getDivisionRankingRows().get(1);
 		DivisionRankingRow thirdLine = productionRanking.getDivisionRankingRows().get(2);
 		DivisionRankingRow fourthLine = productionRanking.getDivisionRankingRows().get(3);
+
+		System.out.println(firstLine.getCompetitor().getFirstName());
+		System.out.println(secondLine.getCompetitor().getFirstName());
+		System.out.println(thirdLine.getCompetitor().getFirstName());
+		System.out.println(fourthLine.getCompetitor().getFirstName());
+
 		assertEquals("Jarno Virta should be #1 for Production Division ranking.", "Jarno",
 				firstLine.getCompetitor().getFirstName());
-		assertEquals("Jarno Virta should have bestResultsAverage of 1.25 for Production Division.", 1.253,
+		assertEquals("Jarno Virta should have bestResultsAverage of 1.16 for Production Division.", 1.16209,
 				firstLine.getBestResultsAverage(), 0.001);
 		assertEquals("Jarno Virta should have result of 100%", 100.0, firstLine.getResultPercentage(), 0.1);
-		assertEquals("Jerry Miculek should be #2 for Production Division ranking.", "Jerry",
+
+		assertEquals("Ben Stoeger should be #2 for Production Division ranking.", "Ben",
 				secondLine.getCompetitor().getFirstName());
-		assertEquals("Jerry Miculek should have bestResultsAverage of 0.87 for Production Division.", 0.87204,
+		assertEquals("Ben Stoeger should have bestResultsAverage of 1,00 for Production Division.", 1.00401,
 				secondLine.getBestResultsAverage(), 0.001);
-		assertEquals("Jerry Miculek should have result of 70%", 69.6, secondLine.getResultPercentage(), 0.1);
-		assertEquals("Ben Stoeger should be #3 for Production Division ranking.", "Ben",
+		assertEquals("Ben Stoeger should have result of 86,40%", 86.4, secondLine.getResultPercentage(), 0.1);
+
+		assertEquals("Jerry Miculek should be #3 for Production Division ranking.", "Jerry",
 				thirdLine.getCompetitor().getFirstName());
-		assertEquals("Ben Stoeger should have bestResultsAverage of 0.82 for Production Division.", 0.818,
+		assertEquals("Jerry Miculek should have bestResultsAverage of 0.87 for Production Division.", 0.87204,
 				thirdLine.getBestResultsAverage(), 0.001);
-		assertEquals("Ben Stoeger should have result of 65%", 65.3, thirdLine.getResultPercentage(), 0.1);
+		assertEquals("Jerry Miculek should have result of 70%", 69.6, thirdLine.getResultPercentage(), 0.1);
+
 		assertEquals("Rob Leatham should not have a rank (not enough results).", false,
 				fourthLine.isRankedCompetitor());
 		assertEquals("Standard division should have two results.", 2, standardRanking.getDivisionRankingRows().size());

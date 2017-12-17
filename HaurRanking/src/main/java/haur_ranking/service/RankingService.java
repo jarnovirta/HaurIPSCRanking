@@ -16,21 +16,27 @@ import haur_ranking.domain.Match;
 import haur_ranking.domain.Ranking;
 import haur_ranking.domain.StageScoreSheet;
 import haur_ranking.pdf.PdfGenerator;
-import haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
 import haur_ranking.repository.haur_ranking_repository.RankingRepository;
-import haur_ranking.repository.haur_ranking_repository.StageScoreSheetRepository;
+import haur_ranking.repository.haur_ranking_repository.implementation.HaurRankingDatabaseUtils;
 
 public class RankingService {
+
+	private static RankingRepository rankingRepository;
+
+	public static void init(RankingRepository rankingRepo) {
+		rankingRepository = rankingRepo;
+	}
+
 	public static List<Ranking> getPreviousRankingsTableData(int page, int pageSize) {
 		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
-		List<Ranking> rankings = RankingRepository.getRankingsListPage(page, pageSize, entityManager);
+		List<Ranking> rankings = rankingRepository.getRankingsListPage(page, pageSize);
 		entityManager.close();
 		return rankings;
 	}
 
 	public static int getRankingsCount() {
 		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
-		int count = RankingRepository.getRankingsCount(entityManager);
+		int count = rankingRepository.getCount();
 		entityManager.close();
 		return count;
 	}
@@ -70,6 +76,7 @@ public class RankingService {
 
 		Double competitorTopScoresAverage;
 		double scoreSum = 0;
+
 		for (int i = 0; i < 4; i++) {
 			scoreSum += competitorRelativeScores.get(i);
 			hitFactorSum += competitorHitFactors.get(i);
@@ -113,8 +120,8 @@ public class RankingService {
 
 		for (Competitor competitor : competitors) {
 			// Get competitor score sheets and limit number to eight.
-			List<StageScoreSheet> scoreSheets = StageScoreSheetRepository.find(competitor.getFirstName(),
-					competitor.getLastName(), division, classifierStageTopResultAverages.keySet(), entityManager);
+			List<StageScoreSheet> scoreSheets = StageScoreSheetService.find(competitor.getFirstName(),
+					competitor.getLastName(), division, classifierStageTopResultAverages.keySet());
 			if (scoreSheets.size() > 0)
 				resultList.add(competitorTopScoresAverage(competitor, divisionRanking, scoreSheets,
 						classifierStageTopResultAverages));
@@ -191,7 +198,7 @@ public class RankingService {
 
 	public static Ranking findCurrentRanking() {
 		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
-		Ranking ranking = RankingRepository.findCurrentRanking(entityManager);
+		Ranking ranking = rankingRepository.findCurrentRanking();
 		entityManager.close();
 		return ranking;
 	}
@@ -199,7 +206,7 @@ public class RankingService {
 	public static void persist(Ranking ranking) {
 		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
 		entityManager.getTransaction().begin();
-		RankingRepository.save(ranking, entityManager);
+		rankingRepository.save(ranking);
 		entityManager.getTransaction().commit();
 		entityManager.close();
 
@@ -209,7 +216,7 @@ public class RankingService {
 		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
 		entityManager.getTransaction().begin();
 		for (Ranking ranking : rankings) {
-			RankingRepository.delete(ranking, entityManager);
+			rankingRepository.delete(ranking);
 		}
 		entityManager.getTransaction().commit();
 		entityManager.close();
@@ -223,7 +230,7 @@ public class RankingService {
 			entityManager.getTransaction().begin();
 			commitTransaction = true;
 		}
-		RankingRepository.removeRankingRowsForCompetitor(competitor, entityManager);
+		rankingRepository.removeRankingRowsForCompetitor(competitor);
 
 		if (commitTransaction) {
 			entityManager.getTransaction().commit();

@@ -1,4 +1,4 @@
-package haur_ranking.repository.haur_ranking_repository;
+package haur_ranking.repository.haur_ranking_repository.implementation;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;

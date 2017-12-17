@@ -8,42 +8,44 @@ import javax.persistence.EntityManager;
 import haur_ranking.domain.ClassifierStage;
 import haur_ranking.domain.Match;
 import haur_ranking.domain.Stage;
-import haur_ranking.domain.StageScoreSheet;
-import haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
 import haur_ranking.repository.haur_ranking_repository.MatchRepository;
+import haur_ranking.repository.haur_ranking_repository.implementation.HaurRankingDatabaseUtils;
 
 public class MatchService {
 
+	private static MatchRepository matchRepository;
+
+	public static void init(MatchRepository repository) {
+		matchRepository = repository;
+	}
+
 	public static Match find(Match match, EntityManager entityManager) {
-		return MatchRepository.find(match);
+		return matchRepository.find(match);
 	}
 
 	public static void delete(Match match) {
-		MatchRepository.delete(match);
+		matchRepository.delete(match);
 	}
 
 	public static List<Match> getMatchTableData(int page, int pageSize) {
-		List<Match> matches = MatchRepository.getMatchListPage(page, pageSize);
+		List<Match> matches = matchRepository.getMatchListPage(page, pageSize);
 		return matches;
 
 	}
 
 	public static List<Match> findAll() {
 		List<Match> matches = null;
-		matches = MatchRepository.findAll();
+		matches = matchRepository.findAll();
 
 		return matches;
 	}
 
 	public static int getTotalMatchCount() {
-		int count = MatchRepository.getMatchCount();
+		int count = matchRepository.getMatchCount();
 		return count;
 	}
 
 	public static void save(Match match) {
-
-		// Find existing competitors in database and save new competitors.
-		List<StageScoreSheet> newStageScoreSheets = new ArrayList<StageScoreSheet>();
 
 		// Save matches with new results. Check for existing matches.
 		// Existing stage score sheets have already been
@@ -51,7 +53,7 @@ public class MatchService {
 		// existing stages (all score sheets for a stage
 		// are always treated together).
 
-		Match existingMatch = MatchRepository.find(match);
+		Match existingMatch = matchRepository.find(match);
 		if (existingMatch != null) {
 			for (Stage stage : match.getStages()) {
 				stage.setMatch(existingMatch);
@@ -60,12 +62,12 @@ public class MatchService {
 			match = existingMatch;
 		}
 
-		MatchRepository.merge(match);
+		matchRepository.merge(match);
 	}
 
 	public static Match findLatestMatch() {
 		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
-		Match match = MatchRepository.findLatestMatch();
+		Match match = matchRepository.findNewestMatch();
 		entityManager.close();
 		return match;
 	}

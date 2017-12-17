@@ -4,15 +4,14 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import haur_ranking.domain.Match;
 import haur_ranking.domain.Stage;
-import haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
+import haur_ranking.repository.haur_ranking_repository.implementation.StageRepositoryImpl;
+import haur_ranking.repository.winmss_repository.implementation.WinMSSStageRepositoryImpl;
 import haur_ranking.service.StageService;
 
 public class StageServiceTests {
@@ -30,13 +29,12 @@ public class StageServiceTests {
 	// database.
 	@Test
 	public void findTest() {
-		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
+		StageService.init(new StageRepositoryImpl(), new WinMSSStageRepositoryImpl());
 		List<Match> testMatches = TestUtils.createTestMatches();
 		for (Match match : testMatches) {
 			for (Stage stage : match.getStages()) {
-				assertNotNull("find() should find all stages in database.", StageService.find(stage, entityManager));
+				assertNotNull("find() should find all stages in database.", StageService.find(stage));
 			}
 		}
-		entityManager.close();
 	}
 }

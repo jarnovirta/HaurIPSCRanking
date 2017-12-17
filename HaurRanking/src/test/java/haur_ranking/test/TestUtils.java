@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.EntityManager;
-
 import org.apache.commons.io.FileUtils;
 
 import haur_ranking.domain.ClassifierStage;
@@ -19,8 +17,21 @@ import haur_ranking.domain.Match;
 import haur_ranking.domain.Ranking;
 import haur_ranking.domain.Stage;
 import haur_ranking.domain.StageScoreSheet;
-import haur_ranking.repository.haur_ranking_repository.HaurRankingDatabaseUtils;
+import haur_ranking.repository.haur_ranking_repository.implementation.CompetitorRepositoryImpl;
+import haur_ranking.repository.haur_ranking_repository.implementation.HaurRankingDatabaseUtils;
+import haur_ranking.repository.haur_ranking_repository.implementation.MatchRepositoryImpl;
+import haur_ranking.repository.haur_ranking_repository.implementation.RankingRepositoryImpl;
+import haur_ranking.repository.haur_ranking_repository.implementation.StageRepositoryImpl;
+import haur_ranking.repository.haur_ranking_repository.implementation.StageScoreSheetRepositoryImpl;
+import haur_ranking.repository.winmss_repository.implementation.WinMSSMatchRepositoryImpl;
+import haur_ranking.repository.winmss_repository.implementation.WinMSSStageRepositoryImpl;
+import haur_ranking.repository.winmss_repository.implementation.WinMSSStageScoreSheetRepositoryImpl;
+import haur_ranking.service.CompetitorService;
 import haur_ranking.service.MatchService;
+import haur_ranking.service.RankingService;
+import haur_ranking.service.StageScoreSheetService;
+import haur_ranking.service.StageService;
+import haur_ranking.service.WinMSSDataImportService;
 import haur_ranking.utils.DateFormatUtils;
 
 // LUO LAPPUJA MUIHIN DIVISIOONIIN
@@ -43,11 +54,11 @@ public class TestUtils {
 
 	static Double[] jerryNewMatchHitFactors = new Double[] { 3.1, null, null, 3.9, null, 2.3, 3.9, null, null, 1.5 };
 
-	static Double[] benNewMatchHitFactors = new Double[] { 1.5, 4.1, 2.9, 0.0, 4.8, null, null, null, null, null };
+	static Double[] benNewMatchHitFactors = new Double[] { 1.5, 4.1, 2.9, 0.0, 4.8, null, null, null, null, 2.1 };
 
 	static Double[] robNewMatchHitFactors = new Double[] { 2.0, 2.2, 3.6, null, null, null, null, null, 5.2, null };
 
-	static Double[] jarnoOldMatchHitFactors = new Double[] { null, null, null, null, 6.0, null, null, 3.6, null, 3.8 };
+	static Double[] jarnoOldMatchHitFactors = new Double[] { null, null, null, null, 6.0, null, null, 3.6, null, null };
 
 	static Double[] jerryOldMatchHitFactors = new Double[] { null, null, null, 4.2, null, null, null, 2.5, null, null };
 
@@ -199,13 +210,32 @@ public class TestUtils {
 	}
 
 	protected static void setupDatabase() {
-		deleteDatabase();
-		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
-		entityManager.getTransaction().begin();
-		MatchService.saveAll(TestUtils.createTestMatches());
+		MatchService.init(new MatchRepositoryImpl());
+		RankingService.init(new RankingRepositoryImpl());
+		CompetitorService.init(new CompetitorRepositoryImpl());
+		StageScoreSheetService.init(new StageScoreSheetRepositoryImpl());
+		StageService.init(new StageRepositoryImpl(), new WinMSSStageRepositoryImpl());
+		WinMSSDataImportService.init(new WinMSSMatchRepositoryImpl(), new WinMSSStageRepositoryImpl(),
+				new WinMSSStageScoreSheetRepositoryImpl());
 
-		entityManager.getTransaction().commit();
-		entityManager.close();
+		deleteDatabase();
+
+		List<Match> matches = TestUtils.createTestMatches();
+		WinMSSDataImportService.importSelectedResults(matches);
+		// for (Match match : matches) {
+		// CompetitorService.mergeCompetitorsInMatch(match);
+		// MatchService.save(match);
+		//
+		// }
+		Map<ClassifierStage, Double> classifiers = StageService
+				.getClassifierStagesWithTwoOrMoreResults(IPSCDivision.PRODUCTION);
+		List<StageScoreSheet> bensheets = StageScoreSheetService.find("Ben", "Stoeger", IPSCDivision.PRODUCTION,
+				classifiers.keySet());
+		System.out.println("BEN sheets count: " + bensheets.size());
+		for (StageScoreSheet sheet : bensheets) {
+			System.out.println(sheet.getHitFactor());
+		}
+
 		HaurRankingDatabaseUtils.closeEntityManagerFactory();
 	}
 
