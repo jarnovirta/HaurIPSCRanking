@@ -32,8 +32,8 @@ public class WinMSSDataImportService {
 	private static int newScoreSheetsCount;
 	private static int newStagesCount;
 	private static int newCompetitorsCount;
-
-	private static List<StageScoreSheet> newStageScoreSheets;
+	private static boolean runForUnitTests = false;
+	private static List<StageScoreSheet> newStageScoreSheets = new ArrayList<StageScoreSheet>();
 
 	public static void init(WinMSSMatchRepository winMSSMatchRepo, WinMSSStageRepository WinMSSStageRepo,
 			WinMSSStageScoreSheetRepository winMSSStageScoreSheetRepo) {
@@ -76,25 +76,44 @@ public class WinMSSDataImportService {
 	// Database
 	public static void importSelectedResults(List<Match> matches) {
 
-		initializeImportProgressVariables(matches);
-
+		if (!runForUnitTests) {
+			initializeImportProgressVariables(matches);
+		}
 		// List<Stage> invalidClassifiers = new ArrayList<Stage>();
 		setImportProgressStatus(ImportStatus.SAVING_TO_HAUR_RANKING_DB);
 		for (Match match : matches) {
-			setStageScoreSheetsFromWinMSS(match);
-			int scoreSheetsCount = getScoreSheetsCount(match);
-			prepareMatchForSave(match);
+			int scoreSheetsCount = getWinMSSScoreSheetCountForMatch(match);
+			filterOutStagesExcludedFromSave(match);
+
+			if (match.getStages().size() == 0) {
+				addImportProgress(scoreSheetsCount);
+
+				continue;
+			}
+
+			if (!runForUnitTests) {
+				setStageScoreSheetsFromWinMSS(match);
+			}
+
+			filterOutStagesWithNoNewResults(match);
+
+			newCompetitorsCount += CompetitorService.mergeCompetitorsInMatch(match);
+			newStagesCount += match.getStages().size();
+			for (Stage stage : match.getStages()) {
+				newStageScoreSheets.addAll(stage.getStageScoreSheets());
+			}
 			if (match.getStages().size() > 0) {
 				MatchService.save(match);
 			}
 			addImportProgress(scoreSheetsCount);
 			newScoreSheetsCount += getScoreSheetsCount(match);
 		}
-
 		oldScoreSheetsRemovedCount = StageScoreSheetService.removeExtraStageScoreSheets(newStageScoreSheets);
 
 		setImportProgressStatus(ImportStatus.GENERATING_RANKING);
-		RankingService.generateRanking();
+		if (newScoreSheetsCount > 0) {
+			RankingService.generateRanking();
+		}
 		DataImportEvent event = new DataImportEvent(DataImportEventType.IMPORT_STATUS_CHANGE);
 		event.setImportStatus(ImportStatus.SAVE_TO_HAUR_RANKING_DB_DONE);
 		event.setNewScoreSheetsCount(newScoreSheetsCount);
@@ -106,13 +125,23 @@ public class WinMSSDataImportService {
 
 	}
 
-	private static void prepareMatchForSave(Match match) {
-		newCompetitorsCount += CompetitorService.mergeCompetitorsInMatch(match);
-		filterOutStagesWithNoNewResults(match);
-		newStagesCount += match.getStages().size();
+	private static int getWinMSSScoreSheetCountForMatch(Match match) {
+		int scoreSheetCount = 0;
 		for (Stage stage : match.getStages()) {
-			newStageScoreSheets.addAll(stage.getStageScoreSheets());
+			scoreSheetCount += winMSSStageScoreSheetRepository.getScoreSheetCountForStage(match, stage);
 		}
+		return scoreSheetCount;
+	}
+
+	private static void filterOutStagesExcludedFromSave(Match match) {
+		List<Stage> filteredStageList = new ArrayList<Stage>();
+		for (Stage stage : match.getStages()) {
+			if (stage.getSaveAsClassifierStage() != null && stage.isNewStage()) {
+				filteredStageList.add(stage);
+			}
+		}
+		match.setStages(filteredStageList);
+
 	}
 
 	private static void setStageScoreSheetsFromWinMSS(Match match) {
@@ -144,10 +173,11 @@ public class WinMSSDataImportService {
 			if (stage.isNewStage()) {
 				if (stage.getSaveAsClassifierStage() != null) {
 					stage.setClassifierStage(stage.getSaveAsClassifierStage());
-					if (!StageService.isValidClassifier(stage)) {
-						continue;
+					if (!runForUnitTests) {
+						if (!StageService.isValidClassifier(stage)) {
+							continue;
+						}
 					}
-
 					if (stage.getStageScoreSheets() != null && stage.getStageScoreSheets().size() > 0) {
 						stagesWithNewResults.add(stage);
 					}
@@ -167,11 +197,14 @@ public class WinMSSDataImportService {
 		newStagesCount = 0;
 		newCompetitorsCount = 0;
 
-		newStageScoreSheets = new ArrayList<StageScoreSheet>();
+		newStageScoreSheets.clear();
 
 		for (Match match : matches) {
 			for (Stage stage : match.getStages()) {
-				progressCounterTotalSteps += winMSSStageScoreSheetRepository.getScoreSheetCountForStage(match, stage);
+				if (stage.getSaveAsClassifierStage() != null) {
+					progressCounterTotalSteps += winMSSStageScoreSheetRepository.getScoreSheetCountForStage(match,
+							stage);
+				}
 			}
 		}
 	}
@@ -206,5 +239,9 @@ public class WinMSSDataImportService {
 
 	public static void addImportProgressEventListener(DataImportEventListener listener) {
 		importProgressEventListeners.add(listener);
+	}
+
+	public static void setRunForUnitTests(boolean runAsTest) {
+		runForUnitTests = runAsTest;
 	}
 }

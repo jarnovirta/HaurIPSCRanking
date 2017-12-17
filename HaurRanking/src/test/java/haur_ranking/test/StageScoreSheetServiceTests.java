@@ -49,7 +49,7 @@ public class StageScoreSheetServiceTests {
 			assertEquals("Jerry should have 6 results for Production Division.", 6, jerryTotalResultsCount);
 
 			int benTotalResultsCount = StageScoreSheetService.find("Ben", "Stoeger", IPSCDivision.PRODUCTION).size();
-			assertEquals("Ben should have 5 results for Production Division.", 5, benTotalResultsCount);
+			assertEquals("Ben should have 6 results for Production Division.", 6, benTotalResultsCount);
 
 		} catch (Exception e) {
 			e.printStackTrace();

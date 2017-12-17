@@ -1,3 +1,2 @@
-[EL Info]: 2017-12-17 17:49:17.804--ServerSession(1250956357)--EclipseLink, version: Eclipse Persistence Services - 2.6.5.v20170607-b3d05bd
-[EL Info]: connection: 2017-12-17 17:49:18.246--ServerSession(1250956357)--/file:/C:/Users/Jarno/git/HaurIPSCRanking/HaurRanking/target/classes/_fi.haur_ranking.jpa login successful
-[EL Info]: connection: 2017-12-17 17:49:40.309--ServerSession(1250956357)--/file:/C:/Users/Jarno/git/HaurIPSCRanking/HaurRanking/target/classes/_fi.haur_ranking.jpa logout successful
+[EL Info]: 2017-12-17 21:57:01.328--ServerSession(1250956357)--EclipseLink, version: Eclipse Persistence Services - 2.6.5.v20170607-b3d05bd
+[EL Info]: connection: 2017-12-17 21:57:01.773--ServerSession(1250956357)--/file:/C:/Users/Jarno/git/HaurIPSCRanking/HaurRanking/target/classes/_fi.haur_ranking.jpa login successful

@@ -50,7 +50,7 @@ public class TestUtils {
 	static Competitor clint = new Competitor("Clint", "Eastwood", "");
 	static Competitor charles = new Competitor("Charles", "Bronson", "");
 
-	static Double[] jarnoNewMatchHitFactors = new Double[] { 4.0, 3.9, 2.0, null, 5.5, 4.0, 4.5, null, null, null };
+	static Double[] jarnoNewMatchHitFactors = new Double[] { 4.0, 3.9, 2.0, null, 5.5, 4.0, 4.5, null, null, 1.0 };
 
 	static Double[] jerryNewMatchHitFactors = new Double[] { 3.1, null, null, 3.9, null, 2.3, 3.9, null, null, 1.5 };
 
@@ -117,7 +117,8 @@ public class TestUtils {
 	private static Stage createStage(Match match, ClassifierStage classifier) {
 		Stage stage = new Stage(match, classifier.toString(), classifier);
 		stage.setStageScoreSheets(createStageScoreSheets(stage));
-
+		stage.setNewStage(true);
+		stage.setSaveAsClassifierStage(ClassifierStage.parseString(stage.getName()));
 		return stage;
 	}
 
@@ -217,24 +218,12 @@ public class TestUtils {
 		StageService.init(new StageRepositoryImpl(), new WinMSSStageRepositoryImpl());
 		WinMSSDataImportService.init(new WinMSSMatchRepositoryImpl(), new WinMSSStageRepositoryImpl(),
 				new WinMSSStageScoreSheetRepositoryImpl());
+		WinMSSDataImportService.setRunForUnitTests(true);
 
 		deleteDatabase();
 
 		List<Match> matches = TestUtils.createTestMatches();
 		WinMSSDataImportService.importSelectedResults(matches);
-		// for (Match match : matches) {
-		// CompetitorService.mergeCompetitorsInMatch(match);
-		// MatchService.save(match);
-		//
-		// }
-		Map<ClassifierStage, Double> classifiers = StageService
-				.getClassifierStagesWithTwoOrMoreResults(IPSCDivision.PRODUCTION);
-		List<StageScoreSheet> bensheets = StageScoreSheetService.find("Ben", "Stoeger", IPSCDivision.PRODUCTION,
-				classifiers.keySet());
-		System.out.println("BEN sheets count: " + bensheets.size());
-		for (StageScoreSheet sheet : bensheets) {
-			System.out.println(sheet.getHitFactor());
-		}
 
 		HaurRankingDatabaseUtils.closeEntityManagerFactory();
 	}
