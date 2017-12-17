@@ -200,9 +200,9 @@ public class TestUtils {
 
 	protected static void setupDatabase() {
 		deleteDatabase();
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
 		entityManager.getTransaction().begin();
-		MatchService.save(TestUtils.createTestMatches());
+		MatchService.saveAll(TestUtils.createTestMatches());
 
 		entityManager.getTransaction().commit();
 		entityManager.close();

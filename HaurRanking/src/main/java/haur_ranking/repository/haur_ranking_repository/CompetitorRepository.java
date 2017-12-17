@@ -79,15 +79,25 @@ public class CompetitorRepository {
 		}
 	}
 
-	public static Competitor persist(Competitor competitor, EntityManager entityManager) {
+	public static Competitor persist(Competitor competitor) {
+		Competitor persistedCompetitor = null;
+
+		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
+		entityManager.getTransaction().begin();
+
 		try {
 			entityManager.persist(competitor);
-			return find(competitor.getFirstName(), competitor.getLastName(), competitor.getWinMSSComment(),
-					entityManager);
+
+			persistedCompetitor = find(competitor.getFirstName(), competitor.getLastName(),
+					competitor.getWinMSSComment(), entityManager);
+
 		} catch (Exception e) {
 			e.printStackTrace();
-			return null;
+
 		}
+		entityManager.getTransaction().commit();
+		entityManager.close();
+		return persistedCompetitor;
 	}
 
 	public static void delete(Competitor competitor, EntityManager entityManager) {

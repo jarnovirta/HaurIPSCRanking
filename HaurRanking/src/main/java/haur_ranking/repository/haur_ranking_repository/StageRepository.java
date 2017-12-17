@@ -43,7 +43,9 @@ public class StageRepository {
 		}
 	}
 
-	public static Stage find(Stage stage, EntityManager entityManager) {
+	public static Stage find(Stage stage) {
+		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
+		Stage resultStage = null;
 		try {
 			String queryString = "SELECT s FROM Stage s WHERE s.name = :stageName AND s.match.name = :matchName and s.match.date = :matchDate";
 
@@ -53,13 +55,13 @@ public class StageRepository {
 			query.setParameter("matchDate", stage.getMatch().getDate());
 			List<Stage> stages = query.getResultList();
 			if (stages != null && stages.size() > 0)
-				return stages.get(0);
-			else
-				return null;
+				resultStage = stages.get(0);
+
 		} catch (Exception e) {
 			e.printStackTrace();
-			return null;
 		}
+		entityManager.close();
+		return resultStage;
 	}
 
 	// Returns a list of ClassifierStage for which there are at least two

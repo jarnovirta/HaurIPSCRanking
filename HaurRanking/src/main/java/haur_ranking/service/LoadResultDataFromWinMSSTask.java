@@ -9,6 +9,6 @@ public class LoadResultDataFromWinMSSTask implements Runnable {
 
 	@Override
 	public void run() {
-		MatchService.findNewResultsInWinMSSDatabase(winMSSFilePath);
+		WinMSSDataImportService.findNewResultsInWinMSSDatabase(winMSSFilePath);
 	}
 }

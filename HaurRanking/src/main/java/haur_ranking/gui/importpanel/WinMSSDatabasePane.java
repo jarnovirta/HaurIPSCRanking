@@ -293,7 +293,8 @@ public class WinMSSDatabasePane extends JPanel implements GUIDataEventListener {
 
 		@Override
 		public void actionPerformed(ActionEvent event) {
-			JComboBox<String> comboBox = (JComboBox<String>) event.getSource();
+			@SuppressWarnings("unchecked")
+			JComboBox<Object> comboBox = (JComboBox<Object>) event.getSource();
 			this.saveAsClassifierValue = comboBox.getSelectedItem();
 
 			if (event.getActionCommand().equals("comboBoxChanged")) {
@@ -307,6 +308,7 @@ public class WinMSSDatabasePane extends JPanel implements GUIDataEventListener {
 						stage.setSaveAsClassifierStage(null);
 				}
 			}
+
 		}
 	}
 }

@@ -14,6 +14,6 @@ public class SaveSelectedResultsToHaurRankingDbTask implements Runnable {
 
 	@Override
 	public void run() {
-		MatchService.importSelectedResults(matches);
+		WinMSSDataImportService.importSelectedResults(matches);
 	}
 }

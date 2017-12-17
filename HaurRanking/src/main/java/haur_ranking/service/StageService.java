@@ -16,12 +16,12 @@ import haur_ranking.repository.winmss_repository.WinMSSStageRepository;
 public class StageService {
 	private static Map<ClassifierStage, Stage> validClassifiers;
 
-	public static Stage find(Stage stage, EntityManager entityManager) {
-		return StageRepository.find(stage, entityManager);
+	public static Stage find(Stage stage) {
+		return StageRepository.find(stage);
 	}
 
 	public static int getTotalStageCount() {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
 		int count = StageRepository.getTotalStageCount(entityManager);
 		entityManager.close();
 		return count;
@@ -29,7 +29,7 @@ public class StageService {
 	}
 
 	public static Map<ClassifierStage, Double> getClassifierStagesWithTwoOrMoreResults(IPSCDivision division) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
 		Map<ClassifierStage, Double> classifierStages = StageRepository
 				.getClassifierStagesWithTwoOrMoreResults(division, entityManager);
 		entityManager.close();
@@ -51,7 +51,7 @@ public class StageService {
 	}
 
 	public static void delete(List<Stage> stages) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
 		entityManager.getTransaction().begin();
 		for (Stage stage : stages) {
 			Match match = stage.getMatch();

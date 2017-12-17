@@ -5,13 +5,13 @@ import java.util.List;
 
 import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEventListener;
-import haur_ranking.service.MatchService;
+import haur_ranking.service.WinMSSDataImportService;
 
 public class DataEventService {
 	private static List<GUIDataEventListener> dataEventListeners = new ArrayList<GUIDataEventListener>();
 
 	public static void init() {
-		MatchService.addImportProgressEventListener(new DataImportEventHelper());
+		WinMSSDataImportService.addImportProgressEventListener(new DataImportEventHelper());
 	}
 
 	public static void addDataEventListener(GUIDataEventListener listener) {

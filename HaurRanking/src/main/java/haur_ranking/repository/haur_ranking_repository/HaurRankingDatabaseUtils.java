@@ -13,7 +13,7 @@ public class HaurRankingDatabaseUtils {
 
 	}
 
-	public static EntityManager getEntityManager() {
+	public static EntityManager createEntityManager() {
 		if (entityManagerFactory == null || !entityManagerFactory.isOpen())
 			initialize();
 		return entityManagerFactory.createEntityManager();
