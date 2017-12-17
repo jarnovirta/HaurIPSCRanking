@@ -32,8 +32,14 @@ public class WinMSSDataImportService {
 	private static int newScoreSheetsCount;
 	private static int newStagesCount;
 	private static int newCompetitorsCount;
+
+	// runForUnitTests set to true for testing so that WinMSS database methods
+	// are not called. Test data is hard coded into test classes.
 	private static boolean runForUnitTests = false;
-	private static List<StageScoreSheet> newStageScoreSheets = new ArrayList<StageScoreSheet>();
+
+	private static List<StageScoreSheet> newStageScoreSheets;
+	private static List<Stage> invalidClassifiers;
+	private static List<Stage> stagesWithNoScoreSheets;
 
 	public static void init(WinMSSMatchRepository winMSSMatchRepo, WinMSSStageRepository WinMSSStageRepo,
 			WinMSSStageScoreSheetRepository winMSSStageScoreSheetRepo) {
@@ -84,10 +90,8 @@ public class WinMSSDataImportService {
 		for (Match match : matches) {
 			int scoreSheetsCount = getWinMSSScoreSheetCountForMatch(match);
 			filterOutStagesExcludedFromSave(match);
-
 			if (match.getStages().size() == 0) {
 				addImportProgress(scoreSheetsCount);
-
 				continue;
 			}
 
@@ -121,11 +125,15 @@ public class WinMSSDataImportService {
 		event.setNewMatchesCount(newMatchesCount);
 		event.setNewStagesCount(newStagesCount);
 		event.setOldScoreSheetsRemovedCount(oldScoreSheetsRemovedCount);
+		event.setInvalidClassifiers(invalidClassifiers);
+		event.setStagesWithNoScoreSheets(stagesWithNoScoreSheets);
 		emitDataImportEvent(event);
 
 	}
 
 	private static int getWinMSSScoreSheetCountForMatch(Match match) {
+		if (runForUnitTests)
+			return -1;
 		int scoreSheetCount = 0;
 		for (Stage stage : match.getStages()) {
 			scoreSheetCount += winMSSStageScoreSheetRepository.getScoreSheetCountForStage(match, stage);
@@ -167,7 +175,6 @@ public class WinMSSDataImportService {
 	}
 
 	private static void filterOutStagesWithNoNewResults(Match match) {
-
 		List<Stage> stagesWithNewResults = new ArrayList<Stage>();
 		for (Stage stage : match.getStages()) {
 			if (stage.isNewStage()) {
@@ -175,11 +182,14 @@ public class WinMSSDataImportService {
 					stage.setClassifierStage(stage.getSaveAsClassifierStage());
 					if (!runForUnitTests) {
 						if (!StageService.isValidClassifier(stage)) {
+							invalidClassifiers.add(stage);
 							continue;
 						}
 					}
 					if (stage.getStageScoreSheets() != null && stage.getStageScoreSheets().size() > 0) {
 						stagesWithNewResults.add(stage);
+					} else {
+						stagesWithNoScoreSheets.add(stage);
 					}
 				}
 			}
@@ -187,6 +197,9 @@ public class WinMSSDataImportService {
 		match.setStages(stagesWithNewResults);
 	}
 
+	// Initialize counter variables. This is necessary because service methods
+	// are static. Service is not instantiated to make it easier to add GUI
+	// classes as event listeners.
 	private static void initializeImportProgressVariables(List<Match> matches) {
 		progressCounterTotalSteps = 0;
 		progressCounterCompletedSteps = 0;
@@ -197,7 +210,9 @@ public class WinMSSDataImportService {
 		newStagesCount = 0;
 		newCompetitorsCount = 0;
 
-		newStageScoreSheets.clear();
+		newStageScoreSheets = new ArrayList<StageScoreSheet>();
+		invalidClassifiers = new ArrayList<Stage>();
+		stagesWithNoScoreSheets = new ArrayList<Stage>();
 
 		for (Match match : matches) {
 			for (Stage stage : match.getStages()) {

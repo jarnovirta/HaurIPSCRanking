@@ -3,6 +3,7 @@ package haur_ranking.event;
 import java.util.List;
 
 import haur_ranking.domain.Match;
+import haur_ranking.domain.Stage;
 
 public class DataImportEvent {
 
@@ -23,6 +24,10 @@ public class DataImportEvent {
 	private int newMatchesCount;
 	private int newCompetitorsCount;
 	private int oldScoreSheetsRemovedCount;
+
+	private List<Stage> invalidClassifiers;
+
+	private List<Stage> stagesWithNoScoreSheets;
 
 	public DataImportEvent(DataImportEventType eventType) {
 		this.dataImportEventType = eventType;
@@ -98,6 +103,22 @@ public class DataImportEvent {
 
 	public void setOldScoreSheetsRemovedCount(int oldScoreSheetsRemovedCount) {
 		this.oldScoreSheetsRemovedCount = oldScoreSheetsRemovedCount;
+	}
+
+	public List<Stage> getInvalidClassifiers() {
+		return invalidClassifiers;
+	}
+
+	public void setInvalidClassifiers(List<Stage> invalidClassifiers) {
+		this.invalidClassifiers = invalidClassifiers;
+	}
+
+	public List<Stage> getStagesWithNoScoreSheets() {
+		return stagesWithNoScoreSheets;
+	}
+
+	public void setStagesWithNoScoreSheets(List<Stage> stagesWithNoScoreSheets) {
+		this.stagesWithNoScoreSheets = stagesWithNoScoreSheets;
 	}
 
 }
