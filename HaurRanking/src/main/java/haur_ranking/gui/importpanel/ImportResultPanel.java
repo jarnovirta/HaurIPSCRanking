@@ -164,11 +164,15 @@ public class ImportResultPanel extends JPanel implements GUIDataEventListener {
 		if (importEvent.getInvalidClassifiers() != null && importEvent.getInvalidClassifiers().size() > 0) {
 			invalidClassifiersTextArea.setText(getClassifierListString(importEvent.getInvalidClassifiers()));
 			invalidClassifiersPanel.setVisible(true);
+		} else {
+			invalidClassifiersPanel.setVisible(false);
 		}
 
 		if (importEvent.getStagesWithNoScoreSheets() != null && importEvent.getStagesWithNoScoreSheets().size() > 0) {
 			stagesWithNoResultsTextArea.setText(getClassifierListString(importEvent.getStagesWithNoScoreSheets()));
 			stagesWithNoResultsPanel.setVisible(true);
+		} else {
+			stagesWithNoResultsPanel.setVisible(false);
 		}
 
 	}
