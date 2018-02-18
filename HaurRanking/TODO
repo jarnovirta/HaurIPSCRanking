@@ -21,3 +21,9 @@ TODO:
 - kaikki haut käyttämään winmsscomment
 
 - ilman ranking sijaa olevat aakkosjärjestykseen
+
+- VARMISTA ETTÄ ENTITY MANAGER CLOSE jotta FLUSH JA MANAGERFACTORY MYÖS!
+
+GENERATE RANKING TAPAHTUU 2 X????
+
+Palauta aliaksen vertailu kilpailijan nimen tallennukseen.

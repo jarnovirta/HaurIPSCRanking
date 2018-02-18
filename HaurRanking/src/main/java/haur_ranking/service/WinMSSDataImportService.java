@@ -189,7 +189,8 @@ public class WinMSSDataImportService {
 					if (stage.getStageScoreSheets() != null && stage.getStageScoreSheets().size() > 0) {
 						stagesWithNewResults.add(stage);
 					} else {
-						stagesWithNoScoreSheets.add(stage);
+						if (stagesWithNoScoreSheets != null)
+							stagesWithNoScoreSheets.add(stage);
 					}
 				}
 			}

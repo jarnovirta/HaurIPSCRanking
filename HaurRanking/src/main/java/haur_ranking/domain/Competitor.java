@@ -35,6 +35,10 @@ public class Competitor {
 	}
 
 	public Competitor(String firstName, String lastName, String winMSSComment) {
+		String[] firstNameArray = firstName.split(" ");
+		if (firstNameArray.length > 1) {
+			firstName = firstNameArray[0];
+		}
 		this.firstName = firstName;
 		this.lastName = lastName;
 	}
@@ -50,17 +54,8 @@ public class Competitor {
 			return false;
 
 		final Competitor other = (Competitor) obj;
-		boolean commentsEqual;
-		if (other.getWinMSSComment() != null && other.getWinMSSComment().equals(this.winMSSComment)) {
-			commentsEqual = true;
-		} else {
-			if (other.getWinMSSComment() == null && this.winMSSComment == null) {
-				commentsEqual = true;
-			} else {
-				commentsEqual = false;
-			}
-		}
-		if (other.getFirstName().equals(this.firstName) && other.getLastName().equals(this.lastName) && commentsEqual)
+
+		if (other.getFirstName().equals(this.firstName) && other.getLastName().equals(this.lastName))
 			return true;
 		else
 			return false;

@@ -19,12 +19,9 @@ public class CompetitorService {
 		competitorRepository = competitorRepo;
 	}
 
-	public static Competitor find(String firstName, String lastName, String winMSSComment) {
+	public static Competitor find(String firstName, String lastName) {
 		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
-		entityManager.getTransaction().begin();
 		Competitor competitor = find(firstName, lastName, entityManager);
-		entityManager.getTransaction().commit();
-		entityManager.close();
 		return competitor;
 	}
 
@@ -79,8 +76,19 @@ public class CompetitorService {
 		for (Stage stage : match.getStages()) {
 			if (stage.getStageScoreSheets() != null) {
 				for (StageScoreSheet sheet : stage.getStageScoreSheets()) {
+
 					Competitor existingCompetitor = CompetitorService.find(sheet.getCompetitor().getFirstName(),
-							sheet.getCompetitor().getLastName(), sheet.getCompetitor().getWinMSSComment());
+							sheet.getCompetitor().getLastName());
+
+					if (sheet.getCompetitor().getLastName().equals("Piepponen")) {
+						System.out.println(sheet.getCompetitor().getFirstName() + " "
+								+ sheet.getCompetitor().getFirstName().length());
+						System.out.println(sheet.getCompetitor().getLastName() + " "
+								+ sheet.getCompetitor().getLastName().length());
+						System.out.println("Found: " + (existingCompetitor != null));
+
+					}
+
 					if (existingCompetitor != null) {
 						sheet.setCompetitor(existingCompetitor);
 					} else {

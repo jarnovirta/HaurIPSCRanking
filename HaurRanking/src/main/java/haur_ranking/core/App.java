@@ -19,10 +19,13 @@ import haur_ranking.service.WinMSSDataImportService;
 public class App {
 
 	public static void main(String[] args) {
+
 		initializeServices();
 		MainWindow gui = new MainWindow();
 		gui.prepareGUI();
 		gui.showHaurRankingGui();
+		// Testing; remove:
+		RankingService.generateRanking();
 	}
 
 	private static void initializeServices() {

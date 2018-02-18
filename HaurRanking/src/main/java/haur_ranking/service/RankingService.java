@@ -57,14 +57,18 @@ public class RankingService {
 		double hitFactorSum = 0.0;
 		for (StageScoreSheet sheet : competitorLatestScoreSheets) {
 			hitFactorSum += sheet.getHitFactor();
+
 			ClassifierStage classifierStage = sheet.getStage().getClassifierStage();
 			if (classifierStageTopResultAverages.keySet().contains(classifierStage)) {
 				double classifierStageTopTwoResultsAverage = classifierStageTopResultAverages.get(classifierStage);
 				competitorRelativeScores.add(sheet.getHitFactor() / classifierStageTopTwoResultsAverage);
 				competitorHitFactors.add(sheet.getHitFactor());
 			}
+
 		}
+
 		Double competitorHitFactorsAverage = hitFactorSum / competitorLatestScoreSheets.size();
+
 		Collections.sort(competitorHitFactors);
 		Collections.reverse(competitorHitFactors);
 		Collections.sort(competitorRelativeScores);
