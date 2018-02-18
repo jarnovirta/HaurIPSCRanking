@@ -22,15 +22,14 @@ public class CompetitorService {
 	public static Competitor find(String firstName, String lastName, String winMSSComment) {
 		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
 		entityManager.getTransaction().begin();
-		Competitor competitor = find(firstName, lastName, winMSSComment, entityManager);
+		Competitor competitor = find(firstName, lastName, entityManager);
 		entityManager.getTransaction().commit();
 		entityManager.close();
 		return competitor;
 	}
 
-	public static Competitor find(String firstName, String lastName, String winMSSComment,
-			EntityManager entityManager) {
-		return competitorRepository.find(firstName, lastName, winMSSComment, entityManager);
+	public static Competitor find(String firstName, String lastName, EntityManager entityManager) {
+		return competitorRepository.find(firstName, lastName, entityManager);
 
 	}
 

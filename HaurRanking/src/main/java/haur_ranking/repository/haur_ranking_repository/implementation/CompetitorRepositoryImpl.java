@@ -10,36 +10,17 @@ import haur_ranking.repository.haur_ranking_repository.CompetitorRepository;
 
 public class CompetitorRepositoryImpl implements CompetitorRepository {
 	@Override
-	public Competitor find(String firstName, String lastName, String winMSSComment, EntityManager entityManager) {
+	public Competitor find(String firstName, String lastName, EntityManager entityManager) {
 		String queryString = "SELECT c FROM Competitor c WHERE c.firstName = :firstName AND c.lastName = :lastName";
-		if (winMSSComment != null)
-			queryString += " AND c.winMSSComment = :winMSSComment";
+
 		try {
 			TypedQuery<Competitor> query = entityManager.createQuery(queryString, Competitor.class);
 			query.setParameter("firstName", firstName);
 			query.setParameter("lastName", lastName);
-			if (winMSSComment != null)
-				query.setParameter("winMSSComment", winMSSComment);
+
 			List<Competitor> existingCompetitors = query.getResultList();
 			if (existingCompetitors.size() > 0)
 				return existingCompetitors.get(0);
-		} catch (Exception e) {
-			e.printStackTrace();
-
-		}
-		return null;
-	}
-
-	@Override
-	public List<Competitor> findByLastName(String lastName, EntityManager entityManager) {
-		String queryString = "SELECT c FROM Competitor c WHERE c.lastName = :lastName";
-
-		try {
-			TypedQuery<Competitor> query = entityManager.createQuery(queryString, Competitor.class);
-			query.setParameter("lastName", lastName);
-			List<Competitor> existingCompetitors = query.getResultList();
-			if (existingCompetitors.size() > 0)
-				return existingCompetitors;
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -94,8 +75,7 @@ public class CompetitorRepositoryImpl implements CompetitorRepository {
 		try {
 			entityManager.persist(competitor);
 
-			persistedCompetitor = find(competitor.getFirstName(), competitor.getLastName(),
-					competitor.getWinMSSComment(), entityManager);
+			persistedCompetitor = find(competitor.getFirstName(), competitor.getLastName(), entityManager);
 			entityManager.getTransaction().commit();
 
 		} catch (Exception e) {

@@ -7,9 +7,7 @@ import javax.persistence.EntityManager;
 import haur_ranking.domain.Competitor;
 
 public interface CompetitorRepository {
-	public Competitor find(String firstName, String lastName, String winMSSComment, EntityManager entityManager);
-
-	public List<Competitor> findByLastName(String lastName, EntityManager entityManager);
+	public Competitor find(String firstName, String lastName, EntityManager entityManager);
 
 	public List<Competitor> getCompetitorListPage(int page, int pageSize, EntityManager entityManager);
 
