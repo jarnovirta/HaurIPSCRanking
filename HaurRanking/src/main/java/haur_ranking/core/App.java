@@ -24,7 +24,7 @@ public class App {
 		MainWindow gui = new MainWindow();
 		gui.prepareGUI();
 		gui.showHaurRankingGui();
-		// Testing; remove:
+		// Testing; remove later:
 		RankingService.generateRanking();
 	}
 
