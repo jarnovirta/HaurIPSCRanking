@@ -33,4 +33,6 @@ public interface StageScoreSheetRepository {
 
 	public int getCompetitorStageScoreSheetCount(Competitor competitor);
 
+	public List<Double> getCompetitorLatestScores(Competitor competitor, IPSCDivision division);
+
 }

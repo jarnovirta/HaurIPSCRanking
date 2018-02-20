@@ -41,41 +41,37 @@ public class RankingService {
 		return count;
 	}
 
-	private static DivisionRankingRow competitorTopScoresAverage(Competitor competitor, DivisionRanking divisionRanking,
-			List<StageScoreSheet> competitorLatestScoreSheets,
+	private static DivisionRankingRow generateDivisionRankingRow(Competitor competitor, DivisionRanking divisionRanking,
 			Map<ClassifierStage, Double> classifierStageTopResultAverages) {
 
-		if (competitorLatestScoreSheets.size() < 4)
-			return new DivisionRankingRow(competitor, divisionRanking, false, competitorLatestScoreSheets.size());
-		int resultCount = competitorLatestScoreSheets.size();
-		if (competitorLatestScoreSheets.size() > 8)
-			competitorLatestScoreSheets = competitorLatestScoreSheets.subList(0, 8);
+		List<StageScoreSheet> scoreSheetsForValidClassifiers = StageScoreSheetService.find(competitor.getFirstName(),
+				competitor.getLastName(), divisionRanking.getDivision(), classifierStageTopResultAverages.keySet());
+		if (scoreSheetsForValidClassifiers.size() == 0)
+			return null;
+
+		if (scoreSheetsForValidClassifiers.size() < 4)
+			return new DivisionRankingRow(competitor, divisionRanking, false, scoreSheetsForValidClassifiers.size());
+		int resultCount = scoreSheetsForValidClassifiers.size();
+		if (scoreSheetsForValidClassifiers.size() > 8)
+			scoreSheetsForValidClassifiers = scoreSheetsForValidClassifiers.subList(0, 8);
 
 		List<Double> competitorRelativeScores = new ArrayList<Double>();
-		List<Double> competitorHitFactors = new ArrayList<Double>();
 
-		double hitFactorSum = 0.0;
-		for (StageScoreSheet sheet : competitorLatestScoreSheets) {
-			hitFactorSum += sheet.getHitFactor();
+		// Calculate competitor relative scores
+		for (StageScoreSheet sheet : scoreSheetsForValidClassifiers) {
 
 			ClassifierStage classifierStage = sheet.getStage().getClassifierStage();
 			if (classifierStageTopResultAverages.keySet().contains(classifierStage)) {
 				double classifierStageTopTwoResultsAverage = classifierStageTopResultAverages.get(classifierStage);
 				competitorRelativeScores.add(sheet.getHitFactor() / classifierStageTopTwoResultsAverage);
-				competitorHitFactors.add(sheet.getHitFactor());
 			}
-
 		}
 
-		Double competitorHitFactorsAverage = hitFactorSum / competitorLatestScoreSheets.size();
-
-		Collections.sort(competitorHitFactors);
-		Collections.reverse(competitorHitFactors);
 		Collections.sort(competitorRelativeScores);
 		Collections.reverse(competitorRelativeScores);
 		if (competitorRelativeScores.size() > 4) {
 			competitorRelativeScores.subList(4, competitorRelativeScores.size()).clear();
-			competitorHitFactors.subList(4, competitorHitFactors.size());
+
 		}
 
 		Double competitorTopScoresAverage;
@@ -83,12 +79,13 @@ public class RankingService {
 
 		for (int i = 0; i < 4; i++) {
 			scoreSum += competitorRelativeScores.get(i);
-			hitFactorSum += competitorHitFactors.get(i);
+
 		}
 
 		competitorTopScoresAverage = scoreSum / 4;
 		DivisionRankingRow line = new DivisionRankingRow(competitor, divisionRanking, true, competitorTopScoresAverage,
-				competitorHitFactorsAverage, resultCount);
+				StageScoreSheetService.getCompetitorHitFactorAverage(competitor, divisionRanking.getDivision()),
+				resultCount);
 
 		return line;
 
@@ -124,11 +121,11 @@ public class RankingService {
 
 		for (Competitor competitor : competitors) {
 			// Get competitor score sheets and limit number to eight.
-			List<StageScoreSheet> scoreSheets = StageScoreSheetService.find(competitor.getFirstName(),
-					competitor.getLastName(), division, classifierStageTopResultAverages.keySet());
-			if (scoreSheets.size() > 0)
-				resultList.add(competitorTopScoresAverage(competitor, divisionRanking, scoreSheets,
-						classifierStageTopResultAverages));
+			DivisionRankingRow row = generateDivisionRankingRow(competitor, divisionRanking,
+					classifierStageTopResultAverages);
+			if (row != null)
+				resultList.add(row);
+
 		}
 
 		Collections.sort(resultList);

@@ -85,7 +85,6 @@ public class StageScoreSheetService {
 	}
 
 	public static void removeInBatch(List<Long> idLIst) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
 		List<Long> idList = new ArrayList<Long>();
 
 		// Remove reference from stage to score sheet in database
@@ -129,5 +128,14 @@ public class StageScoreSheetService {
 	public static List<StageScoreSheet> find(String firstName, String lastName, IPSCDivision division,
 			Set<ClassifierStage> classifierSet) {
 		return sheetRepository.find(firstName, lastName, division, classifierSet);
+	}
+
+	public static double getCompetitorHitFactorAverage(Competitor competitor, IPSCDivision division) {
+		List<Double> latestHitFactors = sheetRepository.getCompetitorLatestScores(competitor, division);
+		double hitFactorSum = 0.0;
+		for (Double hf : latestHitFactors) {
+			hitFactorSum += hf;
+		}
+		return hitFactorSum / latestHitFactors.size();
 	}
 }

@@ -211,4 +211,26 @@ public class StageScoreSheetRepositoryImpl implements StageScoreSheetRepository 
 		return resultCount;
 	}
 
+	@Override
+	public List<Double> getCompetitorLatestScores(Competitor competitor, IPSCDivision division) {
+		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
+		List<Double> hitFactorAverage;
+		try {
+			String queryString = "SELECT s.hitFactor FROM StageScoreSheet s WHERE s.competitor = :competitor"
+					+ " AND s.ipscDivision = :division ORDER BY s.stage.match.date DESC";
+			TypedQuery<Double> query = entityManager.createQuery(queryString, Double.class);
+			query.setParameter("competitor", competitor);
+			query.setParameter("division", division);
+			query.setMaxResults(8);
+			hitFactorAverage = query.getResultList();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+
+		}
+		entityManager.close();
+		return hitFactorAverage;
+	}
+
 }
