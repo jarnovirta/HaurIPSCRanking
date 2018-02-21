@@ -13,7 +13,7 @@ import haur_ranking.repository.haur_ranking_repository.RankingRepository;
 public class RankingRepositoryImpl implements RankingRepository {
 	@Override
 	public void save(Ranking ranking) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		entityManager.getTransaction().begin();
 		try {
 			entityManager.persist(ranking);
@@ -26,7 +26,7 @@ public class RankingRepositoryImpl implements RankingRepository {
 
 	@Override
 	public List<Ranking> getRankingsListPage(int page, int pageSize) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		List<Ranking> rankings = null;
 		try {
 			String queryString = "SELECT r FROM Ranking r ORDER BY r.date DESC";
@@ -45,7 +45,7 @@ public class RankingRepositoryImpl implements RankingRepository {
 
 	@Override
 	public int getCount() {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		int count = -1;
 		try {
 			count = ((Long) entityManager.createQuery("SELECT COUNT(r) from Ranking r").getSingleResult()).intValue();
@@ -58,7 +58,7 @@ public class RankingRepositoryImpl implements RankingRepository {
 
 	@Override
 	public void deleteAll() {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		entityManager.getTransaction().begin();
 		try {
 			String queryString = "DELETE FROM Ranking r";
@@ -73,7 +73,7 @@ public class RankingRepositoryImpl implements RankingRepository {
 
 	@Override
 	public void delete(Ranking ranking) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		entityManager.getTransaction().begin();
 		try {
 			if (!entityManager.contains(ranking))
@@ -88,7 +88,7 @@ public class RankingRepositoryImpl implements RankingRepository {
 
 	@Override
 	public Ranking findCurrentRanking() {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		Ranking ranking = null;
 		try {
 			String queryString = "SELECT r FROM Ranking r ORDER BY r.date DESC";
@@ -107,7 +107,7 @@ public class RankingRepositoryImpl implements RankingRepository {
 
 	@Override
 	public void removeRankingRowsForCompetitor(Competitor competitor) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		entityManager.getTransaction().begin();
 		try {
 			String queryString = "SELECT dvrr FROM  DivisionRankingRow dvrr WHERE dvrr.competitor = :competitor";

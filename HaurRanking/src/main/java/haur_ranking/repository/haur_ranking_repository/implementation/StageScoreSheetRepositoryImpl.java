@@ -17,7 +17,7 @@ public class StageScoreSheetRepositoryImpl implements StageScoreSheetRepository 
 
 	@Override
 	public List<StageScoreSheet> find(IPSCDivision division, ClassifierStage classifier) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		List<StageScoreSheet> sheets = null;
 		try {
 			String queryString = "SELECT s FROM StageScoreSheet s WHERE s.ipscDivision = :division AND s.stage.classifierStage = :classifier";
@@ -34,7 +34,7 @@ public class StageScoreSheetRepositoryImpl implements StageScoreSheetRepository 
 
 	@Override
 	public StageScoreSheet find(Long id) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		StageScoreSheet sheet = null;
 		try {
 			String queryString = "SELECT s FROM StageScoreSheet s WHERE s.id = :id";
@@ -51,7 +51,7 @@ public class StageScoreSheetRepositoryImpl implements StageScoreSheetRepository 
 	@Override
 	public List<StageScoreSheet> find(String firstName, String lastName, IPSCDivision division,
 			ClassifierStage classifierStage) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		List<StageScoreSheet> sheets = null;
 		try {
 			String queryString = "SELECT s FROM StageScoreSheet s WHERE s.competitor.firstName = :firstName "
@@ -73,7 +73,7 @@ public class StageScoreSheetRepositoryImpl implements StageScoreSheetRepository 
 
 	@Override
 	public List<StageScoreSheet> find(String firstName, String lastName, IPSCDivision division) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		List<StageScoreSheet> sheets = null;
 		try {
 			String queryString = "SELECT s FROM StageScoreSheet s WHERE s.competitor.firstName = :firstName "
@@ -95,7 +95,7 @@ public class StageScoreSheetRepositoryImpl implements StageScoreSheetRepository 
 	@Override
 	public List<StageScoreSheet> find(String firstName, String lastName, IPSCDivision division,
 			Set<ClassifierStage> classifiers) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		List<StageScoreSheet> sheets = null;
 		try {
 			String queryString = "SELECT s FROM StageScoreSheet s WHERE s.competitor.firstName = :firstName "
@@ -116,7 +116,7 @@ public class StageScoreSheetRepositoryImpl implements StageScoreSheetRepository 
 
 	@Override
 	public List<StageScoreSheet> find(Competitor competitor) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		List<StageScoreSheet> sheets = null;
 		try {
 			String queryString = "SELECT s from StageScoreSheet s WHERE s.competitor = :competitor";
@@ -131,7 +131,7 @@ public class StageScoreSheetRepositoryImpl implements StageScoreSheetRepository 
 
 	@Override
 	public List<StageScoreSheet> findAll() {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		List<StageScoreSheet> sheets = null;
 		try {
 			String queryString = "SELECT s from StageScoreSheet s";
@@ -145,7 +145,7 @@ public class StageScoreSheetRepositoryImpl implements StageScoreSheetRepository 
 
 	@Override
 	public int getCount() {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		int matchCount = -1;
 		try {
 			String queryString = "SELECT COUNT(s) from StageScoreSheet s";
@@ -159,7 +159,7 @@ public class StageScoreSheetRepositoryImpl implements StageScoreSheetRepository 
 
 	@Override
 	public void removeInBatch(List<Long> idList) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		entityManager.getTransaction().begin();
 		try {
 			entityManager.createQuery("DELETE FROM StageScoreSheet s where s.id IN :idList")
@@ -174,7 +174,7 @@ public class StageScoreSheetRepositoryImpl implements StageScoreSheetRepository 
 
 	@Override
 	public void save(StageScoreSheet sheet) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		entityManager.getTransaction().begin();
 		try {
 			entityManager.persist(sheet);
@@ -186,7 +186,7 @@ public class StageScoreSheetRepositoryImpl implements StageScoreSheetRepository 
 
 	@Override
 	public int getCompetitorStageScoreSheetCount(Competitor competitor) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		int resultCount = -1;
 		try {
 			String queryString = "SELECT COUNT(s) FROM StageScoreSheet s WHERE s.competitor = :competitor";
@@ -203,7 +203,7 @@ public class StageScoreSheetRepositoryImpl implements StageScoreSheetRepository 
 
 	@Override
 	public List<Double> getCompetitorLatestScores(Competitor competitor, IPSCDivision division) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		List<Double> hitFactorAverage = null;
 		try {
 			String queryString = "SELECT s.hitFactor FROM StageScoreSheet s WHERE s.competitor = :competitor"

@@ -15,7 +15,7 @@ import haur_ranking.repository.haur_ranking_repository.StageRepository;
 public class StageRepositoryImpl implements StageRepository {
 	@Override
 	public Stage find(Long id) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		Stage stage = null;
 		try {
 			String queryString = "SELECT s FROM Stage s WHERE s.id = " + id;
@@ -30,7 +30,7 @@ public class StageRepositoryImpl implements StageRepository {
 
 	@Override
 	public int getCount() {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		int stageCount = -1;
 		try {
 			stageCount = ((Long) entityManager.createQuery("SELECT COUNT(s) from Stage s").getSingleResult())
@@ -46,7 +46,7 @@ public class StageRepositoryImpl implements StageRepository {
 
 	@Override
 	public void delete(Stage stage) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		entityManager.getTransaction().begin();
 		try {
 			if (!entityManager.contains(stage)) {
@@ -63,7 +63,7 @@ public class StageRepositoryImpl implements StageRepository {
 
 	@Override
 	public Stage find(Stage stage) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		Stage resultStage = null;
 		try {
 			String queryString = "SELECT s FROM Stage s WHERE s.name = :stageName AND s.match.name = :matchName and s.match.date = :matchDate";
@@ -89,7 +89,7 @@ public class StageRepositoryImpl implements StageRepository {
 	// when generating a ranking.
 	@Override
 	public Map<ClassifierStage, Double> getClassifierStagesWithTwoOrMoreResults(IPSCDivision division) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 
 		Map<ClassifierStage, Double> resultClassifierStages = new HashMap<ClassifierStage, Double>();
 

@@ -109,7 +109,7 @@ public class StageScoreSheetService {
 	}
 
 	public static void removeStageScoreSheetsForCompetitor(Competitor competitor) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		entityManager.getTransaction().begin();
 		List<StageScoreSheet> sheets = sheetRepository.find(competitor);
 		List<Long> sheetIds = new ArrayList<Long>();

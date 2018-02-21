@@ -32,7 +32,7 @@ public class StageScoreSheetServiceTests {
 			int jarnoTotalResultsCount = StageScoreSheetService.find("Jarno", "Virta", IPSCDivision.PRODUCTION).size();
 			assertEquals("Jarno should have 9 results for Production Division.", 9, jarnoTotalResultsCount);
 
-			EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+			EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 
 			// Check that competitor Jarno has only 8 results. Score sheet for
 			// Spring match (1.4.2017) should have been

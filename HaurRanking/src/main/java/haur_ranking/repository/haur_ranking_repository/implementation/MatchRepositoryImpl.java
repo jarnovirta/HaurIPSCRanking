@@ -11,7 +11,7 @@ import haur_ranking.repository.haur_ranking_repository.MatchRepository;
 public class MatchRepositoryImpl implements MatchRepository {
 	@Override
 	public Match find(Match match) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		List<Match> resultList = null;
 		Match resultMatch = null;
 		try {
@@ -34,7 +34,7 @@ public class MatchRepositoryImpl implements MatchRepository {
 
 	@Override
 	public List<Match> getMatchListPage(int page, int pageSize) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		List<Match> resultList = null;
 		try {
 			String queryString = "SELECT m FROM Match m ORDER BY m.date DESC";
@@ -52,7 +52,7 @@ public class MatchRepositoryImpl implements MatchRepository {
 
 	@Override
 	public void delete(Match match) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		entityManager.getTransaction().begin();
 		try {
 			if (!entityManager.contains(match)) {
@@ -69,7 +69,7 @@ public class MatchRepositoryImpl implements MatchRepository {
 
 	@Override
 	public Match findNewestMatch() {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		Match match = null;
 		try {
 			String queryString = "SELECT m FROM Match m ORDER BY m.date DESC";
@@ -89,7 +89,7 @@ public class MatchRepositoryImpl implements MatchRepository {
 
 	@Override
 	public List<Match> findAll() {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		List<Match> matches = null;
 		try {
 			String queryString = "SELECT m FROM Match m ORDER BY m.date DESC";
@@ -105,7 +105,7 @@ public class MatchRepositoryImpl implements MatchRepository {
 
 	@Override
 	public int getMatchCount() {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		int count = -1;
 		try {
 			count = ((Long) entityManager.createQuery("SELECT COUNT(m) from Match m").getSingleResult()).intValue();
@@ -121,7 +121,7 @@ public class MatchRepositoryImpl implements MatchRepository {
 
 	@Override
 	public Match merge(Match match) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		entityManager.getTransaction().begin();
 		try {
 			match = entityManager.merge(match);

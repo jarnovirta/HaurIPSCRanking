@@ -69,7 +69,7 @@ public class CompetitorRepositoryImpl implements CompetitorRepository {
 	public Competitor persist(Competitor competitor) {
 		Competitor persistedCompetitor = null;
 
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		entityManager.getTransaction().begin();
 
 		try {
@@ -80,9 +80,10 @@ public class CompetitorRepositoryImpl implements CompetitorRepository {
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			entityManager.getTransaction().rollback();
 
 		}
-		entityManager.close();
+
 		return persistedCompetitor;
 	}
 

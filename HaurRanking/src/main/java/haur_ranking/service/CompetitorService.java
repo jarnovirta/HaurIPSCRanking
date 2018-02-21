@@ -20,7 +20,7 @@ public class CompetitorService {
 	}
 
 	public static Competitor find(String firstName, String lastName) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		Competitor competitor = find(firstName, lastName, entityManager);
 		return competitor;
 	}
@@ -35,21 +35,21 @@ public class CompetitorService {
 	}
 
 	public static List<Competitor> findAll() {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		List<Competitor> competitors = competitorRepository.findAll(entityManager);
 		entityManager.close();
 		return competitors;
 	}
 
 	public static int getTotalCompetitorCount() {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		int count = competitorRepository.getTotalCompetitorCount(entityManager);
 		entityManager.close();
 		return count;
 	}
 
 	public static List<Competitor> getCompetitorTableDataPage(int page, int pageSize) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		List<Competitor> competitors = competitorRepository.getCompetitorListPage(page, pageSize, entityManager);
 		for (Competitor competitor : competitors) {
 			competitor.setResultCount(StageScoreSheetService.getCompetitorStageScoreSheetCount(competitor));
@@ -59,7 +59,7 @@ public class CompetitorService {
 	}
 
 	public static void deleteAll(List<Competitor> competitors) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		entityManager.getTransaction().begin();
 		for (Competitor competitor : competitors) {
 			StageScoreSheetService.removeStageScoreSheetsForCompetitor(competitor);

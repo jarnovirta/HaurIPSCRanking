@@ -1,6 +1,5 @@
 package haur_ranking.repository.haur_ranking_repository.implementation;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
@@ -13,10 +12,10 @@ public class HaurRankingDatabaseUtils {
 
 	}
 
-	public static EntityManager getEntityManager() {
+	public static EntityManagerFactory getEntityManagerFactory() {
 		if (entityManagerFactory == null || !entityManagerFactory.isOpen())
 			initialize();
-		return entityManagerFactory.createEntityManager();
+		return entityManagerFactory;
 	}
 
 	public static void initialize() {

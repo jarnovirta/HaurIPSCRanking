@@ -33,7 +33,7 @@ public class StageService {
 	}
 
 	public static int getTotalStageCount() {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		int count = stageRepository.getCount();
 		entityManager.close();
 		return count;
@@ -41,7 +41,7 @@ public class StageService {
 	}
 
 	public static Map<ClassifierStage, Double> getClassifierStagesWithTwoOrMoreResults(IPSCDivision division) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		Map<ClassifierStage, Double> classifierStages = stageRepository
 				.getClassifierStagesWithTwoOrMoreResults(division);
 		entityManager.close();
@@ -63,7 +63,7 @@ public class StageService {
 	}
 
 	public static void delete(List<Stage> stages) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		entityManager.getTransaction().begin();
 		for (Stage stage : stages) {
 			Match match = stage.getMatch();
