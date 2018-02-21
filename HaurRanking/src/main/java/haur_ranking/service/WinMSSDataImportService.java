@@ -37,9 +37,9 @@ public class WinMSSDataImportService {
 	// are not called. Test data is hard coded into test classes.
 	private static boolean runForUnitTests = false;
 
-	private static List<StageScoreSheet> newStageScoreSheets;
-	private static List<Stage> invalidClassifiers;
-	private static List<Stage> stagesWithNoScoreSheets;
+	private static List<StageScoreSheet> newStageScoreSheets = new ArrayList<StageScoreSheet>();
+	private static List<Stage> invalidClassifiers = new ArrayList<Stage>();
+	private static List<Stage> stagesWithNoScoreSheets = new ArrayList<Stage>();
 
 	public static void init(WinMSSMatchRepository winMSSMatchRepo, WinMSSStageRepository WinMSSStageRepo,
 			WinMSSStageScoreSheetRepository winMSSStageScoreSheetRepo) {
@@ -82,9 +82,9 @@ public class WinMSSDataImportService {
 	// Database
 	public static void importSelectedResults(List<Match> matches) {
 
-		if (!runForUnitTests) {
+		if (!runForUnitTests)
 			initializeImportProgressVariables(matches);
-		}
+
 		// List<Stage> invalidClassifiers = new ArrayList<Stage>();
 		setImportProgressStatus(ImportStatus.SAVING_TO_HAUR_RANKING_DB);
 		for (Match match : matches) {
