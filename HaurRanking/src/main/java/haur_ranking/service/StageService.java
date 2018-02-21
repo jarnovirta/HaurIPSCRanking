@@ -25,16 +25,22 @@ public class StageService {
 	}
 
 	public static Stage find(Stage stage) {
-		return stageRepository.find(stage);
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
+		stage = stageRepository.find(stage, entityManager);
+		entityManager.close();
+		return stage;
 	}
 
 	public static Stage find(Long id) {
-		return stageRepository.find(id);
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
+		Stage stage = stageRepository.find(id, entityManager);
+		entityManager.close();
+		return stage;
 	}
 
 	public static int getTotalStageCount() {
 		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
-		int count = stageRepository.getCount();
+		int count = stageRepository.getCount(entityManager);
 		entityManager.close();
 		return count;
 
@@ -43,7 +49,7 @@ public class StageService {
 	public static Map<ClassifierStage, Double> getClassifierStagesWithTwoOrMoreResults(IPSCDivision division) {
 		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		Map<ClassifierStage, Double> classifierStages = stageRepository
-				.getClassifierStagesWithTwoOrMoreResults(division);
+				.getClassifierStagesWithTwoOrMoreResults(division, entityManager);
 		entityManager.close();
 		return classifierStages;
 	}
@@ -70,7 +76,7 @@ public class StageService {
 			match.getStages().remove(stage);
 			if (!entityManager.contains(stage))
 				stage = entityManager.merge(stage);
-			stageRepository.delete(stage);
+			stageRepository.delete(stage, entityManager);
 			entityManager.flush();
 			if (match.getStages().size() == 0)
 				MatchService.delete(match);

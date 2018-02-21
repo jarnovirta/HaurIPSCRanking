@@ -14,8 +14,7 @@ import haur_ranking.repository.haur_ranking_repository.StageRepository;
 
 public class StageRepositoryImpl implements StageRepository {
 	@Override
-	public Stage find(Long id) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
+	public Stage find(Long id, EntityManager entityManager) {
 		Stage stage = null;
 		try {
 			String queryString = "SELECT s FROM Stage s WHERE s.id = " + id;
@@ -24,13 +23,11 @@ public class StageRepositoryImpl implements StageRepository {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		entityManager.close();
 		return stage;
 	}
 
 	@Override
-	public int getCount() {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
+	public int getCount(EntityManager entityManager) {
 		int stageCount = -1;
 		try {
 			stageCount = ((Long) entityManager.createQuery("SELECT COUNT(s) from Stage s").getSingleResult())
@@ -40,30 +37,23 @@ public class StageRepositoryImpl implements StageRepository {
 			e.printStackTrace();
 
 		}
-		entityManager.close();
 		return stageCount;
 	}
 
 	@Override
-	public void delete(Stage stage) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
-		entityManager.getTransaction().begin();
+	public void delete(Stage stage, EntityManager entityManager) {
 		try {
 			if (!entityManager.contains(stage)) {
 				stage = entityManager.merge(stage);
 			}
 			entityManager.remove(stage);
-			entityManager.getTransaction().commit();
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		entityManager.close();
 	}
 
 	@Override
-	public Stage find(Stage stage) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
+	public Stage find(Stage stage, EntityManager entityManager) {
 		Stage resultStage = null;
 		try {
 			String queryString = "SELECT s FROM Stage s WHERE s.name = :stageName AND s.match.name = :matchName and s.match.date = :matchDate";
@@ -79,7 +69,6 @@ public class StageRepositoryImpl implements StageRepository {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		entityManager.close();
 		return resultStage;
 	}
 
@@ -88,9 +77,8 @@ public class StageRepositoryImpl implements StageRepository {
 	// Only ClassifierStages with at least two results are taken into account
 	// when generating a ranking.
 	@Override
-	public Map<ClassifierStage, Double> getClassifierStagesWithTwoOrMoreResults(IPSCDivision division) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
-
+	public Map<ClassifierStage, Double> getClassifierStagesWithTwoOrMoreResults(IPSCDivision division,
+			EntityManager entityManager) {
 		Map<ClassifierStage, Double> resultClassifierStages = new HashMap<ClassifierStage, Double>();
 
 		try {
@@ -112,7 +100,6 @@ public class StageRepositoryImpl implements StageRepository {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		entityManager.close();
 		return resultClassifierStages;
 	}
 }
