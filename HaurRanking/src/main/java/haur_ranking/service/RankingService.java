@@ -125,9 +125,7 @@ public class RankingService {
 					classifierStageTopResultAverages);
 			if (row != null)
 				resultList.add(row);
-
 		}
-
 		Collections.sort(resultList);
 		Collections.reverse(resultList);
 		convertAverageScoresToPercentage(resultList);
@@ -137,6 +135,7 @@ public class RankingService {
 	}
 
 	public static Ranking generateRanking() {
+		System.out.println("Generate");
 		Ranking ranking = new Ranking();
 		for (IPSCDivision division : IPSCDivision.values()) {
 			DivisionRanking divRanking = getDivisionRanking(division);
@@ -144,6 +143,8 @@ public class RankingService {
 				ranking.getDivisionRankings().add(divRanking);
 			}
 		}
+		if (ranking.getDivisionRankings().size() == 0)
+			return null;
 		ranking.setTotalCompetitorsAndResultsCounts();
 		Match latestIncludedMatch = MatchService.findLatestMatch();
 		if (latestIncludedMatch != null) {
@@ -152,6 +153,7 @@ public class RankingService {
 		} else {
 			ranking.setLatestIncludedMatchName("--");
 		}
+		System.out.println("Persist");
 		persist(ranking);
 		return ranking;
 	}

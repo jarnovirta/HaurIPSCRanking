@@ -97,7 +97,6 @@ public class DatabasePanelDataService {
 	public static void deleteCompetitors() {
 		if (competitorsToDelete.size() > 0)
 			CompetitorService.deleteAll(competitorsToDelete);
-		RankingService.generateRanking();
 		DataEventService.emit(new GUIDataEvent(GUIDataEventType.NEW_RANKING_GENERATED));
 	}
 
