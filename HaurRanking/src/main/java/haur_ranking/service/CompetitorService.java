@@ -21,17 +21,18 @@ public class CompetitorService {
 
 	public static Competitor find(String firstName, String lastName) {
 		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
-		Competitor competitor = find(firstName, lastName, entityManager);
+		Competitor competitor = competitorRepository.find(firstName, lastName, entityManager);
+		entityManager.close();
 		return competitor;
-	}
-
-	public static Competitor find(String firstName, String lastName, EntityManager entityManager) {
-		return competitorRepository.find(firstName, lastName, entityManager);
 
 	}
 
-	public static Competitor persist(Competitor competitor) {
-		return competitorRepository.persist(competitor);
+	public static void persist(Competitor competitor) {
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
+		entityManager.getTransaction().begin();
+		competitorRepository.persist(competitor, entityManager);
+		entityManager.getTransaction().commit();
+		entityManager.close();
 	}
 
 	public static List<Competitor> findAll() {
@@ -83,11 +84,10 @@ public class CompetitorService {
 					if (existingCompetitor != null) {
 						sheet.setCompetitor(existingCompetitor);
 					} else {
-						sheet.setCompetitor(persist(sheet.getCompetitor()));
+						persist(sheet.getCompetitor());
 						newCompetitorsCount++;
 					}
 				}
-
 			}
 		}
 		return newCompetitorsCount;

@@ -15,7 +15,7 @@ public interface CompetitorRepository {
 
 	public int getTotalCompetitorCount(EntityManager entityManager);
 
-	public Competitor persist(Competitor competitor);
+	public void persist(Competitor competitor, EntityManager entityManager);
 
 	public void delete(Competitor competitor, EntityManager entityManager);
 

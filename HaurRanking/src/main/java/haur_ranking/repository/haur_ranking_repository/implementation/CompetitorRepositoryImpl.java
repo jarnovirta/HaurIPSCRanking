@@ -31,6 +31,7 @@ public class CompetitorRepositoryImpl implements CompetitorRepository {
 	@Override
 	public List<Competitor> getCompetitorListPage(int page, int pageSize, EntityManager entityManager) {
 		try {
+
 			String queryString = "SELECT c FROM Competitor c ORDER BY c.lastName";
 			final TypedQuery<Competitor> query = entityManager.createQuery(queryString, Competitor.class);
 			query.setFirstResult((page - 1) * pageSize);
@@ -44,7 +45,6 @@ public class CompetitorRepositoryImpl implements CompetitorRepository {
 
 	@Override
 	public List<Competitor> findAll(EntityManager entityManager) {
-
 		try {
 			String queryString = "SELECT c FROM Competitor c ORDER BY c.lastName";
 			final TypedQuery<Competitor> query = entityManager.createQuery(queryString, Competitor.class);
@@ -66,25 +66,12 @@ public class CompetitorRepositoryImpl implements CompetitorRepository {
 	}
 
 	@Override
-	public Competitor persist(Competitor competitor) {
-		Competitor persistedCompetitor = null;
-
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
-		entityManager.getTransaction().begin();
-
+	public void persist(Competitor competitor, EntityManager entityManager) {
 		try {
 			entityManager.persist(competitor);
-
-			persistedCompetitor = find(competitor.getFirstName(), competitor.getLastName(), entityManager);
-			entityManager.getTransaction().commit();
-
 		} catch (Exception e) {
 			e.printStackTrace();
-			entityManager.getTransaction().rollback();
-
 		}
-
-		return persistedCompetitor;
 	}
 
 	@Override
