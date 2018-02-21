@@ -135,7 +135,6 @@ public class RankingService {
 	}
 
 	public static Ranking generateRanking() {
-		System.out.println("Generate");
 		Ranking ranking = new Ranking();
 		for (IPSCDivision division : IPSCDivision.values()) {
 			DivisionRanking divRanking = getDivisionRanking(division);
@@ -153,7 +152,6 @@ public class RankingService {
 		} else {
 			ranking.setLatestIncludedMatchName("--");
 		}
-		System.out.println("Persist");
 		persist(ranking);
 		return ranking;
 	}
