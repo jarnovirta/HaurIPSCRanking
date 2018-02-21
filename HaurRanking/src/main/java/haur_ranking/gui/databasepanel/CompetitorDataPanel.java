@@ -145,10 +145,7 @@ public class CompetitorDataPanel extends JPanel
 		for (Competitor competitor : databaseCompetitorTableData) {
 			String[] row = new String[3];
 			row[0] = firstRowOrderNumber + rowCounter + ". ";
-			String middleInitial = "";
-			if (competitor.getWinMSSComment() != null)
-				middleInitial = competitor.getWinMSSComment();
-			row[1] = competitor.getFirstName() + " " + middleInitial + competitor.getLastName();
+			row[1] = competitor.getFirstName() + " " + competitor.getLastName();
 			row[2] = String.valueOf(competitor.getResultCount());
 			tableModel.addRow(row);
 			rowCounter++;

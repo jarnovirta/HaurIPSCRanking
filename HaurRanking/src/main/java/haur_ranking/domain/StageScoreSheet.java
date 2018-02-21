@@ -19,7 +19,6 @@ public class StageScoreSheet {
 
 	@ManyToOne(cascade = CascadeType.PERSIST)
 	private Competitor competitor;
-	private String ssiModel = "match_ipsc.ipscscorecard";
 	private Long winMssPrimaryKey;
 	private Long winMssStageId;
 	private Long winMssMemberId;
@@ -46,7 +45,6 @@ public class StageScoreSheet {
 
 	private int procedurals;
 	boolean scoresZeroedForStage = false;
-	private String comment = "";
 
 	public StageScoreSheet() {
 	}
@@ -68,10 +66,6 @@ public class StageScoreSheet {
 
 	public int getcHits() {
 		return cHits;
-	}
-
-	public String getComment() {
-		return comment;
 	}
 
 	public Competitor getCompetitor() {
@@ -116,10 +110,6 @@ public class StageScoreSheet {
 
 	public int getSpecialPenalty() {
 		return specialPenalty;
-	}
-
-	public String getSsiModel() {
-		return ssiModel;
 	}
 
 	public Stage getStage() {
@@ -168,10 +158,6 @@ public class StageScoreSheet {
 
 	public void setcHits(int cHits) {
 		this.cHits = cHits;
-	}
-
-	public void setComment(String comment) {
-		this.comment = comment;
 	}
 
 	public void setCompetitor(Competitor competitor) {
@@ -228,10 +214,6 @@ public class StageScoreSheet {
 
 	public void setSpecialPenalty(int specialPenalty) {
 		this.specialPenalty = specialPenalty;
-	}
-
-	public void setSsiModel(String ssiModel) {
-		this.ssiModel = ssiModel;
 	}
 
 	public void setStage(Stage stage) {

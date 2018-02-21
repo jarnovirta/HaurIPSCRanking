@@ -15,8 +15,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import haur_ranking.utils.DateFormatUtils;
-
 @Entity
 @Table(name = "Match")
 public class Match {
@@ -25,7 +23,6 @@ public class Match {
 	private Long id;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Calendar date;
-	private String dateString; // Format: dd.MM.yyyy
 
 	@Transient
 	private Long winMssMatchId;
@@ -40,7 +37,6 @@ public class Match {
 		this.name = matchName;
 		this.winMssMatchId = winMssMatchId;
 		this.date = date;
-		this.dateString = DateFormatUtils.calendarToDateString(date);
 	}
 
 	public Match(String matchName) {
@@ -85,9 +81,5 @@ public class Match {
 
 	public void setWinMssMatchId(Long winMssMatchId) {
 		this.winMssMatchId = winMssMatchId;
-	}
-
-	public String getDateString() {
-		return this.dateString;
 	}
 }

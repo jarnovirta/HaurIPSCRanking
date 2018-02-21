@@ -37,6 +37,7 @@ import haur_ranking.event.GUIDataEventListener;
 import haur_ranking.gui.service.DataEventService;
 import haur_ranking.gui.service.ImportPanelDataService;
 import haur_ranking.gui.utils.JTableUtils;
+import haur_ranking.utils.DateFormatUtils;
 
 public class WinMSSDatabasePane extends JPanel implements GUIDataEventListener {
 
@@ -197,7 +198,7 @@ public class WinMSSDatabasePane extends JPanel implements GUIDataEventListener {
 			Object[] rowData = new Object[5];
 			rowData[0] = (matchCounter++) + ". ";
 			rowData[1] = match.getName();
-			rowData[2] = match.getDateString();
+			rowData[2] = DateFormatUtils.calendarToDateString(match.getDate());
 			if (match.getStages() == null || match.getStages().size() == 0)
 				continue;
 			Stage stage = match.getStages().get(0);

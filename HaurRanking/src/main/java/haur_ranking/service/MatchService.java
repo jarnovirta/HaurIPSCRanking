@@ -10,6 +10,7 @@ import haur_ranking.domain.Match;
 import haur_ranking.domain.Stage;
 import haur_ranking.repository.haur_ranking_repository.MatchRepository;
 import haur_ranking.repository.haur_ranking_repository.implementation.HaurRankingDatabaseUtils;
+import haur_ranking.utils.DateFormatUtils;
 
 public class MatchService {
 
@@ -80,7 +81,7 @@ public class MatchService {
 			String[] rowData = new String[4];
 			rowData[0] = (matchCounter++) + ".";
 			rowData[1] = match.getName();
-			rowData[2] = match.getDateString();
+			rowData[2] = DateFormatUtils.calendarToDateString(match.getDate());
 			if (match.getStages() == null || match.getStages().size() == 0)
 				continue;
 			rowData[3] = match.getStages().get(0).getName();
