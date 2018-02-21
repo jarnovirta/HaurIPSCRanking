@@ -69,7 +69,7 @@ public class CompetitorRepositoryImpl implements CompetitorRepository {
 	public Competitor persist(Competitor competitor) {
 		Competitor persistedCompetitor = null;
 
-		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
 		entityManager.getTransaction().begin();
 
 		try {

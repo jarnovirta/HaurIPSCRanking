@@ -67,7 +67,7 @@ public class MatchService {
 	}
 
 	public static Match findLatestMatch() {
-		EntityManager entityManager = HaurRankingDatabaseUtils.createEntityManager();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManager();
 		Match match = matchRepository.findNewestMatch();
 		entityManager.close();
 		return match;

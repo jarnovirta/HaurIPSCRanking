@@ -9,9 +9,9 @@ import haur_ranking.domain.IPSCDivision;
 import haur_ranking.domain.StageScoreSheet;
 
 public interface StageScoreSheetRepository {
-	public List<StageScoreSheet> find(IPSCDivision division, ClassifierStage classifier);
-
 	public StageScoreSheet find(Long id);
+
+	public List<StageScoreSheet> find(IPSCDivision division, ClassifierStage classifier);
 
 	public List<StageScoreSheet> find(String firstName, String lastName, IPSCDivision division,
 			ClassifierStage classifierStage);
@@ -29,7 +29,7 @@ public interface StageScoreSheetRepository {
 
 	public void removeInBatch(List<Long> idList);
 
-	public StageScoreSheet save(StageScoreSheet sheet);
+	public void save(StageScoreSheet sheet);
 
 	public int getCompetitorStageScoreSheetCount(Competitor competitor);
 
