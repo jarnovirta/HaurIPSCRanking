@@ -12,21 +12,16 @@ import haur_ranking.repository.haur_ranking_repository.RankingRepository;
 
 public class RankingRepositoryImpl implements RankingRepository {
 	@Override
-	public void save(Ranking ranking) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
-		entityManager.getTransaction().begin();
+	public void save(Ranking ranking, EntityManager entityManager) {
 		try {
 			entityManager.persist(ranking);
-			entityManager.getTransaction().commit();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		entityManager.close();
 	}
 
 	@Override
-	public List<Ranking> getRankingsListPage(int page, int pageSize) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
+	public List<Ranking> getRankingsListPage(int page, int pageSize, EntityManager entityManager) {
 		List<Ranking> rankings = null;
 		try {
 			String queryString = "SELECT r FROM Ranking r ORDER BY r.date DESC";
@@ -39,56 +34,43 @@ public class RankingRepositoryImpl implements RankingRepository {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		entityManager.close();
 		return rankings;
 	}
 
 	@Override
-	public int getCount() {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
+	public int getCount(EntityManager entityManager) {
 		int count = -1;
 		try {
 			count = ((Long) entityManager.createQuery("SELECT COUNT(r) from Ranking r").getSingleResult()).intValue();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		entityManager.close();
 		return count;
 	}
 
 	@Override
-	public void deleteAll() {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
-		entityManager.getTransaction().begin();
+	public void deleteAll(EntityManager entityManager) {
 		try {
 			String queryString = "DELETE FROM Ranking r";
 			entityManager.createQuery(queryString).executeUpdate();
-			entityManager.getTransaction().commit();
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		entityManager.close();
 	}
 
 	@Override
-	public void delete(Ranking ranking) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
-		entityManager.getTransaction().begin();
+	public void delete(Ranking ranking, EntityManager entityManager) {
 		try {
 			if (!entityManager.contains(ranking))
 				ranking = entityManager.merge(ranking);
 			entityManager.remove(ranking);
-			entityManager.getTransaction().commit();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		entityManager.close();
 	}
 
 	@Override
-	public Ranking findCurrentRanking() {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
+	public Ranking findCurrentRanking(EntityManager entityManager) {
 		Ranking ranking = null;
 		try {
 			String queryString = "SELECT r FROM Ranking r ORDER BY r.date DESC";
@@ -101,14 +83,11 @@ public class RankingRepositoryImpl implements RankingRepository {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		entityManager.close();
 		return ranking;
 	}
 
 	@Override
-	public void removeRankingRowsForCompetitor(Competitor competitor) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
-		entityManager.getTransaction().begin();
+	public void removeRankingRowsForCompetitor(Competitor competitor, EntityManager entityManager) {
 		try {
 			String queryString = "SELECT dvrr FROM  DivisionRankingRow dvrr WHERE dvrr.competitor = :competitor";
 			TypedQuery<DivisionRankingRow> query = entityManager.createQuery(queryString, DivisionRankingRow.class);
@@ -119,10 +98,8 @@ public class RankingRepositoryImpl implements RankingRepository {
 				row.getDivisionRanking().getDivisionRankingRows().remove(row);
 				entityManager.remove(row);
 			}
-			entityManager.getTransaction().commit();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		entityManager.close();
 	}
 }

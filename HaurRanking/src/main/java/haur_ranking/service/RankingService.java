@@ -29,14 +29,14 @@ public class RankingService {
 
 	public static List<Ranking> getPreviousRankingsTableData(int page, int pageSize) {
 		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
-		List<Ranking> rankings = rankingRepository.getRankingsListPage(page, pageSize);
+		List<Ranking> rankings = rankingRepository.getRankingsListPage(page, pageSize, entityManager);
 		entityManager.close();
 		return rankings;
 	}
 
 	public static int getRankingsCount() {
 		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
-		int count = rankingRepository.getCount();
+		int count = rankingRepository.getCount(entityManager);
 		entityManager.close();
 		return count;
 	}
@@ -199,7 +199,7 @@ public class RankingService {
 
 	public static Ranking findCurrentRanking() {
 		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
-		Ranking ranking = rankingRepository.findCurrentRanking();
+		Ranking ranking = rankingRepository.findCurrentRanking(entityManager);
 		entityManager.close();
 		return ranking;
 	}
@@ -207,7 +207,7 @@ public class RankingService {
 	public static void persist(Ranking ranking) {
 		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		entityManager.getTransaction().begin();
-		rankingRepository.save(ranking);
+		rankingRepository.save(ranking, entityManager);
 		entityManager.getTransaction().commit();
 		entityManager.close();
 
@@ -217,25 +217,18 @@ public class RankingService {
 		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		entityManager.getTransaction().begin();
 		for (Ranking ranking : rankings) {
-			rankingRepository.delete(ranking);
+			rankingRepository.delete(ranking, entityManager);
 		}
 		entityManager.getTransaction().commit();
 		entityManager.close();
-
 	}
 
 	public static void removeRankingDataForCompetitor(Competitor competitor) {
 		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
-		boolean commitTransaction = false;
-		if (!entityManager.getTransaction().isActive()) {
-			entityManager.getTransaction().begin();
-			commitTransaction = true;
-		}
-		rankingRepository.removeRankingRowsForCompetitor(competitor);
+		entityManager.getTransaction().begin();
+		rankingRepository.removeRankingRowsForCompetitor(competitor, entityManager);
+		entityManager.getTransaction().commit();
+		entityManager.close();
 
-		if (commitTransaction) {
-			entityManager.getTransaction().commit();
-			entityManager.close();
-		}
 	}
 }
