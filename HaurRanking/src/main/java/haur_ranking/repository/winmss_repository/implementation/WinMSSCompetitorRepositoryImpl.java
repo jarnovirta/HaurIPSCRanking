@@ -8,6 +8,7 @@ import haur_ranking.domain.Competitor;
 import haur_ranking.repository.winmss_repository.WinMSSCompetitorRepository;
 
 public class WinMSSCompetitorRepositoryImpl implements WinMSSCompetitorRepository {
+	@Override
 	public Competitor findCompetitor(Long winMSSMemberId, Long matchId) {
 		Competitor competitor = null;
 		Connection connection = null;
@@ -16,10 +17,10 @@ public class WinMSSCompetitorRepositoryImpl implements WinMSSCompetitorRepositor
 		try {
 			connection = WinMSSDatabaseUtil.getConnection();
 			statement = connection.createStatement();
-			resultSet = statement.executeQuery(
-					"SELECT Firstname, Lastname, Comment FROM tblMember WHERE MemberId = " + winMSSMemberId);
+			resultSet = statement
+					.executeQuery("SELECT Firstname, Lastname FROM tblMember WHERE MemberId = " + winMSSMemberId);
 			if (resultSet.next()) {
-				competitor = new Competitor(resultSet.getString(1), resultSet.getString(2), resultSet.getString(3));
+				competitor = new Competitor(resultSet.getString(1), resultSet.getString(2));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -30,6 +31,7 @@ public class WinMSSCompetitorRepositoryImpl implements WinMSSCompetitorRepositor
 
 	}
 
+	@Override
 	public boolean isDisqualified(Long winMssMemberId, Long matchId) {
 		Statement statement = null;
 		ResultSet resultSet = null;

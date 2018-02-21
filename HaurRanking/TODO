@@ -1,14 +1,9 @@
 TODO:
 
-- Varmista ett√§ DQ kisaajat eiv√§t ole mukana (testi)
 
-- exception handling
 - laske ranking vain muuttuneiden divisioonien osalta. Nyt vissiin lasketaan kaikki?
 
 - Delete-napilla poistoihin varmistusdialogi
-
-
-- ilman ranking sijaa olevat aakkosj‰rjestykseen
 
 
 - VARMISTA ETTƒ ENTITY MANAGER CLOSE jotta FLUSH JA MANAGERFACTORY MY÷S!
@@ -19,3 +14,6 @@ GENERATE RANKING TAPAHTUU 2 X????
 Ei-t‰rke‰t
 - mik‰ on tulosm‰‰r‰ tietokantasivulla vs pdf?
 - Tallennettaessa tyhj√§ stage ilman tuloslistoja menee aina uudelleen kantaan.
+
+- ilman ranking sijaa olevat aakkosj‰rjestykseen
+- exception handling

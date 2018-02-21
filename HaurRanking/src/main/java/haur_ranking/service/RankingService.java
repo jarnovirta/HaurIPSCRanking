@@ -141,7 +141,7 @@ public class RankingService {
 		for (IPSCDivision division : IPSCDivision.values()) {
 			DivisionRanking divRanking = getDivisionRanking(division);
 			if (divRanking.getDivisionRankingRows().size() > 0) {
-				ranking.getDivisionRankings().add(getDivisionRanking(division));
+				ranking.getDivisionRankings().add(divRanking);
 			}
 		}
 		ranking.setTotalCompetitorsAndResultsCounts();

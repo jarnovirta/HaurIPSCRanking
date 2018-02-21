@@ -26,7 +26,7 @@ public class Competitor {
 	public Competitor() {
 	}
 
-	public Competitor(String firstName, String lastName, String winMSSComment) {
+	public Competitor(String firstName, String lastName) {
 		String[] firstNameArray = firstName.split(" ");
 		if (firstNameArray.length > 1) {
 			firstName = firstNameArray[0];

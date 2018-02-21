@@ -43,12 +43,12 @@ public class TestUtils {
 	static ClassifierStage[] classifierStages = new ClassifierStage[] { ClassifierStage.CLC01, ClassifierStage.CLC03,
 			ClassifierStage.CLC05, ClassifierStage.CLC07, ClassifierStage.CLC09, ClassifierStage.CLC11,
 			ClassifierStage.CLC13, ClassifierStage.CLC15, ClassifierStage.CLC17, ClassifierStage.CLC19 };
-	static Competitor jarno = new Competitor("Jarno", "Virta", null);
-	static Competitor jerry = new Competitor("Jerry", "Miculek", "");
-	static Competitor ben = new Competitor("Ben", "Stoeger", "");
-	static Competitor rob = new Competitor("Rob", "Leatham", "");
-	static Competitor clint = new Competitor("Clint", "Eastwood", "");
-	static Competitor charles = new Competitor("Charles", "Bronson", "");
+	static Competitor jarno = new Competitor("Jarno", "Virta");
+	static Competitor jerry = new Competitor("Jerry", "Miculek");
+	static Competitor ben = new Competitor("Ben", "Stoeger");
+	static Competitor rob = new Competitor("Rob", "Leatham");
+	static Competitor clint = new Competitor("Clint", "Eastwood");
+	static Competitor charles = new Competitor("Charles", "Bronson");
 
 	static Double[] jarnoNewMatchHitFactors = new Double[] { 4.0, 3.9, 2.0, null, 5.5, 4.0, 4.5, null, null, 1.0 };
 
@@ -246,6 +246,7 @@ public class TestUtils {
 	}
 
 	protected static Ranking getCompareToRanking() {
+
 		Ranking compareToRanking = new Ranking();
 		DivisionRanking compareToDivisionRanking = new DivisionRanking(IPSCDivision.PRODUCTION);
 
