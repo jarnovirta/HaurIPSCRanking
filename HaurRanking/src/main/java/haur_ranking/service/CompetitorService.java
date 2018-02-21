@@ -80,15 +80,6 @@ public class CompetitorService {
 					Competitor existingCompetitor = CompetitorService.find(sheet.getCompetitor().getFirstName(),
 							sheet.getCompetitor().getLastName());
 
-					if (sheet.getCompetitor().getLastName().equals("Piepponen")) {
-						System.out.println(sheet.getCompetitor().getFirstName() + " "
-								+ sheet.getCompetitor().getFirstName().length());
-						System.out.println(sheet.getCompetitor().getLastName() + " "
-								+ sheet.getCompetitor().getLastName().length());
-						System.out.println("Found: " + (existingCompetitor != null));
-
-					}
-
 					if (existingCompetitor != null) {
 						sheet.setCompetitor(existingCompetitor);
 					} else {
