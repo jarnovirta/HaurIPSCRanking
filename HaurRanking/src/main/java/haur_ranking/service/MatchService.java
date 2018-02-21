@@ -20,29 +20,41 @@ public class MatchService {
 		matchRepository = repository;
 	}
 
-	public static Match find(Match match, EntityManager entityManager) {
-		return matchRepository.find(match);
+	public static Match find(Match match) {
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
+		match = matchRepository.find(match, entityManager);
+		entityManager.close();
+		return match;
 	}
 
 	public static void delete(Match match) {
-		matchRepository.delete(match);
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
+		entityManager.getTransaction().begin();
+		matchRepository.delete(match, entityManager);
+		entityManager.getTransaction().commit();
+		entityManager.close();
 	}
 
 	public static List<Match> getMatchTableData(int page, int pageSize) {
-		List<Match> matches = matchRepository.getMatchListPage(page, pageSize);
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
+		List<Match> matches = matchRepository.getMatchListPage(page, pageSize, entityManager);
+		entityManager.close();
 		return matches;
 
 	}
 
 	public static List<Match> findAll() {
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		List<Match> matches = null;
-		matches = matchRepository.findAll();
-
+		matches = matchRepository.findAll(entityManager);
+		entityManager.close();
 		return matches;
 	}
 
 	public static int getTotalMatchCount() {
-		int count = matchRepository.getMatchCount();
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
+		int count = matchRepository.getMatchCount(entityManager);
+		entityManager.close();
 		return count;
 	}
 
@@ -53,8 +65,9 @@ public class MatchService {
 		// filtered out and therefore there is no need to check them or for
 		// existing stages (all score sheets for a stage
 		// are always treated together).
-
-		Match existingMatch = matchRepository.find(match);
+		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
+		entityManager.getTransaction().begin();
+		Match existingMatch = matchRepository.find(match, entityManager);
 		if (existingMatch != null) {
 			for (Stage stage : match.getStages()) {
 				stage.setMatch(existingMatch);
@@ -63,12 +76,14 @@ public class MatchService {
 			match = existingMatch;
 		}
 
-		matchRepository.merge(match);
+		matchRepository.merge(match, entityManager);
+		entityManager.getTransaction().commit();
+		entityManager.close();
 	}
 
 	public static Match findLatestMatch() {
 		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
-		Match match = matchRepository.findNewestMatch();
+		Match match = matchRepository.findNewestMatch(entityManager);
 		entityManager.close();
 		return match;
 	}
@@ -99,8 +114,6 @@ public class MatchService {
 				tableRows.add(rowData);
 			}
 		}
-
 		return tableRows;
 	}
-
 }

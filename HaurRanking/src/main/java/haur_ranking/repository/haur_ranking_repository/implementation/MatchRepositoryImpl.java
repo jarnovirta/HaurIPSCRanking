@@ -10,8 +10,7 @@ import haur_ranking.repository.haur_ranking_repository.MatchRepository;
 
 public class MatchRepositoryImpl implements MatchRepository {
 	@Override
-	public Match find(Match match) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
+	public Match find(Match match, EntityManager entityManager) {
 		List<Match> resultList = null;
 		Match resultMatch = null;
 		try {
@@ -28,13 +27,11 @@ public class MatchRepositoryImpl implements MatchRepository {
 			e.printStackTrace();
 
 		}
-		entityManager.close();
 		return resultMatch;
 	}
 
 	@Override
-	public List<Match> getMatchListPage(int page, int pageSize) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
+	public List<Match> getMatchListPage(int page, int pageSize, EntityManager entityManager) {
 		List<Match> resultList = null;
 		try {
 			String queryString = "SELECT m FROM Match m ORDER BY m.date DESC";
@@ -44,32 +41,24 @@ public class MatchRepositoryImpl implements MatchRepository {
 			resultList = query.getResultList();
 		} catch (Exception e) {
 			e.printStackTrace();
-
 		}
-		entityManager.close();
 		return resultList;
 	}
 
 	@Override
-	public void delete(Match match) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
-		entityManager.getTransaction().begin();
+	public void delete(Match match, EntityManager entityManager) {
 		try {
 			if (!entityManager.contains(match)) {
 				match = entityManager.merge(match);
 			}
 			entityManager.remove(match);
-			entityManager.getTransaction().commit();
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		entityManager.close();
 	}
 
 	@Override
-	public Match findNewestMatch() {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
+	public Match findNewestMatch(EntityManager entityManager) {
 		Match match = null;
 		try {
 			String queryString = "SELECT m FROM Match m ORDER BY m.date DESC";
@@ -81,15 +70,12 @@ public class MatchRepositoryImpl implements MatchRepository {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-
 		}
-		entityManager.close();
 		return match;
 	}
 
 	@Override
-	public List<Match> findAll() {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
+	public List<Match> findAll(EntityManager entityManager) {
 		List<Match> matches = null;
 		try {
 			String queryString = "SELECT m FROM Match m ORDER BY m.date DESC";
@@ -99,13 +85,11 @@ public class MatchRepositoryImpl implements MatchRepository {
 			e.printStackTrace();
 
 		}
-		entityManager.close();
 		return matches;
 	}
 
 	@Override
-	public int getMatchCount() {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
+	public int getMatchCount(EntityManager entityManager) {
 		int count = -1;
 		try {
 			count = ((Long) entityManager.createQuery("SELECT COUNT(m) from Match m").getSingleResult()).intValue();
@@ -114,25 +98,17 @@ public class MatchRepositoryImpl implements MatchRepository {
 			e.printStackTrace();
 
 		}
-		entityManager.close();
 		return count;
 
 	}
 
 	@Override
-	public Match merge(Match match) {
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
-		entityManager.getTransaction().begin();
+	public Match merge(Match match, EntityManager entityManager) {
 		try {
 			match = entityManager.merge(match);
-			entityManager.getTransaction().commit();
-
 		} catch (Exception e) {
 			e.printStackTrace();
-
 		}
-		entityManager.close();
 		return match;
 	}
-
 }
