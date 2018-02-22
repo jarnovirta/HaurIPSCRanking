@@ -5,8 +5,7 @@
   <version>0.0.1-SNAPSHOT</version>
   <name>haurranking</name>
   <build>
-    <finalName>haurranking</finalName>
-
+    <finalName>haur-ranking</finalName>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
