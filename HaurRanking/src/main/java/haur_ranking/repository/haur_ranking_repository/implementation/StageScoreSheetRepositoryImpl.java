@@ -161,7 +161,7 @@ public class StageScoreSheetRepositoryImpl implements StageScoreSheetRepository 
 	}
 
 	@Override
-	public void save(StageScoreSheet sheet, EntityManager entityManager) {
+	public void persist(StageScoreSheet sheet, EntityManager entityManager) {
 		try {
 			entityManager.persist(sheet);
 		} catch (Exception e) {

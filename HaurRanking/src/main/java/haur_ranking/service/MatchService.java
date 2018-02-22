@@ -76,7 +76,7 @@ public class MatchService {
 			match = existingMatch;
 		}
 
-		matchRepository.merge(match, entityManager);
+		matchRepository.persist(match, entityManager);
 		entityManager.getTransaction().commit();
 		entityManager.close();
 	}

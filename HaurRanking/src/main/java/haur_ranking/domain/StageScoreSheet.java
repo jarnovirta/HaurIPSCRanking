@@ -1,6 +1,5 @@
 package haur_ranking.domain;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -17,7 +16,7 @@ public class StageScoreSheet {
 	@GeneratedValue(strategy = GenerationType.TABLE)
 	private Long id;
 
-	@ManyToOne(cascade = CascadeType.PERSIST)
+	@ManyToOne
 	private Competitor competitor;
 	private Long winMssPrimaryKey;
 	private Long winMssStageId;

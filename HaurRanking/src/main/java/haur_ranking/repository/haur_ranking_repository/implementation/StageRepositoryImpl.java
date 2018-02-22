@@ -72,8 +72,8 @@ public class StageRepositoryImpl implements StageRepository {
 		return resultStage;
 	}
 
-	// Returns a list of ClassifierStage for which there are at least two
-	// results in database.
+	// Returns a Map of ClassifierStage for which there are at least two
+	// results in database and average of top 2 hit factors for the classifier.
 	// Only ClassifierStages with at least two results are taken into account
 	// when generating a ranking.
 	@Override

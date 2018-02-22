@@ -19,6 +19,6 @@ public interface MatchRepository {
 
 	public int getMatchCount(EntityManager entityManager);
 
-	public Match merge(Match match, EntityManager entityManager);
+	public void persist(Match match, EntityManager entityManager);
 
 }

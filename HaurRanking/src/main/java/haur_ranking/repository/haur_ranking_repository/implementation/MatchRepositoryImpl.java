@@ -93,7 +93,6 @@ public class MatchRepositoryImpl implements MatchRepository {
 		int count = -1;
 		try {
 			count = ((Long) entityManager.createQuery("SELECT COUNT(m) from Match m").getSingleResult()).intValue();
-
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -103,12 +102,11 @@ public class MatchRepositoryImpl implements MatchRepository {
 	}
 
 	@Override
-	public Match merge(Match match, EntityManager entityManager) {
+	public void persist(Match match, EntityManager entityManager) {
 		try {
-			match = entityManager.merge(match);
+			entityManager.persist(match);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return match;
 	}
 }

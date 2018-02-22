@@ -32,7 +32,7 @@ public interface StageScoreSheetRepository {
 
 	public void removeInBatch(List<Long> idList, EntityManager entityManager);
 
-	public void save(StageScoreSheet sheet, EntityManager entityManager);
+	public void persist(StageScoreSheet sheet, EntityManager entityManager);
 
 	public int getCompetitorStageScoreSheetCount(Competitor competitor, EntityManager entityManager);
 
