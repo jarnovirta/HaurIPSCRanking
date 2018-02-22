@@ -38,7 +38,6 @@ public class StageScoreSheetService {
 
 	// Returns a list of score sheets for classifiers which are valid for
 	// ranking, ie. have minimum two results.
-
 	public static List<StageScoreSheet> findCompetitorScoreSheetsForValidClassifiers(String firstName, String lastName,
 			IPSCDivision division) {
 		List<StageScoreSheet> sheets = null;

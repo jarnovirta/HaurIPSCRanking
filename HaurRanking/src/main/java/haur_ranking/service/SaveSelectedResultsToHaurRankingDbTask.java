@@ -10,7 +10,6 @@ public class SaveSelectedResultsToHaurRankingDbTask implements Runnable {
 
 	public SaveSelectedResultsToHaurRankingDbTask(List<Match> matches) {
 		this.matches = matches;
-
 	}
 
 	@Override

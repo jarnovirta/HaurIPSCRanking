@@ -51,7 +51,7 @@ public class WinMSSDataImportService {
 	// Find stages with new results, from which user selects stage results to
 	// be imported
 	public static List<Match> findNewResultsInWinMSSDatabase(String winMssDbLocation) {
-		setImportProgressStatus(ImportStatus.LOADING_FROM_WINMSS);
+		emitImportProgressStatusChange(ImportStatus.LOADING_FROM_WINMSS);
 		List<Match> winMSSMatches = winMSSMatchRepository.findAll(winMssDbLocation);
 		for (Match match : winMSSMatches) {
 			match.setStages(winMSSStageRepository.findStagesForMatch(match));
@@ -86,7 +86,7 @@ public class WinMSSDataImportService {
 			initializeImportProgressVariables(matches);
 
 		// List<Stage> invalidClassifiers = new ArrayList<Stage>();
-		setImportProgressStatus(ImportStatus.SAVING_TO_HAUR_RANKING_DB);
+		emitImportProgressStatusChange(ImportStatus.SAVING_TO_HAUR_RANKING_DB);
 		for (Match match : matches) {
 			int scoreSheetsCount = getWinMSSScoreSheetCountForMatch(match);
 			filterOutStagesExcludedFromSave(match);
@@ -114,7 +114,7 @@ public class WinMSSDataImportService {
 		}
 		oldScoreSheetsRemovedCount = StageScoreSheetService.removeExtraStageScoreSheets(newStageScoreSheets);
 
-		setImportProgressStatus(ImportStatus.GENERATING_RANKING);
+		emitImportProgressStatusChange(ImportStatus.GENERATING_RANKING);
 		if (newScoreSheetsCount > 0) {
 			RankingService.generateRanking();
 		}
@@ -231,11 +231,11 @@ public class WinMSSDataImportService {
 		progressCounterCompletedSteps += progressStepsCount;
 		progressPercentage = Math
 				.toIntExact(Math.round(progressCounterCompletedSteps / progressCounterTotalSteps * 100));
-		emitImportProgressEvent();
+		emitImportProgressPercentage();
 
 	}
 
-	private static void emitImportProgressEvent() {
+	private static void emitImportProgressPercentage() {
 		DataImportEvent event = new DataImportEvent(DataImportEventType.IMPORT_PROGRESS);
 		event.setProgressPercent(progressPercentage);
 		emitDataImportEvent(event);
@@ -247,7 +247,7 @@ public class WinMSSDataImportService {
 		}
 	}
 
-	private static void setImportProgressStatus(ImportStatus newStatus) {
+	private static void emitImportProgressStatusChange(ImportStatus newStatus) {
 		DataImportEvent event = new DataImportEvent(DataImportEventType.IMPORT_STATUS_CHANGE);
 		event.setImportStatus(newStatus);
 		emitDataImportEvent(event);
