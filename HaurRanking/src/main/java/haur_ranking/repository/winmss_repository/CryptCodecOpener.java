@@ -9,6 +9,7 @@ import com.healthmarketscience.jackcess.DatabaseBuilder;
 
 import net.ucanaccess.jdbc.JackcessOpenerInterface;
 
+// Used for opening the WinMSS database (MS Access Database)
 public class CryptCodecOpener implements JackcessOpenerInterface {
 	@Override
 	public Database open(File fl, String pwd) throws IOException {

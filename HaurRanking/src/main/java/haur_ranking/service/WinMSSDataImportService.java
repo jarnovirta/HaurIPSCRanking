@@ -101,7 +101,7 @@ public class WinMSSDataImportService {
 
 			filterOutStagesWithNoNewResults(match);
 
-			newCompetitorsCount += CompetitorService.mergeCompetitorsInMatch(match);
+			newCompetitorsCount += CompetitorService.persistCompetitorsInMatch(match);
 			newStagesCount += match.getStages().size();
 			for (Stage stage : match.getStages()) {
 				newStageScoreSheets.addAll(stage.getStageScoreSheets());

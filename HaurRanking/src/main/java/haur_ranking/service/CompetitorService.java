@@ -72,7 +72,7 @@ public class CompetitorService {
 		RankingService.generateRanking();
 	}
 
-	public static int mergeCompetitorsInMatch(Match match) {
+	public static int persistCompetitorsInMatch(Match match) {
 		int newCompetitorsCount = 0;
 		for (Stage stage : match.getStages()) {
 			if (stage.getStageScoreSheets() != null) {
@@ -92,5 +92,4 @@ public class CompetitorService {
 		}
 		return newCompetitorsCount;
 	}
-
 }

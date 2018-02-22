@@ -14,30 +14,8 @@ import haur_ranking.domain.Stage;
 import haur_ranking.repository.winmss_repository.WinMSSStageRepository;
 
 public class WinMSSStageRepositoryImpl implements WinMSSStageRepository {
-	public List<Stage> findAllHandgunStages() {
-		List<Stage> stages = new ArrayList<Stage>();
-		Connection connection = WinMSSDatabaseUtil.getConnection();
-		Statement statement = null;
-		ResultSet resultSet = null;
-		try {
-			statement = connection.createStatement();
-			resultSet = statement
-					.executeQuery("SELECT MatchId, StageId, StageName FROM tblMatchStage WHERE TypeFirearmId=1");
-			while (resultSet.next()) {
-				Stage stage = new Stage();
-				stage.setWinMssMatchId(resultSet.getLong(1));
-				stage.setWinMssId(resultSet.getLong(2));
-				stage.setName(resultSet.getString(3));
-				stages.add(stage);
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		} finally {
-			WinMSSDatabaseUtil.closeStatementResultSet(statement, resultSet);
-		}
-		return stages;
-	}
 
+	@Override
 	public List<Stage> findStagesForMatch(Match match) {
 		List<Stage> stages = new ArrayList<Stage>();
 		Connection connection = null;
@@ -71,6 +49,7 @@ public class WinMSSStageRepositoryImpl implements WinMSSStageRepository {
 		return stages;
 	}
 
+	@Override
 	public Map<ClassifierStage, Stage> getValidClassifiers() {
 		Map<ClassifierStage, Stage> validStages = new HashMap<ClassifierStage, Stage>();
 		Connection connection = null;

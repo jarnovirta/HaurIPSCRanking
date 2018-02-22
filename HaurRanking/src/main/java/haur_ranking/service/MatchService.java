@@ -67,7 +67,7 @@ public class MatchService {
 		// are always treated together).
 		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		entityManager.getTransaction().begin();
-		Match existingMatch = matchRepository.find(match, entityManager);
+		Match existingMatch = find(match);
 		if (existingMatch != null) {
 			for (Stage stage : match.getStages()) {
 				stage.setMatch(existingMatch);

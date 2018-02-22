@@ -8,8 +8,6 @@ import haur_ranking.domain.Match;
 import haur_ranking.domain.Stage;
 
 public interface WinMSSStageRepository {
-	public List<Stage> findAllHandgunStages();
-
 	public List<Stage> findStagesForMatch(Match match);
 
 	public Map<ClassifierStage, Stage> getValidClassifiers();

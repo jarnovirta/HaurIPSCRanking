@@ -44,11 +44,14 @@ public class RankingService {
 	private static DivisionRankingRow generateDivisionRankingRow(Competitor competitor, DivisionRanking divisionRanking,
 			Map<ClassifierStage, Double> classifierStageTopResultAverages) {
 
+		// Find competitor's scores for valid classifiers. Return a null row if
+		// no results
 		List<StageScoreSheet> scoreSheetsForValidClassifiers = StageScoreSheetService.find(competitor.getFirstName(),
 				competitor.getLastName(), divisionRanking.getDivision(), classifierStageTopResultAverages.keySet());
 		if (scoreSheetsForValidClassifiers.size() == 0)
 			return null;
 
+		// Calculate result data for min. 4 and max. 8 latest results
 		if (scoreSheetsForValidClassifiers.size() < 4)
 			return new DivisionRankingRow(competitor, divisionRanking, false, scoreSheetsForValidClassifiers.size());
 		int resultCount = scoreSheetsForValidClassifiers.size();
@@ -57,9 +60,10 @@ public class RankingService {
 
 		List<Double> competitorRelativeScores = new ArrayList<Double>();
 
-		// Calculate competitor relative scores
+		// Calculate competitor relative scores for classifiers. Relative score
+		// is competitor's hit factor
+		// divided by the average of top 2 hit factors for the classifier.
 		for (StageScoreSheet sheet : scoreSheetsForValidClassifiers) {
-
 			ClassifierStage classifierStage = sheet.getStage().getClassifierStage();
 			if (classifierStageTopResultAverages.keySet().contains(classifierStage)) {
 				double classifierStageTopTwoResultsAverage = classifierStageTopResultAverages.get(classifierStage);
@@ -67,6 +71,9 @@ public class RankingService {
 			}
 		}
 
+		// Calculate average of competitor's 4 best classifier scores. This is
+		// used
+		// to determine the competitor's rank.
 		Collections.sort(competitorRelativeScores);
 		Collections.reverse(competitorRelativeScores);
 		if (competitorRelativeScores.size() > 4) {
@@ -79,20 +86,17 @@ public class RankingService {
 
 		for (int i = 0; i < 4; i++) {
 			scoreSum += competitorRelativeScores.get(i);
-
 		}
-
 		competitorTopScoresAverage = scoreSum / 4;
 		DivisionRankingRow line = new DivisionRankingRow(competitor, divisionRanking, true, competitorTopScoresAverage,
 				StageScoreSheetService.getCompetitorHitFactorAverage(competitor, divisionRanking.getDivision()),
 				resultCount);
-
 		return line;
-
 	}
 
-	// Expects resultList to be ordered, top score first.
 	private static void convertAverageScoresToPercentage(List<DivisionRankingRow> resultList) {
+		// Set competitor ranking percentages relative to top competitor in the
+		// division.
 		if (resultList != null && resultList.size() > 0 && resultList.get(0).getBestResultsAverage() > 0) {
 			double topScore = resultList.get(0).getBestResultsAverage();
 			for (DivisionRankingRow line : resultList) {
@@ -109,8 +113,12 @@ public class RankingService {
 		Map<ClassifierStage, Double> classifierStageTopResultAverages = StageService
 				.getClassifierStagesWithTwoOrMoreResults(division);
 
+		// If no valid classifiers exist for the division, return null
 		if (classifierStageTopResultAverages.keySet().isEmpty())
-			return divisionRanking;
+			return null;
+
+		// Add all valid classifiers (min. 2 results in division) to
+		// DivisionRanking
 		for (ClassifierStage classifier : classifierStageTopResultAverages.keySet()) {
 			if (!divisionRanking.getValidClassifiers().contains(classifier)) {
 				divisionRanking.getValidClassifiers().add(classifier);
@@ -120,7 +128,8 @@ public class RankingService {
 		List<Competitor> competitors = CompetitorService.findAll();
 
 		for (Competitor competitor : competitors) {
-			// Get competitor score sheets and limit number to eight.
+			// Add ranking data rows for competitors. Get max 8 latest
+			// competitor score sheets in division and for valid classifiers.
 			DivisionRankingRow row = generateDivisionRankingRow(competitor, divisionRanking,
 					classifierStageTopResultAverages);
 			if (row != null)
@@ -136,14 +145,18 @@ public class RankingService {
 
 	public static Ranking generateRanking() {
 		Ranking ranking = new Ranking();
+
+		// Generate a division ranking for each IPSC division
+		// for which valid results exist in database
 		for (IPSCDivision division : IPSCDivision.values()) {
 			DivisionRanking divRanking = getDivisionRanking(division);
-			if (divRanking.getDivisionRankingRows().size() > 0) {
+			if (divRanking != null && divRanking.getDivisionRankingRows().size() > 0) {
 				ranking.getDivisionRankings().add(divRanking);
 			}
 		}
 		if (ranking.getDivisionRankings().size() == 0)
 			return null;
+		// Set other ranking data and save to database.
 		ranking.setTotalCompetitorsAndResultsCounts();
 		Match latestIncludedMatch = MatchService.findLatestMatch();
 		if (latestIncludedMatch != null) {
@@ -192,7 +205,6 @@ public class RankingService {
 						}
 					}
 				}
-
 			}
 		}
 	}
