@@ -19,12 +19,10 @@ import haur_ranking.service.WinMSSDataImportService;
 public class App {
 
 	public static void main(String[] args) {
-
 		initializeServices();
 		MainWindow gui = new MainWindow();
 		gui.prepareGUI();
 		gui.showHaurRankingGui();
-
 	}
 
 	private static void initializeServices() {
@@ -35,6 +33,5 @@ public class App {
 		StageService.init(new StageRepositoryImpl(), new WinMSSStageRepositoryImpl());
 		WinMSSDataImportService.init(new WinMSSMatchRepositoryImpl(), new WinMSSStageRepositoryImpl(),
 				new WinMSSStageScoreSheetRepositoryImpl());
-
 	}
 }
