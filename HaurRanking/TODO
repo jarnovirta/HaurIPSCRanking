@@ -2,17 +2,14 @@ TODO:
 
 
 - laske ranking vain muuttuneiden divisioonien osalta. Nyt vissiin lasketaan kaikki?
-
 - Delete-napilla poistoihin varmistusdialogi
+- Poistettujen vanhojen tulosten määrä on tulosten tuonnin yhteydessä VÄÄÄRIN!!!
 
-
-- VARMISTA ETTÄ ENTITY MANAGER CLOSE jotta FLUSH JA MANAGERFACTORY MYÖS!
-
-GENERATE RANKING TAPAHTUU 2 X????
+- Lisää metadataan se iTEXT-juttu!!!!
 
 
 Ei-tärkeät
-- mikä on tulosmäärä tietokantasivulla vs pdf?
+
 - Tallennettaessa tyhjÃ¤ stage ilman tuloslistoja menee aina uudelleen kantaan.
 
 - ilman ranking sijaa olevat aakkosjärjestykseen
