@@ -16,7 +16,6 @@ public class Competitor {
 	private String firstName;
 	private String lastName;
 
-	private String email;
 	private int winMSSTypeDisqualifyRuleId;
 	private int winMSSTypeDisqualificationRuleId;
 
@@ -53,10 +52,6 @@ public class Competitor {
 			return false;
 	}
 
-	public String getEmail() {
-		return email;
-	}
-
 	public String getFirstName() {
 		return firstName;
 	}
@@ -83,10 +78,6 @@ public class Competitor {
 		hash = 53 * hash + (this.firstName != null ? this.firstName.hashCode() : 0);
 		hash = 53 * hash + (this.lastName != null ? this.lastName.hashCode() : 0);
 		return hash;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
 	}
 
 	public void setFirstName(String firstName) {

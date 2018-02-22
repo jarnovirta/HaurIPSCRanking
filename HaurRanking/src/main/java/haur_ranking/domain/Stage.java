@@ -21,9 +21,13 @@ public class Stage {
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE)
 	private Long id;
+
+	@Transient
 	private Long winMssId;
 
 	private String name;
+
+	@Transient
 	private Long winMssMatchId;
 
 	@ManyToOne(cascade = CascadeType.MERGE)

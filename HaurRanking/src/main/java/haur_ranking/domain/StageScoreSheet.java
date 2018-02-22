@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "StageScoreSheet")
@@ -18,8 +19,11 @@ public class StageScoreSheet {
 
 	@ManyToOne
 	private Competitor competitor;
+	@Transient
 	private Long winMssPrimaryKey;
+	@Transient
 	private Long winMssStageId;
+	@Transient
 	private Long winMssMemberId;
 
 	@ManyToOne
@@ -33,13 +37,13 @@ public class StageScoreSheet {
 	private int deductedPoints = 0;
 	private int specialPenalty;
 	private double time;
-	private String timeString;
 	private boolean failedPowerFactor = false;
 	private boolean disqualified = false;
 	private double hitFactor;
 	@Enumerated(EnumType.STRING)
 	private IPSCDivision ipscDivision;
 
+	@Transient
 	private String lastModifiedInWinMSSDatabaseString;
 
 	private int procedurals;
@@ -117,10 +121,6 @@ public class StageScoreSheet {
 
 	public double getTime() {
 		return time;
-	}
-
-	public String getTimeString() {
-		return timeString;
 	}
 
 	public Long getWinMssMemberId() {
@@ -221,10 +221,6 @@ public class StageScoreSheet {
 
 	public void setTime(double time) {
 		this.time = time;
-	}
-
-	public void setTimeString(String timeString) {
-		this.timeString = timeString;
 	}
 
 	public void setWinMssMemberId(Long winMssMemberId) {
