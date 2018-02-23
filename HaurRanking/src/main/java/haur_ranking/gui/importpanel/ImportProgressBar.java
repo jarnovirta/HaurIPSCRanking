@@ -18,7 +18,7 @@ public class ImportProgressBar extends JFrame implements GUIDataEventListener {
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	JProgressBar progressBar;
+	private JProgressBar progressBar;
 
 	public ImportProgressBar() {
 		super("Tulosten tuonti");

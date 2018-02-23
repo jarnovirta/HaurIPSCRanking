@@ -13,6 +13,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -164,11 +165,14 @@ public class MatchStatisticsAndControlsPanel extends JPanel implements GUIDataEv
 	}
 
 	private void deleteStagesCommandHandler() {
-		DatabasePanelDataService.deleteStages();
+		int dialogButton = JOptionPane.YES_NO_OPTION;
+		int dialogResult = JOptionPane.showConfirmDialog(null, "Delete match(es)?", "Confirm", dialogButton);
+		if (dialogResult == JOptionPane.YES_OPTION) {
+			DatabasePanelDataService.deleteStages();
+		}
 		setChooseStagesToDeleteButtonEnabled();
 		cancelDeleteButton.setEnabled(false);
 		deleteStagesButton.setEnabled(false);
-
 	}
 
 	private void cancelDeleteCommandHandler() {

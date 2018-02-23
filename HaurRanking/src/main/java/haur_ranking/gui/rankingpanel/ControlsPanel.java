@@ -17,6 +17,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import haur_ranking.domain.DivisionRanking;
@@ -145,10 +146,13 @@ public class ControlsPanel extends JPanel implements GUIDataEventListener {
 	}
 
 	private void deleteRankingsCommandHandler() {
+		int dialogButton = JOptionPane.YES_NO_OPTION;
+		int dialogResult = JOptionPane.showConfirmDialog(null, "Delete previous rankin(s)?", "Confirm", dialogButton);
+		if (dialogResult == JOptionPane.YES_OPTION) {
+			RankingPanelDataService.deletePreviousRankings();
+		}
 		deleteRankingsButton.setEnabled(false);
 		cancelDeleteButton.setEnabled(false);
-		RankingPanelDataService.deletePreviousRankings();
-
 		setChoosePreviousRankingsToDeleteButtonEnabled();
 		setPdfButtonEnabled();
 	}

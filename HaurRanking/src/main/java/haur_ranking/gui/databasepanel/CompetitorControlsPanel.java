@@ -13,6 +13,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import haur_ranking.event.GUIDataEvent;
@@ -131,7 +132,11 @@ public class CompetitorControlsPanel extends JPanel implements GUIDataEventListe
 	}
 
 	private void deleteCompetitorsCommandHandler() {
-		DatabasePanelDataService.deleteCompetitors();
+		int dialogButton = JOptionPane.YES_NO_OPTION;
+		int dialogResult = JOptionPane.showConfirmDialog(null, "Delete competitor(s)?", "Confirm", dialogButton);
+		if (dialogResult == JOptionPane.YES_OPTION) {
+			DatabasePanelDataService.deleteCompetitors();
+		}
 		setChooseCompetitorsToDeleteButtonEnabled();
 		cancelDeleteButton.setEnabled(false);
 		deleteCompetitorsButton.setEnabled(false);
