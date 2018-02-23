@@ -50,6 +50,8 @@ public class PdfGenerator {
 					ranking.getValidClassifiersCount());
 			pdfWriter.setPageEvent(footer);
 			doc.open();
+			doc.addCreator(
+					"Haur Ranking application using iText Java Library v. 5.0.6 by iText Software under AGPL License.");
 			doc.add(getTitleParagraph());
 			for (DivisionRanking divisionRanking : ranking.getDivisionRankings()) {
 				footer.setShowFooterOnPage(true);
