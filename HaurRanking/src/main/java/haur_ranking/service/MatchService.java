@@ -63,7 +63,7 @@ public class MatchService {
 		return count;
 	}
 
-	public static void save(Match match) {
+	public static void persist(Match match) throws DatabaseException {
 
 		// Save matches with new results. Check for existing matches.
 		// Existing stage score sheets have already been
@@ -86,6 +86,7 @@ public class MatchService {
 		} catch (DatabaseException e) {
 			e.printStackTrace();
 			entityManager.getTransaction().rollback();
+			throw e;
 		} finally {
 			entityManager.close();
 		}

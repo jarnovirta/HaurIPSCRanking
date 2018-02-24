@@ -80,8 +80,10 @@ public class CompetitorRepositoryImpl implements CompetitorRepository {
 		try {
 			if (!entityManager.contains(competitor))
 				competitor = entityManager.merge(competitor);
+
 			entityManager.remove(competitor);
 		} catch (Exception e) {
+			System.out.println("Error");
 			throw new DatabaseException(e.getMessage());
 		}
 	}

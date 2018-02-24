@@ -1,7 +1,10 @@
 package haur_ranking.gui.service;
 
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.JOptionPane;
 
 import haur_ranking.domain.Match;
 import haur_ranking.domain.Stage;
@@ -12,6 +15,7 @@ import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.service.LoadResultDataFromWinMSSTask;
 import haur_ranking.service.SaveSelectedResultsToHaurRankingDbTask;
+import haur_ranking.service.SaveToHaurRankingDBExceptionHandler;
 
 public class ImportPanelDataService {
 	private static List<Match> importResultsPanelMatchList;
@@ -27,9 +31,9 @@ public class ImportPanelDataService {
 		DataEventService.emit(new GUIDataEvent(GUIDataEventType.IMPORT_RESULTS_TABLE_UPDATE));
 	}
 
-	public static void saveResultsToHaurRankingDatabase() {
+	public static void saveResultsToHaurRankingDatabase(Component parentComponent) {
 		SaveSelectedResultsToHaurRankingDbTask importResultsTask = new SaveSelectedResultsToHaurRankingDbTask(
-				importResultsPanelMatchList);
+				importResultsPanelMatchList, new SaveToDatabaseExceptionHandler(parentComponent));
 		Thread importTaskThread = new Thread(importResultsTask);
 		importTaskThread.start();
 	}
@@ -65,6 +69,19 @@ public class ImportPanelDataService {
 
 	public static List<Stage> getImportResultsPanelStageList() {
 		return importResultsPanelStageList;
+	}
+
+	private static class SaveToDatabaseExceptionHandler implements SaveToHaurRankingDBExceptionHandler {
+		private Component parentComponent;
+
+		public SaveToDatabaseExceptionHandler(Component parentComponent) {
+			this.parentComponent = parentComponent;
+		}
+
+		@Override
+		public void handleException(Exception e) {
+			JOptionPane.showMessageDialog(parentComponent, "Error: " + e.getMessage());
+		}
 	}
 
 }

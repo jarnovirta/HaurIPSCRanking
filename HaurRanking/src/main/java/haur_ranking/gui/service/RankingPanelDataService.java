@@ -1,7 +1,10 @@
 package haur_ranking.gui.service;
 
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.JOptionPane;
 
 import haur_ranking.domain.Ranking;
 import haur_ranking.event.GUIDataEvent;
@@ -54,11 +57,15 @@ public class RankingPanelDataService {
 		previousRankingsToDelete.clear();
 	}
 
-	public static void deletePreviousRankings() {
-		if (previousRankingsToDelete != null) {
-			RankingService.delete(previousRankingsToDelete);
-			loadPreviousRankingsTableData(1);
-			DataEventService.emit(new GUIDataEvent(GUIDataEventType.PREVIOUS_RANKINGS_TABLE_UPDATE));
+	public static void deletePreviousRankings(Component parentComponent) {
+		try {
+			if (previousRankingsToDelete != null) {
+				RankingService.delete(previousRankingsToDelete);
+				loadPreviousRankingsTableData(1);
+				DataEventService.emit(new GUIDataEvent(GUIDataEventType.PREVIOUS_RANKINGS_TABLE_UPDATE));
+			}
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(parentComponent, "Error: " + e.getMessage());
 		}
 	}
 

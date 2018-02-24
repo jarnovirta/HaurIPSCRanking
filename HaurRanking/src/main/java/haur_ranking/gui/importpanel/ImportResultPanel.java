@@ -149,7 +149,7 @@ public class ImportResultPanel extends JPanel implements GUIDataEventListener {
 		statisticsTableModel.setValueAt("Uusia tuloksia:", 1, 0);
 		statisticsTableModel.setValueAt("Vanhoja tuloksia samoihin ", 2, 0);
 		statisticsTableModel.setValueAt("luokitteluohjelmiin poistettu:", 3, 0);
-		statisticsTableModel.setValueAt("Uusia kilpailijoita:", 4, 0);
+		statisticsTableModel.setValueAt("Uusia henkilöitä:", 4, 0);
 
 		return statisticsTable;
 	}

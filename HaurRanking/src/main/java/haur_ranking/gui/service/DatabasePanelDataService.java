@@ -1,7 +1,10 @@
 package haur_ranking.gui.service;
 
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.JOptionPane;
 
 import haur_ranking.domain.Competitor;
 import haur_ranking.domain.DatabaseStatistics;
@@ -94,10 +97,14 @@ public class DatabasePanelDataService {
 		competitorsToDelete.clear();
 	}
 
-	public static void deleteCompetitors() {
-		if (competitorsToDelete.size() > 0)
-			CompetitorService.deleteAll(competitorsToDelete);
-		DataEventService.emit(new GUIDataEvent(GUIDataEventType.NEW_RANKING_GENERATED));
+	public static void deleteCompetitors(Component parentComponent) {
+		try {
+			if (competitorsToDelete.size() > 0)
+				CompetitorService.deleteAll(competitorsToDelete);
+			DataEventService.emit(new GUIDataEvent(GUIDataEventType.NEW_RANKING_GENERATED));
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(parentComponent, "Error: " + e.getMessage());
+		}
 	}
 
 	public static List<Stage> getDatabaseMatchInfoTableStages() {
@@ -108,9 +115,13 @@ public class DatabasePanelDataService {
 		return databaseMatchInfoTableStagesToDelete;
 	}
 
-	public static void deleteStages() {
-		StageService.delete(databaseMatchInfoTableStagesToDelete);
-		RankingService.generateRanking();
+	public static void deleteStages(Component parentComponent) {
+		try {
+			StageService.delete(databaseMatchInfoTableStagesToDelete);
+			RankingService.generateRanking();
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(parentComponent, "Error: " + e.getMessage());
+		}
 		DataEventService.emit(new GUIDataEvent(GUIDataEventType.NEW_RANKING_GENERATED));
 	}
 

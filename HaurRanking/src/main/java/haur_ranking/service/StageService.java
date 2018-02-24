@@ -69,7 +69,7 @@ public class StageService {
 		return true;
 	}
 
-	public static void delete(List<Stage> stages) {
+	public static void delete(List<Stage> stages) throws DatabaseException {
 		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		entityManager.getTransaction().begin();
 
@@ -85,9 +85,10 @@ public class StageService {
 					MatchService.delete(match);
 			}
 			entityManager.getTransaction().commit();
-		} catch (DatabaseException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			entityManager.getTransaction().rollback();
+			throw e;
 		} finally {
 			entityManager.close();
 		}

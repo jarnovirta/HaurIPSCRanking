@@ -108,7 +108,7 @@ public class RankingService {
 
 	private static DivisionRanking getDivisionRanking(IPSCDivision division) {
 		DivisionRanking divisionRanking = new DivisionRanking(division);
-		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
+
 		// Get valid classifiers with two or more results, and top two hit
 		// scores average for each.
 		Map<ClassifierStage, Double> classifierStageTopResultAverages = StageService
@@ -140,34 +140,37 @@ public class RankingService {
 		Collections.reverse(resultList);
 		convertAverageScoresToPercentage(resultList);
 		divisionRanking.setDivisionRankingRows(resultList);
-		entityManager.close();
 		return divisionRanking;
 	}
 
-	public static Ranking generateRanking() {
-		Ranking ranking = new Ranking();
+	public static Ranking generateRanking() throws DatabaseException {
+		try {
+			Ranking ranking = new Ranking();
 
-		// Generate a division ranking for each IPSC division
-		// for which valid results exist in database
-		for (IPSCDivision division : IPSCDivision.values()) {
-			DivisionRanking divRanking = getDivisionRanking(division);
-			if (divRanking != null && divRanking.getDivisionRankingRows().size() > 0) {
-				ranking.getDivisionRankings().add(divRanking);
+			// Generate a division ranking for each IPSC division
+			// for which valid results exist in database
+			for (IPSCDivision division : IPSCDivision.values()) {
+				DivisionRanking divRanking = getDivisionRanking(division);
+				if (divRanking != null && divRanking.getDivisionRankingRows().size() > 0) {
+					ranking.getDivisionRankings().add(divRanking);
+				}
 			}
+			if (ranking.getDivisionRankings().size() == 0)
+				return null;
+			// Set other ranking data and save to database.
+			ranking.setTotalCompetitorsAndResultsCounts();
+			Match latestIncludedMatch = MatchService.findLatestMatch();
+			if (latestIncludedMatch != null) {
+				ranking.setLatestIncludedMatchDate(latestIncludedMatch.getDate());
+				ranking.setLatestIncludedMatchName(latestIncludedMatch.getName());
+			} else {
+				ranking.setLatestIncludedMatchName("--");
+			}
+			persist(ranking);
+			return ranking;
+		} catch (Exception e) {
+			throw new DatabaseException("An error occure while generating ranking: " + e.getMessage());
 		}
-		if (ranking.getDivisionRankings().size() == 0)
-			return null;
-		// Set other ranking data and save to database.
-		ranking.setTotalCompetitorsAndResultsCounts();
-		Match latestIncludedMatch = MatchService.findLatestMatch();
-		if (latestIncludedMatch != null) {
-			ranking.setLatestIncludedMatchDate(latestIncludedMatch.getDate());
-			ranking.setLatestIncludedMatchName(latestIncludedMatch.getName());
-		} else {
-			ranking.setLatestIncludedMatchName("--");
-		}
-		persist(ranking);
-		return ranking;
 	}
 
 	public static void createPdfRankingFile(Ranking ranking, Ranking compareToRanking, String pdfFilePath) {
@@ -231,7 +234,7 @@ public class RankingService {
 		}
 	}
 
-	public static void delete(List<Ranking> rankings) {
+	public static void delete(List<Ranking> rankings) throws DatabaseException {
 		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		entityManager.getTransaction().begin();
 		try {
@@ -242,6 +245,7 @@ public class RankingService {
 		} catch (DatabaseException e) {
 			e.printStackTrace();
 			entityManager.getTransaction().rollback();
+			throw e;
 		} finally {
 			entityManager.close();
 		}

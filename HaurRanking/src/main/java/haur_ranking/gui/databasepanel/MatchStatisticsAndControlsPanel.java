@@ -27,6 +27,7 @@ import haur_ranking.event.GUIDataEventListener;
 import haur_ranking.gui.MainWindow;
 import haur_ranking.gui.service.DataEventService;
 import haur_ranking.gui.service.DatabasePanelDataService;
+import haur_ranking.gui.utils.ConfirmationDialogueUtil;
 
 public class MatchStatisticsAndControlsPanel extends JPanel implements GUIDataEventListener {
 	/**
@@ -165,10 +166,10 @@ public class MatchStatisticsAndControlsPanel extends JPanel implements GUIDataEv
 	}
 
 	private void deleteStagesCommandHandler() {
-		int dialogButton = JOptionPane.YES_NO_OPTION;
-		int dialogResult = JOptionPane.showConfirmDialog(null, "Delete match(es)?", "Confirm", dialogButton);
-		if (dialogResult == JOptionPane.YES_OPTION) {
-			DatabasePanelDataService.deleteStages();
+
+		if (ConfirmationDialogueUtil.getConfirmation(this,
+				"Poistetaanko luokitteluohjelmia?") == JOptionPane.YES_OPTION) {
+			DatabasePanelDataService.deleteStages(this);
 		}
 		setChooseStagesToDeleteButtonEnabled();
 		cancelDeleteButton.setEnabled(false);

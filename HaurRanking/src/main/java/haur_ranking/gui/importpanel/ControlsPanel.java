@@ -105,7 +105,7 @@ public class ControlsPanel extends JPanel implements GUIDataEventListener {
 		progressBar.setStringPainted(true);
 		progressBar.setValue(0);
 		progressBar.setVisible(true);
-		ImportPanelDataService.saveResultsToHaurRankingDatabase();
+		ImportPanelDataService.saveResultsToHaurRankingDatabase(this);
 	}
 
 	@Override
@@ -122,6 +122,12 @@ public class ControlsPanel extends JPanel implements GUIDataEventListener {
 				loadWinMSSDataButton.setEnabled(true);
 				importResultsButton.setEnabled(true);
 				clearImportAsClassifierSelectionsButton.setEnabled(true);
+				progressBar.setVisible(false);
+			}
+			if (event.getDataImportEvent().getImportStatus() == ImportStatus.ERROR) {
+				loadWinMSSDataButton.setEnabled(true);
+				importResultsButton.setEnabled(false);
+				clearImportAsClassifierSelectionsButton.setEnabled(false);
 				progressBar.setVisible(false);
 			}
 		}

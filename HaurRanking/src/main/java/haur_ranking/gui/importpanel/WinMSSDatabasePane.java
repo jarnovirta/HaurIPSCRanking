@@ -247,6 +247,9 @@ public class WinMSSDatabasePane extends JPanel implements GUIDataEventListener {
 			if (event.getDataImportEvent().getImportStatus() == ImportStatus.SAVE_TO_HAUR_RANKING_DB_DONE) {
 				cardLayout.show(cardLayoutPanel, ImportTableStatus.IMPORT_RESULT.toString());
 			}
+			if (event.getDataImportEvent().getImportStatus() == ImportStatus.ERROR) {
+				cardLayout.show(cardLayoutPanel, ImportTableStatus.NO_WINMSS_DB_SELECTED.toString());
+			}
 		}
 		if (event.getEventType() == GUIDataEventType.IMPORT_RESULTS_TABLE_UPDATE) {
 			updateDatabaseMatchInfoTable(ImportPanelDataService.getImportResultsPanelMatchList());

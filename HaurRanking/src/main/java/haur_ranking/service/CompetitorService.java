@@ -67,7 +67,7 @@ public class CompetitorService {
 		return competitors;
 	}
 
-	public static void deleteAll(List<Competitor> competitors) {
+	public static void deleteAll(List<Competitor> competitors) throws DatabaseException {
 		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		entityManager.getTransaction().begin();
 		try {
@@ -81,6 +81,7 @@ public class CompetitorService {
 		} catch (DatabaseException e) {
 			e.printStackTrace();
 			entityManager.getTransaction().rollback();
+			throw e;
 		} finally {
 			entityManager.close();
 		}

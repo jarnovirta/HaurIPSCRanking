@@ -22,6 +22,7 @@ import haur_ranking.event.GUIDataEventListener;
 import haur_ranking.gui.MainWindow;
 import haur_ranking.gui.service.DataEventService;
 import haur_ranking.gui.service.DatabasePanelDataService;
+import haur_ranking.gui.utils.ConfirmationDialogueUtil;
 
 public class CompetitorControlsPanel extends JPanel implements GUIDataEventListener {
 	/**
@@ -56,7 +57,7 @@ public class CompetitorControlsPanel extends JPanel implements GUIDataEventListe
 		JPanel statisticsPanel = new JPanel();
 		statisticsPanel.setLayout(new BoxLayout(statisticsPanel, BoxLayout.Y_AXIS));
 		JPanel labelPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		JLabel statisticsLabel = new JLabel("Ampujia:");
+		JLabel statisticsLabel = new JLabel("Henkilöitä:");
 		competitorCountLabel = new JLabel();
 		labelPanel.add(statisticsLabel);
 		labelPanel.add(competitorCountLabel);
@@ -71,7 +72,7 @@ public class CompetitorControlsPanel extends JPanel implements GUIDataEventListe
 	private JPanel getControlButtonsPanel() {
 		JPanel controlsPanel = new JPanel();
 		controlsPanel.setLayout(new BoxLayout(controlsPanel, BoxLayout.Y_AXIS));
-		JLabel instructionLine = new JLabel("Poista ampujia");
+		JLabel instructionLine = new JLabel("Poista henkilöitä");
 		instructionLine.setAlignmentX(Component.LEFT_ALIGNMENT);
 		instructionLine
 				.setFont(new Font(instructionLine.getFont().getName(), Font.BOLD, instructionLine.getFont().getSize()));
@@ -132,10 +133,9 @@ public class CompetitorControlsPanel extends JPanel implements GUIDataEventListe
 	}
 
 	private void deleteCompetitorsCommandHandler() {
-		int dialogButton = JOptionPane.YES_NO_OPTION;
-		int dialogResult = JOptionPane.showConfirmDialog(null, "Delete competitor(s)?", "Confirm", dialogButton);
-		if (dialogResult == JOptionPane.YES_OPTION) {
-			DatabasePanelDataService.deleteCompetitors();
+
+		if (ConfirmationDialogueUtil.getConfirmation(this, "Poistetaanko henkilöitä?") == JOptionPane.YES_OPTION) {
+			DatabasePanelDataService.deleteCompetitors(this);
 		}
 		setChooseCompetitorsToDeleteButtonEnabled();
 		cancelDeleteButton.setEnabled(false);

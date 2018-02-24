@@ -30,6 +30,7 @@ import haur_ranking.gui.filter.FileFilterUtils;
 import haur_ranking.gui.filter.PdfFileFilter;
 import haur_ranking.gui.service.DataEventService;
 import haur_ranking.gui.service.RankingPanelDataService;
+import haur_ranking.gui.utils.ConfirmationDialogueUtil;
 import haur_ranking.service.RankingService;
 import haur_ranking.utils.DateFormatUtils;
 
@@ -146,10 +147,9 @@ public class ControlsPanel extends JPanel implements GUIDataEventListener {
 	}
 
 	private void deleteRankingsCommandHandler() {
-		int dialogButton = JOptionPane.YES_NO_OPTION;
-		int dialogResult = JOptionPane.showConfirmDialog(null, "Delete previous rankin(s)?", "Confirm", dialogButton);
-		if (dialogResult == JOptionPane.YES_OPTION) {
-			RankingPanelDataService.deletePreviousRankings();
+		if (ConfirmationDialogueUtil.getConfirmation(this,
+				"Poistetaanko vanhoja ranking-listauksia?") == JOptionPane.YES_OPTION) {
+			RankingPanelDataService.deletePreviousRankings(this);
 		}
 		deleteRankingsButton.setEnabled(false);
 		cancelDeleteButton.setEnabled(false);

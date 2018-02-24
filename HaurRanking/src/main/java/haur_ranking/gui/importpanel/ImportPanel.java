@@ -18,10 +18,9 @@ public class ImportPanel extends JPanel {
 	WinMSSDatabasePane rightPane;
 
 	public ImportPanel() {
-
 		setLayout(new BorderLayout());
 		add(new ControlsPanel(), BorderLayout.WEST);
 		add(new WinMSSDatabasePane());
-
 	}
+
 }

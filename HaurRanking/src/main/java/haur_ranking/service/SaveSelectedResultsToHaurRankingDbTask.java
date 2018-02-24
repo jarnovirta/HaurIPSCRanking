@@ -7,13 +7,19 @@ import haur_ranking.domain.Match;
 public class SaveSelectedResultsToHaurRankingDbTask implements Runnable {
 
 	private List<Match> matches;
+	private SaveToHaurRankingDBExceptionHandler exceptionHandler;
 
-	public SaveSelectedResultsToHaurRankingDbTask(List<Match> matches) {
+	public SaveSelectedResultsToHaurRankingDbTask(List<Match> matches, SaveToHaurRankingDBExceptionHandler handler) {
 		this.matches = matches;
+		this.exceptionHandler = handler;
 	}
 
 	@Override
 	public void run() {
-		WinMSSDataImportService.importSelectedResults(matches);
+		try {
+			WinMSSDataImportService.importSelectedResults(matches);
+		} catch (Exception e) {
+			exceptionHandler.handleException(e);
+		}
 	}
 }

@@ -223,7 +223,11 @@ public class TestUtils {
 		deleteDatabase();
 
 		List<Match> matches = TestUtils.createTestMatches();
-		WinMSSDataImportService.importSelectedResults(matches);
+		try {
+			WinMSSDataImportService.importSelectedResults(matches);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		HaurRankingDatabaseUtils.closeEntityManagerFactory();
 	}

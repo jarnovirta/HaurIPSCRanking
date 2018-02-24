@@ -11,6 +11,7 @@ import haur_ranking.event.DataImportEvent;
 import haur_ranking.event.DataImportEvent.DataImportEventType;
 import haur_ranking.event.DataImportEvent.ImportStatus;
 import haur_ranking.event.DataImportEventListener;
+import haur_ranking.exception.DatabaseException;
 import haur_ranking.repository.winmss_repository.WinMSSMatchRepository;
 import haur_ranking.repository.winmss_repository.WinMSSStageRepository;
 import haur_ranking.repository.winmss_repository.WinMSSStageScoreSheetRepository;
@@ -80,55 +81,59 @@ public class WinMSSDataImportService {
 
 	// Fetch stage score sheets for stages selected by user and save to Ranking
 	// Database
-	public static void importSelectedResults(List<Match> matches) {
+	public static void importSelectedResults(List<Match> matches) throws DatabaseException {
 
-		if (!runForUnitTests)
-			initializeImportProgressVariables(matches);
+		try {
+			if (!runForUnitTests)
+				initializeImportProgressVariables(matches);
 
-		// List<Stage> invalidClassifiers = new ArrayList<Stage>();
-		emitImportProgressStatusChange(ImportStatus.SAVING_TO_HAUR_RANKING_DB);
-		for (Match match : matches) {
-			int scoreSheetsCount = getWinMSSScoreSheetCountForMatch(match);
-			filterOutStagesExcludedFromSave(match);
-			if (match.getStages().size() == 0) {
+			// List<Stage> invalidClassifiers = new ArrayList<Stage>();
+			emitImportProgressStatusChange(ImportStatus.SAVING_TO_HAUR_RANKING_DB);
+			for (Match match : matches) {
+				int scoreSheetsCount = getWinMSSScoreSheetCountForMatch(match);
+				filterOutStagesExcludedFromSave(match);
+				if (match.getStages().size() == 0) {
+					addImportProgress(scoreSheetsCount);
+					continue;
+				}
+
+				if (!runForUnitTests) {
+					setStageScoreSheetsFromWinMSS(match);
+				}
+
+				filterOutStagesWithNoNewResults(match);
+
+				newCompetitorsCount += CompetitorService.persistCompetitorsInMatch(match);
+				newStagesCount += match.getStages().size();
+				for (Stage stage : match.getStages()) {
+					newStageScoreSheets.addAll(stage.getStageScoreSheets());
+				}
+				if (match.getStages().size() > 0) {
+					MatchService.persist(match);
+				}
 				addImportProgress(scoreSheetsCount);
-				continue;
+				newScoreSheetsCount += getScoreSheetsCount(match);
 			}
+			oldScoreSheetsRemovedCount = StageScoreSheetService.removeExtraStageScoreSheets(newStageScoreSheets);
 
-			if (!runForUnitTests) {
-				setStageScoreSheetsFromWinMSS(match);
+			emitImportProgressStatusChange(ImportStatus.GENERATING_RANKING);
+			if (newScoreSheetsCount > 0) {
+				RankingService.generateRanking();
 			}
-
-			filterOutStagesWithNoNewResults(match);
-
-			newCompetitorsCount += CompetitorService.persistCompetitorsInMatch(match);
-			newStagesCount += match.getStages().size();
-			for (Stage stage : match.getStages()) {
-				newStageScoreSheets.addAll(stage.getStageScoreSheets());
-			}
-			if (match.getStages().size() > 0) {
-				MatchService.save(match);
-			}
-			addImportProgress(scoreSheetsCount);
-			newScoreSheetsCount += getScoreSheetsCount(match);
+			DataImportEvent event = new DataImportEvent(DataImportEventType.IMPORT_STATUS_CHANGE);
+			event.setImportStatus(ImportStatus.SAVE_TO_HAUR_RANKING_DB_DONE);
+			event.setNewScoreSheetsCount(newScoreSheetsCount);
+			event.setNewCompetitorsCount(newCompetitorsCount);
+			event.setNewMatchesCount(newMatchesCount);
+			event.setNewStagesCount(newStagesCount);
+			event.setOldScoreSheetsRemovedCount(oldScoreSheetsRemovedCount);
+			event.setInvalidClassifiers(invalidClassifiers);
+			event.setStagesWithNoScoreSheets(stagesWithNoScoreSheets);
+			emitDataImportEvent(event);
+		} catch (Exception e) {
+			emitImportProgressStatusChange(ImportStatus.ERROR);
+			throw e;
 		}
-		oldScoreSheetsRemovedCount = StageScoreSheetService.removeExtraStageScoreSheets(newStageScoreSheets);
-
-		emitImportProgressStatusChange(ImportStatus.GENERATING_RANKING);
-		if (newScoreSheetsCount > 0) {
-			RankingService.generateRanking();
-		}
-		DataImportEvent event = new DataImportEvent(DataImportEventType.IMPORT_STATUS_CHANGE);
-		event.setImportStatus(ImportStatus.SAVE_TO_HAUR_RANKING_DB_DONE);
-		event.setNewScoreSheetsCount(newScoreSheetsCount);
-		event.setNewCompetitorsCount(newCompetitorsCount);
-		event.setNewMatchesCount(newMatchesCount);
-		event.setNewStagesCount(newStagesCount);
-		event.setOldScoreSheetsRemovedCount(oldScoreSheetsRemovedCount);
-		event.setInvalidClassifiers(invalidClassifiers);
-		event.setStagesWithNoScoreSheets(stagesWithNoScoreSheets);
-		emitDataImportEvent(event);
-
 	}
 
 	private static int getWinMSSScoreSheetCountForMatch(Match match) {
