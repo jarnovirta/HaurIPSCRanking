@@ -6,30 +6,31 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 import haur_ranking.domain.Competitor;
+import haur_ranking.exception.DatabaseException;
 import haur_ranking.repository.haur_ranking_repository.CompetitorRepository;
 
 public class CompetitorRepositoryImpl implements CompetitorRepository {
-	@Override
-	public Competitor find(String firstName, String lastName, EntityManager entityManager) {
-		String queryString = "SELECT c FROM Competitor c WHERE c.firstName = :firstName AND c.lastName = :lastName";
 
+	@Override
+	public Competitor find(String firstName, String lastName, EntityManager entityManager) throws DatabaseException {
 		try {
+			String queryString = "SELECT c FROM Competitor c WHERE c.firstName = :firstName AND c.lastName = :lastName";
 			TypedQuery<Competitor> query = entityManager.createQuery(queryString, Competitor.class);
 			query.setParameter("firstName", firstName);
 			query.setParameter("lastName", lastName);
-
 			List<Competitor> existingCompetitors = query.getResultList();
 			if (existingCompetitors.size() > 0)
 				return existingCompetitors.get(0);
+			else
+				return null;
 		} catch (Exception e) {
-			e.printStackTrace();
-
+			throw new DatabaseException(e.getMessage());
 		}
-		return null;
 	}
 
 	@Override
-	public List<Competitor> getCompetitorListPage(int page, int pageSize, EntityManager entityManager) {
+	public List<Competitor> getCompetitorListPage(int page, int pageSize, EntityManager entityManager)
+			throws DatabaseException {
 		try {
 
 			String queryString = "SELECT c FROM Competitor c ORDER BY c.lastName";
@@ -38,50 +39,47 @@ public class CompetitorRepositoryImpl implements CompetitorRepository {
 			query.setMaxResults(pageSize);
 			return query.getResultList();
 		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
+			throw new DatabaseException(e.getMessage());
 		}
 	}
 
 	@Override
-	public List<Competitor> findAll(EntityManager entityManager) {
+	public List<Competitor> findAll(EntityManager entityManager) throws DatabaseException {
 		try {
 			String queryString = "SELECT c FROM Competitor c ORDER BY c.lastName";
 			final TypedQuery<Competitor> query = entityManager.createQuery(queryString, Competitor.class);
 			return query.getResultList();
 		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
+			throw new DatabaseException(e.getMessage());
 		}
 	}
 
 	@Override
-	public int getTotalCompetitorCount(EntityManager entityManager) {
+	public int getTotalCompetitorCount(EntityManager entityManager) throws DatabaseException {
 		try {
 			return ((Long) entityManager.createQuery("SELECT COUNT(c) from Competitor c").getSingleResult()).intValue();
 		} catch (Exception e) {
-			e.printStackTrace();
-			return -1;
+			throw new DatabaseException(e.getMessage());
 		}
 	}
 
 	@Override
-	public void persist(Competitor competitor, EntityManager entityManager) {
+	public void persist(Competitor competitor, EntityManager entityManager) throws DatabaseException {
 		try {
 			entityManager.persist(competitor);
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new DatabaseException(e.getMessage());
 		}
 	}
 
 	@Override
-	public void delete(Competitor competitor, EntityManager entityManager) {
+	public void delete(Competitor competitor, EntityManager entityManager) throws DatabaseException {
 		try {
 			if (!entityManager.contains(competitor))
 				competitor = entityManager.merge(competitor);
 			entityManager.remove(competitor);
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new DatabaseException(e.getMessage());
 		}
 	}
 }
