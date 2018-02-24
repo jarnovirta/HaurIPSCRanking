@@ -10,6 +10,7 @@ import javax.persistence.TypedQuery;
 import haur_ranking.domain.ClassifierStage;
 import haur_ranking.domain.IPSCDivision;
 import haur_ranking.domain.Stage;
+import haur_ranking.exception.DatabaseException;
 import haur_ranking.repository.haur_ranking_repository.StageRepository;
 
 public class StageRepositoryImpl implements StageRepository {
@@ -32,23 +33,21 @@ public class StageRepositoryImpl implements StageRepository {
 		try {
 			stageCount = ((Long) entityManager.createQuery("SELECT COUNT(s) from Stage s").getSingleResult())
 					.intValue();
-
 		} catch (Exception e) {
 			e.printStackTrace();
-
 		}
 		return stageCount;
 	}
 
 	@Override
-	public void delete(Stage stage, EntityManager entityManager) {
+	public void delete(Stage stage, EntityManager entityManager) throws DatabaseException {
 		try {
 			if (!entityManager.contains(stage)) {
 				stage = entityManager.merge(stage);
 			}
 			entityManager.remove(stage);
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new DatabaseException(e.getMessage());
 		}
 	}
 

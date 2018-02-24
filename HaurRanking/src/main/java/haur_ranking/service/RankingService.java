@@ -15,6 +15,7 @@ import haur_ranking.domain.IPSCDivision;
 import haur_ranking.domain.Match;
 import haur_ranking.domain.Ranking;
 import haur_ranking.domain.StageScoreSheet;
+import haur_ranking.exception.DatabaseException;
 import haur_ranking.pdf.PdfGenerator;
 import haur_ranking.repository.haur_ranking_repository.RankingRepository;
 import haur_ranking.repository.haur_ranking_repository.implementation.HaurRankingDatabaseUtils;
@@ -219,28 +220,43 @@ public class RankingService {
 	public static void persist(Ranking ranking) {
 		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		entityManager.getTransaction().begin();
-		rankingRepository.save(ranking, entityManager);
-		entityManager.getTransaction().commit();
-		entityManager.close();
-
+		try {
+			rankingRepository.save(ranking, entityManager);
+			entityManager.getTransaction().commit();
+		} catch (DatabaseException e) {
+			e.printStackTrace();
+			entityManager.getTransaction().rollback();
+		} finally {
+			entityManager.close();
+		}
 	}
 
 	public static void delete(List<Ranking> rankings) {
 		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		entityManager.getTransaction().begin();
-		for (Ranking ranking : rankings) {
-			rankingRepository.delete(ranking, entityManager);
+		try {
+			for (Ranking ranking : rankings) {
+				rankingRepository.delete(ranking, entityManager);
+			}
+			entityManager.getTransaction().commit();
+		} catch (DatabaseException e) {
+			e.printStackTrace();
+			entityManager.getTransaction().rollback();
+		} finally {
+			entityManager.close();
 		}
-		entityManager.getTransaction().commit();
-		entityManager.close();
 	}
 
 	public static void removeRankingDataForCompetitor(Competitor competitor) {
 		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		entityManager.getTransaction().begin();
-		rankingRepository.removeRankingRowsForCompetitor(competitor, entityManager);
-		entityManager.getTransaction().commit();
-		entityManager.close();
-
+		try {
+			rankingRepository.removeRankingRowsForCompetitor(competitor, entityManager);
+			entityManager.getTransaction().commit();
+		} catch (DatabaseException e) {
+			e.printStackTrace();
+		} finally {
+			entityManager.close();
+		}
 	}
 }

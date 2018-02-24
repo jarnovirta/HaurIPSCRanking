@@ -11,6 +11,7 @@ import haur_ranking.domain.ClassifierStage;
 import haur_ranking.domain.Competitor;
 import haur_ranking.domain.IPSCDivision;
 import haur_ranking.domain.StageScoreSheet;
+import haur_ranking.exception.DatabaseException;
 import haur_ranking.repository.haur_ranking_repository.StageScoreSheetRepository;
 
 public class StageScoreSheetRepositoryImpl implements StageScoreSheetRepository {
@@ -150,22 +151,22 @@ public class StageScoreSheetRepositoryImpl implements StageScoreSheetRepository 
 	}
 
 	@Override
-	public void removeInBatch(List<Long> idList, EntityManager entityManager) {
+	public void removeInBatch(List<Long> idList, EntityManager entityManager) throws DatabaseException {
 		try {
 			entityManager.createQuery("DELETE FROM StageScoreSheet s where s.id IN :idList")
 					.setParameter("idList", idList).executeUpdate();
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new DatabaseException(e.getMessage());
 		}
 	}
 
 	@Override
-	public void persist(StageScoreSheet sheet, EntityManager entityManager) {
+	public void persist(StageScoreSheet sheet, EntityManager entityManager) throws DatabaseException {
 		try {
 			entityManager.persist(sheet);
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new DatabaseException(e.getMessage());
 		}
 	}
 

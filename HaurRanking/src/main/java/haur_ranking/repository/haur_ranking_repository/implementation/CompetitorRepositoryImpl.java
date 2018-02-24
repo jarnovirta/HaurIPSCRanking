@@ -12,7 +12,7 @@ import haur_ranking.repository.haur_ranking_repository.CompetitorRepository;
 public class CompetitorRepositoryImpl implements CompetitorRepository {
 
 	@Override
-	public Competitor find(String firstName, String lastName, EntityManager entityManager) throws DatabaseException {
+	public Competitor find(String firstName, String lastName, EntityManager entityManager) {
 		try {
 			String queryString = "SELECT c FROM Competitor c WHERE c.firstName = :firstName AND c.lastName = :lastName";
 			TypedQuery<Competitor> query = entityManager.createQuery(queryString, Competitor.class);
@@ -24,13 +24,13 @@ public class CompetitorRepositoryImpl implements CompetitorRepository {
 			else
 				return null;
 		} catch (Exception e) {
-			throw new DatabaseException(e.getMessage());
+			e.printStackTrace();
+			return null;
 		}
 	}
 
 	@Override
-	public List<Competitor> getCompetitorListPage(int page, int pageSize, EntityManager entityManager)
-			throws DatabaseException {
+	public List<Competitor> getCompetitorListPage(int page, int pageSize, EntityManager entityManager) {
 		try {
 
 			String queryString = "SELECT c FROM Competitor c ORDER BY c.lastName";
@@ -39,27 +39,30 @@ public class CompetitorRepositoryImpl implements CompetitorRepository {
 			query.setMaxResults(pageSize);
 			return query.getResultList();
 		} catch (Exception e) {
-			throw new DatabaseException(e.getMessage());
+			e.printStackTrace();
+			return null;
 		}
 	}
 
 	@Override
-	public List<Competitor> findAll(EntityManager entityManager) throws DatabaseException {
+	public List<Competitor> findAll(EntityManager entityManager) {
 		try {
 			String queryString = "SELECT c FROM Competitor c ORDER BY c.lastName";
 			final TypedQuery<Competitor> query = entityManager.createQuery(queryString, Competitor.class);
 			return query.getResultList();
 		} catch (Exception e) {
-			throw new DatabaseException(e.getMessage());
+			e.printStackTrace();
+			return null;
 		}
 	}
 
 	@Override
-	public int getTotalCompetitorCount(EntityManager entityManager) throws DatabaseException {
+	public int getTotalCompetitorCount(EntityManager entityManager) {
 		try {
 			return ((Long) entityManager.createQuery("SELECT COUNT(c) from Competitor c").getSingleResult()).intValue();
 		} catch (Exception e) {
-			throw new DatabaseException(e.getMessage());
+			e.printStackTrace();
+			return -1;
 		}
 	}
 

@@ -9,6 +9,7 @@ import haur_ranking.domain.ClassifierStage;
 import haur_ranking.domain.IPSCDivision;
 import haur_ranking.domain.Match;
 import haur_ranking.domain.Stage;
+import haur_ranking.exception.DatabaseException;
 import haur_ranking.repository.haur_ranking_repository.StageRepository;
 import haur_ranking.repository.haur_ranking_repository.implementation.HaurRankingDatabaseUtils;
 import haur_ranking.repository.winmss_repository.WinMSSStageRepository;
@@ -26,9 +27,9 @@ public class StageService {
 
 	public static Stage find(Stage stage) {
 		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
-		stage = stageRepository.find(stage, entityManager);
+		Stage resultStage = stageRepository.find(stage, entityManager);
 		entityManager.close();
-		return stage;
+		return resultStage;
 	}
 
 	public static Stage find(Long id) {
@@ -43,7 +44,6 @@ public class StageService {
 		int count = stageRepository.getCount(entityManager);
 		entityManager.close();
 		return count;
-
 	}
 
 	public static Map<ClassifierStage, Double> getClassifierStagesWithTwoOrMoreResults(IPSCDivision division) {
@@ -55,6 +55,7 @@ public class StageService {
 	}
 
 	public static boolean isValidClassifier(Stage stage) {
+
 		if (validClassifiers == null) {
 			validClassifiers = winMSSStageRepository.getValidClassifiers();
 		}
@@ -71,17 +72,25 @@ public class StageService {
 	public static void delete(List<Stage> stages) {
 		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		entityManager.getTransaction().begin();
-		for (Stage stage : stages) {
-			Match match = stage.getMatch();
-			match.getStages().remove(stage);
-			if (!entityManager.contains(stage))
-				stage = entityManager.merge(stage);
-			stageRepository.delete(stage, entityManager);
-			entityManager.flush();
-			if (match.getStages().size() == 0)
-				MatchService.delete(match);
+
+		try {
+			for (Stage stage : stages) {
+				Match match = stage.getMatch();
+				match.getStages().remove(stage);
+				if (!entityManager.contains(stage))
+					stage = entityManager.merge(stage);
+				stageRepository.delete(stage, entityManager);
+				entityManager.flush();
+				if (match.getStages().size() == 0)
+					MatchService.delete(match);
+			}
+			entityManager.getTransaction().commit();
+		} catch (DatabaseException e) {
+			e.printStackTrace();
+			entityManager.getTransaction().rollback();
+		} finally {
+			entityManager.close();
 		}
-		entityManager.getTransaction().commit();
-		entityManager.close();
 	}
+
 }

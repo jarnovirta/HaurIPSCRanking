@@ -11,6 +11,7 @@ import haur_ranking.domain.Competitor;
 import haur_ranking.domain.IPSCDivision;
 import haur_ranking.domain.Stage;
 import haur_ranking.domain.StageScoreSheet;
+import haur_ranking.exception.DatabaseException;
 import haur_ranking.repository.haur_ranking_repository.StageScoreSheetRepository;
 import haur_ranking.repository.haur_ranking_repository.implementation.HaurRankingDatabaseUtils;
 
@@ -92,30 +93,38 @@ public class StageScoreSheetService {
 	}
 
 	public static void removeInBatch(List<Long> idLIst) {
-		List<Long> idList = new ArrayList<Long>();
+
 		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
 		entityManager.getTransaction().begin();
-		// Remove reference from stage to score sheet in database
-		for (Long id : idLIst) {
-			StageScoreSheet sheet = sheetRepository.find(id, entityManager);
-			Stage stage = StageService.find(sheet.getStage().getId());
-			StageScoreSheet sheetToRemoveFromStage = null;
-			for (StageScoreSheet s : stage.getStageScoreSheets()) {
-				if (s.getId().equals(sheet.getId()))
-					sheetToRemoveFromStage = s;
+		try {
+			List<Long> idList = new ArrayList<Long>();
+
+			// Remove reference from stage to score sheet in database
+			for (Long id : idLIst) {
+				StageScoreSheet sheet = sheetRepository.find(id, entityManager);
+				Stage stage = StageService.find(sheet.getStage().getId());
+				StageScoreSheet sheetToRemoveFromStage = null;
+				for (StageScoreSheet s : stage.getStageScoreSheets()) {
+					if (s.getId().equals(sheet.getId()))
+						sheetToRemoveFromStage = s;
+				}
+				if (sheetToRemoveFromStage != null)
+					stage.getStageScoreSheets().remove(sheetToRemoveFromStage);
+				idList.add(sheet.getId());
 			}
-			if (sheetToRemoveFromStage != null)
-				stage.getStageScoreSheets().remove(sheetToRemoveFromStage);
-			idList.add(sheet.getId());
+
+			idList.add(new Long(1));
+
+			// Remove score sheet from database
+			if (idList.size() > 0)
+				sheetRepository.removeInBatch(idList, entityManager);
+			entityManager.getTransaction().commit();
+		} catch (DatabaseException e) {
+			e.printStackTrace();
+			entityManager.getTransaction().rollback();
+		} finally {
+			entityManager.close();
 		}
-
-		idList.add(new Long(1));
-
-		// Remove score sheet from database
-		if (idList.size() > 0)
-			sheetRepository.removeInBatch(idList, entityManager);
-		entityManager.getTransaction().commit();
-		entityManager.close();
 	}
 
 	public static void removeStageScoreSheetsForCompetitor(Competitor competitor) {

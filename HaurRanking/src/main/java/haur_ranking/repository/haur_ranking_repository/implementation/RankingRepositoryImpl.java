@@ -8,15 +8,16 @@ import javax.persistence.TypedQuery;
 import haur_ranking.domain.Competitor;
 import haur_ranking.domain.DivisionRankingRow;
 import haur_ranking.domain.Ranking;
+import haur_ranking.exception.DatabaseException;
 import haur_ranking.repository.haur_ranking_repository.RankingRepository;
 
 public class RankingRepositoryImpl implements RankingRepository {
 	@Override
-	public void save(Ranking ranking, EntityManager entityManager) {
+	public void save(Ranking ranking, EntityManager entityManager) throws DatabaseException {
 		try {
 			entityManager.persist(ranking);
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new DatabaseException(e.getMessage());
 		}
 	}
 
@@ -49,23 +50,23 @@ public class RankingRepositoryImpl implements RankingRepository {
 	}
 
 	@Override
-	public void deleteAll(EntityManager entityManager) {
+	public void deleteAll(EntityManager entityManager) throws DatabaseException {
 		try {
 			String queryString = "DELETE FROM Ranking r";
 			entityManager.createQuery(queryString).executeUpdate();
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new DatabaseException(e.getMessage());
 		}
 	}
 
 	@Override
-	public void delete(Ranking ranking, EntityManager entityManager) {
+	public void delete(Ranking ranking, EntityManager entityManager) throws DatabaseException {
 		try {
 			if (!entityManager.contains(ranking))
 				ranking = entityManager.merge(ranking);
 			entityManager.remove(ranking);
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new DatabaseException(e.getMessage());
 		}
 	}
 
@@ -87,7 +88,8 @@ public class RankingRepositoryImpl implements RankingRepository {
 	}
 
 	@Override
-	public void removeRankingRowsForCompetitor(Competitor competitor, EntityManager entityManager) {
+	public void removeRankingRowsForCompetitor(Competitor competitor, EntityManager entityManager)
+			throws DatabaseException {
 		try {
 			String queryString = "SELECT dvrr FROM  DivisionRankingRow dvrr WHERE dvrr.competitor = :competitor";
 			TypedQuery<DivisionRankingRow> query = entityManager.createQuery(queryString, DivisionRankingRow.class);
@@ -99,7 +101,7 @@ public class RankingRepositoryImpl implements RankingRepository {
 				entityManager.remove(row);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new DatabaseException(e.getMessage());
 		}
 	}
 }

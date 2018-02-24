@@ -22,16 +22,9 @@ public class CompetitorService {
 
 	public static Competitor find(String firstName, String lastName) {
 		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
-		try {
-
-			Competitor competitor = competitorRepository.find(firstName, lastName, entityManager);
-			return competitor;
-		} catch (DatabaseException e) {
-			e.printStackTrace();
-			return null;
-		} finally {
-			entityManager.close();
-		}
+		Competitor competitor = competitorRepository.find(firstName, lastName, entityManager);
+		entityManager.close();
+		return competitor;
 	}
 
 	public static void persist(Competitor competitor) {
@@ -51,45 +44,27 @@ public class CompetitorService {
 
 	public static List<Competitor> findAll() {
 		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
-		try {
-			List<Competitor> competitors = competitorRepository.findAll(entityManager);
-
-			return competitors;
-		} catch (DatabaseException e) {
-			e.printStackTrace();
-			return null;
-		} finally {
-			entityManager.close();
-		}
+		List<Competitor> competitors = competitorRepository.findAll(entityManager);
+		entityManager.close();
+		return competitors;
 	}
 
 	public static int getTotalCompetitorCount() {
 		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
-		try {
-			int count = competitorRepository.getTotalCompetitorCount(entityManager);
-			return count;
-		} catch (DatabaseException e) {
-			e.printStackTrace();
-			return -1;
-		} finally {
-			entityManager.close();
-		}
+		int count = competitorRepository.getTotalCompetitorCount(entityManager);
+		entityManager.close();
+		return count;
 	}
 
 	public static List<Competitor> getCompetitorTableDataPage(int page, int pageSize) {
 		EntityManager entityManager = HaurRankingDatabaseUtils.getEntityManagerFactory().createEntityManager();
-		try {
-			List<Competitor> competitors = competitorRepository.getCompetitorListPage(page, pageSize, entityManager);
-			for (Competitor competitor : competitors) {
-				competitor.setResultCount(StageScoreSheetService.getCompetitorStageScoreSheetCount(competitor));
-			}
-			return competitors;
-		} catch (DatabaseException e) {
-			e.printStackTrace();
-			return null;
-		} finally {
-			entityManager.close();
+
+		List<Competitor> competitors = competitorRepository.getCompetitorListPage(page, pageSize, entityManager);
+		for (Competitor competitor : competitors) {
+			competitor.setResultCount(StageScoreSheetService.getCompetitorStageScoreSheetCount(competitor));
 		}
+		entityManager.close();
+		return competitors;
 	}
 
 	public static void deleteAll(List<Competitor> competitors) {

@@ -9,6 +9,7 @@ import haur_ranking.domain.ClassifierStage;
 import haur_ranking.domain.Competitor;
 import haur_ranking.domain.IPSCDivision;
 import haur_ranking.domain.StageScoreSheet;
+import haur_ranking.exception.DatabaseException;
 
 public interface StageScoreSheetRepository {
 	public StageScoreSheet find(Long id, EntityManager entityManager);
@@ -30,9 +31,9 @@ public interface StageScoreSheetRepository {
 
 	public int getCount(EntityManager entityManager);
 
-	public void removeInBatch(List<Long> idList, EntityManager entityManager);
+	public void removeInBatch(List<Long> idList, EntityManager entityManager) throws DatabaseException;
 
-	public void persist(StageScoreSheet sheet, EntityManager entityManager);
+	public void persist(StageScoreSheet sheet, EntityManager entityManager) throws DatabaseException;
 
 	public int getCompetitorStageScoreSheetCount(Competitor competitor, EntityManager entityManager);
 

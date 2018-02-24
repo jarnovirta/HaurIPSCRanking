@@ -6,6 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 import haur_ranking.domain.Match;
+import haur_ranking.exception.DatabaseException;
 import haur_ranking.repository.haur_ranking_repository.MatchRepository;
 
 public class MatchRepositoryImpl implements MatchRepository {
@@ -25,7 +26,6 @@ public class MatchRepositoryImpl implements MatchRepository {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-
 		}
 		return resultMatch;
 	}
@@ -46,14 +46,14 @@ public class MatchRepositoryImpl implements MatchRepository {
 	}
 
 	@Override
-	public void delete(Match match, EntityManager entityManager) {
+	public void delete(Match match, EntityManager entityManager) throws DatabaseException {
 		try {
 			if (!entityManager.contains(match)) {
 				match = entityManager.merge(match);
 			}
 			entityManager.remove(match);
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new DatabaseException(e.getMessage());
 		}
 	}
 
@@ -67,7 +67,6 @@ public class MatchRepositoryImpl implements MatchRepository {
 			List<Match> matches = query.getResultList();
 			if (matches != null && matches.size() > 0)
 				match = matches.get(0);
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -83,7 +82,6 @@ public class MatchRepositoryImpl implements MatchRepository {
 			matches = query.getResultList();
 		} catch (Exception e) {
 			e.printStackTrace();
-
 		}
 		return matches;
 	}
@@ -95,18 +93,17 @@ public class MatchRepositoryImpl implements MatchRepository {
 			count = ((Long) entityManager.createQuery("SELECT COUNT(m) from Match m").getSingleResult()).intValue();
 		} catch (Exception e) {
 			e.printStackTrace();
-
 		}
 		return count;
 
 	}
 
 	@Override
-	public void persist(Match match, EntityManager entityManager) {
+	public void persist(Match match, EntityManager entityManager) throws DatabaseException {
 		try {
 			entityManager.persist(match);
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new DatabaseException(e.getMessage());
 		}
 	}
 }
