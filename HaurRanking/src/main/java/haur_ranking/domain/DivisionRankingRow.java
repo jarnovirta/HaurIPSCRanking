@@ -69,12 +69,12 @@ public class DivisionRankingRow implements Comparable<DivisionRankingRow> {
 			return -1;
 		if (this.bestResultsAverage > compareToAverage)
 			return 1;
-		int compareToResultsCount = compareToLine.getResultsCount();
-		if (this.resultsCount < compareToResultsCount)
-			return -1;
-		if (this.resultsCount > compareToResultsCount)
-			return 1;
-		return 0;
+		if (competitor == null || compareToLine == null || compareToLine.getCompetitor() == null)
+			return 0;
+		int lastNameResult = compareToLine.getCompetitor().getLastName().compareTo(this.getCompetitor().getLastName());
+		if (lastNameResult != 0)
+			return lastNameResult;
+		return compareToLine.getCompetitor().getFirstName().compareTo(this.getCompetitor().getLastName());
 
 	}
 

@@ -52,6 +52,14 @@ public class Competitor {
 			return false;
 	}
 
+	@Override
+	public int hashCode() {
+		int hash = 3;
+		hash = 53 * hash + (this.firstName != null ? this.firstName.hashCode() : 0);
+		hash = 53 * hash + (this.lastName != null ? this.lastName.hashCode() : 0);
+		return hash;
+	}
+
 	public String getFirstName() {
 		return firstName;
 	}
@@ -70,14 +78,6 @@ public class Competitor {
 
 	public int getWinMssTypeDisqualifyRuleId() {
 		return winMSSTypeDisqualifyRuleId;
-	}
-
-	@Override
-	public int hashCode() {
-		int hash = 3;
-		hash = 53 * hash + (this.firstName != null ? this.firstName.hashCode() : 0);
-		hash = 53 * hash + (this.lastName != null ? this.lastName.hashCode() : 0);
-		return hash;
 	}
 
 	public void setFirstName(String firstName) {
