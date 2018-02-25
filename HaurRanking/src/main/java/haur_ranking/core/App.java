@@ -23,6 +23,7 @@ public class App {
 		MainWindow gui = new MainWindow();
 		gui.prepareGUI();
 		gui.showHaurRankingGui();
+
 	}
 
 	private static void initializeServices() {
