@@ -2,6 +2,7 @@ package haur_ranking.test;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -223,6 +224,12 @@ public class TestUtils {
 		deleteDatabase();
 
 		List<Match> matches = TestUtils.createTestMatches();
+		// Randomize match order to see that the order in which results are
+		// saved
+		// doesn't affect outcome. This is to see that old results are correctly
+		// removed.
+		Collections.shuffle(matches);
+
 		try {
 			WinMSSDataImportService.importSelectedResults(matches);
 		} catch (Exception e) {

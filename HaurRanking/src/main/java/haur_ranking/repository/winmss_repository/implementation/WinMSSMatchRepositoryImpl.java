@@ -6,7 +6,7 @@ import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.util.Date;
 import java.util.List;
 
 import haur_ranking.domain.Match;
@@ -20,13 +20,23 @@ public class WinMSSMatchRepositoryImpl implements WinMSSMatchRepository {
 		Statement statement = null;
 		ResultSet resultSet = null;
 		try {
+
+			// Only fetch data for matches after 13.3.2017. This is a hack, to
+			// exclude duplicate data to that imported from Excel-file.
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(dateFormat.parse("2017-03-14 00:00:00"));
+			Date cutOffDate = calendar.getTime();
+
 			connection = WinMSSDatabaseUtil.createConnection(fileLocation);
 			statement = connection.createStatement();
-			resultSet = statement.executeQuery(
-					"SELECT MatchId, MatchName, MatchDt FROM tblMatch WHERE TypeFirearmId=1 ORDER BY MatchDt DESC");
+			String queryString = "SELECT MatchId, MatchName, MatchDt FROM tblMatch WHERE TypeFirearmId=1 "
+					+ "AND MatchDt >='" + dateFormat.format(cutOffDate) + "' ORDER BY MatchDt DESC";
+			System.out.println(queryString);
+			resultSet = statement.executeQuery(queryString);
 			while (resultSet.next()) {
-				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
-				Calendar calendar = new GregorianCalendar(2013, 0, 31);
+				System.out.println("Date: " + dateFormat.parse(resultSet.getString(3)));
+				calendar = Calendar.getInstance();
 				calendar.setTime(dateFormat.parse(resultSet.getString(3)));
 				matchList.add(new Match(resultSet.getString(2), resultSet.getLong(1), calendar));
 			}
