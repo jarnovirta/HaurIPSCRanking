@@ -32,10 +32,8 @@ public class WinMSSMatchRepositoryImpl implements WinMSSMatchRepository {
 			statement = connection.createStatement();
 			String queryString = "SELECT MatchId, MatchName, MatchDt FROM tblMatch WHERE TypeFirearmId=1 "
 					+ "AND MatchDt >='" + dateFormat.format(cutOffDate) + "' ORDER BY MatchDt DESC";
-			System.out.println(queryString);
 			resultSet = statement.executeQuery(queryString);
 			while (resultSet.next()) {
-				System.out.println("Date: " + dateFormat.parse(resultSet.getString(3)));
 				calendar = Calendar.getInstance();
 				calendar.setTime(dateFormat.parse(resultSet.getString(3)));
 				matchList.add(new Match(resultSet.getString(2), resultSet.getLong(1), calendar));
