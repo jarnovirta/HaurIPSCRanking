@@ -32,6 +32,10 @@ public class Competitor {
 		}
 		this.firstName = firstName;
 		this.lastName = lastName;
+
+		// A hack for getting around inconsistency in WinMSS db data
+		if (this.lastName.equals("Välimäki") && this.firstName.equals("Juha"))
+			this.firstName = "Juha-Pekka";
 	}
 
 	@Override
