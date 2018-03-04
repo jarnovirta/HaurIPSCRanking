@@ -32,7 +32,7 @@ public class MainWindow {
 	public static final int WIDTH = 1250;
 	public static final int HEIGHT = 800;
 	public static final int MIN_WIDTH = 900;
-	public static final int MIN_HEIGHT = 600;
+	public static final int MIN_HEIGHT = 700;
 	public static final int LEFT_PANE_WIDTH = 450;
 	public static final int RIGHT_PANE_WIDTH = WIDTH - LEFT_PANE_WIDTH;
 
