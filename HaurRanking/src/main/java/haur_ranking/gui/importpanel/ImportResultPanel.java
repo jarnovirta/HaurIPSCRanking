@@ -25,7 +25,6 @@ import haur_ranking.event.DataImportEvent.ImportStatus;
 import haur_ranking.event.GUIDataEvent;
 import haur_ranking.event.GUIDataEvent.GUIDataEventType;
 import haur_ranking.event.GUIDataEventListener;
-import haur_ranking.gui.MainWindow;
 import haur_ranking.gui.service.DataEventService;
 import haur_ranking.utils.DateFormatUtils;
 
@@ -56,7 +55,8 @@ public class ImportResultPanel extends JPanel implements GUIDataEventListener {
 		stagesWithNoResultsPanel = getStagesWithNoResultPanel();
 		panel.add(stagesWithNoResultsPanel);
 		JScrollPane scrollPane = new JScrollPane(panel);
-		scrollPane.setPreferredSize(new Dimension(MainWindow.RIGHT_PANE_WIDTH, MainWindow.HEIGHT));
+		// scrollPane.setPreferredSize(new Dimension(MainWindow.RIGHT_PANE_WIDTH
+		// - 50, MainWindow.HEIGHT - 200));
 		scrollPane.getVerticalScrollBar().setUnitIncrement(16);
 		add(scrollPane);
 
