@@ -1,0 +1,51 @@
+SEURAAVANA TEHTÄVÄT:
+
+Pitkän aikavälin tavoitteisiin lisäisin sen, että samaan tietokantaan tai järjestelmään voitaisiin lisätä tiedot harjoituksista joissa ei ole ammuttu luokitteluammuntoja (Osuvan lähes kaikki torstait ja Ruutisavun vuorot jolloin ammunnanjohtaja ei ole viitsinyt luokitteluasemaa rakennuttaa). Nämä on tekstitiedostoissa, joissa tiedostonimessä on päivämäärä ja sisältönä rivinvaihdoilla erotellusti paikalla olleiden nimet.
+
+Näille voisi perustaa yhtä luokitteluasemaa vastaavan tietueen, jota ei 
+lasketa mukaan rankingiin. Käytännössä jokainen harjoituspäivä olisi 
+silloin WinMSS:n kisaa vastaava, jokaisella vain 0-tulos. Se että 
+paikallaolotietoa kohdellaan kuin mitä tahansa muuta kisaa on 
+olennainen siitä syystä, että WinMSS-tietokannassa on myös harjoituskisoja 
+jotka eivät ole luokitteluasemia. Eli niissä on kaikkien kohdalta 
+osumakertoimet jopa useasta asemasta, mutta niitä ei tule käyttää 
+rankingin laskentaan. Näillä ei-ranking-asemilla ja pelkillä tiedoilla 
+paikalla olleisten nimistä on sama arvo muuta tilastokäyttöä ajatellen.
+
+Tavoitteena tällä paikallaolo- ja ei-ranking-asemien tulosten lisäämisellä 
+olisi nopeuttaa tilastotietojen hakua seuraaviin käyttötarkoituksiin:
+1) kertaharjoitusmaksulaskut, annetaan hakutermiksi ajanjakso, saadaan 
+tuloksena nimen mukaan järjestetty lista ja tieto moneltako päivältä 
+löytyy mikä tahansa merkintä (ranking-tulos, muun kisan tulos, 
+paikallaolotieto)
+2) harjoitusaktiivisuustilastot, annetaan hakutermiksi ajanjakso, 
+saadaan tuloksena useita erittelyitä (tarkemmat tiedot täältä), mm:
+- kuinka monta käyntiä kunakin viikonpäivänä on ollut yhteensä
+- kuinka monta päivää kunakin viikonpäivänä on ollut käyntejä 
+(harjoitusvuorojen määrä)
+- kuinka monelta eri nimeltä on merkintöjä
+
+Muut tiedot kuten maksutapatiedot voidaan edelleen laskea Excelillä 
+koska tieto kausiharjoitusmaksujen maksuista on haettava 
+jäsenrekisteristä, eikä sitä tule yhdistää minkään käyttöyhteyden 
+kautta tähän.
+3) AAK-todistusten laatimiseen tarvittavat tiedot, annetaan hakutermiksi 
+ajanjakso ja nimi, saadaan tuloksena päivämäärän mukaan nousevassa 
+järjestyksessä oleva lista päivistä jolloin kyseisellä nimellä on merkintä
+
+Lisätään vielä seuraava, että saadaan se samaan speksiin. Tämä on 
+uusi vaatimus Helsingin kaupungilta:
+4) Helsingin kriteerin mukaiset aktiiviharjoittelijat, annetaan 
+hakuterminä vuosi ja vastauksena on 
+kaikkien niiden jäsenten nimet sukunimen mukaisessa järjestyksessä, 
+joista löytyy paikallaolotietoja vähintään 10 kertaa minkä tahansa 
+kolmen kuukauden ajalta (eli laskennallisesti ensin selvitetään kuinka 
+monta käyntipäivää löytyy kustakin kuukaudesta ja jos mistä tahansa 
+yhdestä kuukaudesta löytyy 10 kertaa, tulos on true, jos ei löydy 10 
+kerran kuukautta, laitetaan kuukaudet käyntikertajärjestykseen ja 
+lasketaan yhteen 3 eniten käntikertoja sisältäneiden kuukausien 
+käyntimäärät ja jos käyntejä on 10 tai yli, tulos on true, jos niitä 
+on alle 10, tulos on false)
+5) Muut harjoittelijat kuin aktiiviharjoittelijat, annetaan hakuterminä 
+vuosi ja vastauksena on kaikkien niiden jäsenten nimet sukunimen mukaisessa 
+järjestyksessä, joista löytyy paikallaolotieto vähintään yhdeltä päivältä
