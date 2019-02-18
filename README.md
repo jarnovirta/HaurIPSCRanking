@@ -1,5 +1,5 @@
 # HaurIPSCRanking
-This is a Java application for a shooting club's ([Haukilahden urheiluampujat ry](http://www.haur.fi)) internal ranking based on [IPSC](http://www.ipsc.org/) classifiers scored using [WinMSS](http://www.ipsc.org/matches/winmss.php).
+This is a Java application for a shooting club's ([Haukilahden Urheiluampujat ry](http://www.haur.fi)) internal ranking based on [IPSC](http://www.ipsc.org/) classifiers scored using [WinMSS](http://www.ipsc.org/matches/winmss.php).
 
 Results from [IPSC classifier stages](http://www.ipsc.org/classification/icsStages.php) scored using WinMSS can be imported into the application database and included in the ranking. The application reads the result data from the WinMSS database (a Microsoft Access database) and saves the selected results into its own database (an embedded HSQL database). 
 
